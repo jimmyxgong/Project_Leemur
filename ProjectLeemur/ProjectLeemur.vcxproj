@@ -142,6 +142,7 @@
     <ClCompile Include="Environment.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Mob.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Resources.cpp" />

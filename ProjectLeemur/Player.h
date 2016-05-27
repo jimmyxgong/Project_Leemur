@@ -1,12 +1,15 @@
 #pragma once
 
 #include "Commons.h"
-#include "TransformEntity.h"
+#include "Mob.h"
 #include "Camera.h"
 
-class Player : public TransformEntity {
+#include <queue>
+
+class Player : public Mob {
 private:
 	UniquePointer<Camera> camera;
+	UniquePointer<std::queue<Movement>> queue;
 
 public:
 	void onStart() override;

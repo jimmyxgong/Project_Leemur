@@ -6,7 +6,7 @@ Keyboard::Layout Keyboard::defaultLayout;
 Keyboard::Layout * Keyboard::layout;
 
 void Keyboard::init() {
-	setFocusedLayout(&defaultLayout);
+	layoutBackStack.push(&defaultLayout);
 	map();
 }
 
@@ -38,13 +38,28 @@ void Keyboard::onKeyAction(GLFWwindow* window, int key, int scancode, int action
 		}
 
 		bool isShifted = mods == GLFW_MOD_SHIFT;
-		auto listener = layout->listeners.find(key);
-		if (listener != layout->listeners.end()) {
+		auto listener = layoutBackStack.top()->listeners.find(key);
+		if (listener != layoutBackStack.top()->listeners.end()) {
 			listener->second(isShifted);
 		}
 	}
 }
 
+void Keyboard::addLayout(Keyboard::Layout * layout) {
+	layoutBackStack.push(layout);
+}
+
+Keyboard::Layout * Keyboard::popLayout() {
+	// do not pop the default keyboard layout
+	if (layoutBackStack.size() < 2) return nullptr;
+
+	Layout * popped = layoutBackStack.top();
+	layoutBackStack.pop();
+	return popped;
+}
+
+
+/*Deprecated*/
 void Keyboard::setFocusedLayout(Layout * layout) {
 	Keyboard::layout = layout;
 }

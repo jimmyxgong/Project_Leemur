@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Commons.h"
+#include <stack>
 
 class Keyboard {
 public:
@@ -12,6 +13,7 @@ public:
 	
 
 private:
+	static std::stack<Layout*> layoutBackStack;
 	static Layout * layout;
 	static void map();
 
@@ -19,5 +21,9 @@ public:
 	static void init();
 	static void onKeyAction(GLFWwindow* window, int key, int scancode, int action, int mods);
 
+	static void addLayout(Layout * layout);
+	static Layout * popLayout();
+
+	/*Deprecated*/
 	static void setFocusedLayout(Layout * layout);
 };

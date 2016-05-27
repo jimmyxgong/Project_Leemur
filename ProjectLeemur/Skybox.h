@@ -11,7 +11,7 @@ private:
 
 public:
 	GLuint VAO, VBO;
-	Shader* shader;
+	Shader * shader;
 
 	void onStart() override;
 	void onRender() override;
