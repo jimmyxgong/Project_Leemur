@@ -1,0 +1,23 @@
+#pragma once
+
+#include "Commons.h"
+
+class Keyboard {
+public:
+	static class Layout {
+	public:
+		std::unordered_map<int, std::function<void(bool)>> listeners;
+		void onKeyPressed(int key, std::function<void(bool isShifted)>);
+	} defaultLayout;
+	
+
+private:
+	static Layout * layout;
+	static void map();
+
+public:
+	static void init();
+	static void onKeyAction(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+	static void setFocusedLayout(Layout * layout);
+};
