@@ -28,6 +28,7 @@ void Environment::onCreate() {
 void Environment::onStart() {
 	print("Environment starting...");
 	skybox->onStart();
+	player->onStart();
 }
 
 void Environment::onRender() {

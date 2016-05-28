@@ -4,9 +4,11 @@
 
 Keyboard::Layout Keyboard::defaultLayout;
 Keyboard::Layout * Keyboard::layout;
+std::stack<Keyboard::Layout*> Keyboard::layoutBackStack;
 
 void Keyboard::init() {
-	layoutBackStack.push(&defaultLayout);
+	//layoutBackStack.push(&defaultLayout);
+	layout = &defaultLayout;
 	map();
 }
 
@@ -38,8 +40,8 @@ void Keyboard::onKeyAction(GLFWwindow* window, int key, int scancode, int action
 		}
 
 		bool isShifted = mods == GLFW_MOD_SHIFT;
-		auto listener = layoutBackStack.top()->listeners.find(key);
-		if (listener != layoutBackStack.top()->listeners.end()) {
+		auto listener = layout->listeners.find(key);
+		if (listener != layout->listeners.end()) {
 			listener->second(isShifted);
 		}
 	}
