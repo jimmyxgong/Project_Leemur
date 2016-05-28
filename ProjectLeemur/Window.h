@@ -49,6 +49,8 @@ public:
 
 	GLFWwindow * getGlfwWindow() const;
 
+	int width() const;
+	int height() const;
 	
 
 private:

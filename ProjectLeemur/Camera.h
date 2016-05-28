@@ -27,10 +27,9 @@ public:
 
 	//void use();
 
-	explicit Camera();
-	explicit Camera(Vector3f position);
-	explicit Camera(Vector3f position, Vector3f lookat);
-	explicit Camera(Vector3f position, Vector3f lookat, Vector3f upVector);
+	explicit Camera(Vector3f position = CAMERA_POSITION, 
+					Vector3f lookat = CAMERA_LOOK_AT, 
+					Vector3f upVector = CAMERA_UP_VECTOR);
 	
 	Camera(const Camera &);
 	~Camera();

@@ -2,12 +2,14 @@
 #include "Camera.h"
 #include "Environment.h"
 #include "Keyboard.h"
+#include "Mouse.h"
 
 UniquePointer<Environment> environment;
 UniquePointer<Camera> defaultCamera;
 
 void Window::onStart() {
 	Keyboard::init();
+	Mouse::init();
 
 	activeCamera = defaultCamera.get();
 	secondActiveCamera = defaultCamera.get();
@@ -115,6 +117,14 @@ GLFWwindow * Window::getGlfwWindow() const {
 }
 
 
+int Window::width() const {
+	return settings.width;
+}
+
+int Window::height() const {
+	return settings.height;
+}
+
 
 
 
@@ -210,9 +220,14 @@ Window & Window::setFar(float far) {
 Window & Window::start() {
 	focusedWindow = this;
 	glfwWindow = newGlfwWindow();
+
 	glfwSetErrorCallback(onError);
 	glfwSetWindowSizeCallback(glfwWindow, onResize);
+
 	glfwSetKeyCallback(glfwWindow, Keyboard::onKeyAction);
+	glfwSetCursorPosCallback(glfwWindow, Mouse::onMouseUpdate);
+	glfwSetMouseButtonCallback(glfwWindow, Mouse::onMousePress);
+	glfwSetScrollCallback(glfwWindow, Mouse::onMouseScroll);
 
 	setupGlew();
 	setupOpenGLsettings();

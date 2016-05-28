@@ -13,9 +13,11 @@ public:
 		std::function<void(bool isUp)> onScroll;
 		std::function<void()> onClick;
 
-		void setOnDrag(const std::function<void(const Point &, bool isLeft)>&);
-		void setOnScroll(const std::function<void(bool isUp)>&);
-		void setOnClick(const std::function<void()>&);
+		void setOnDrag(std::function<void(const Point &, bool isLeft)>);
+		void setOnScroll(std::function<void(bool isUp)>);
+		void setOnClick(std::function<void()>);
+
+		Layout();
 	} defaultLayout;
 
 

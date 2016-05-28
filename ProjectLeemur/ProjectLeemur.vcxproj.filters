@@ -37,6 +37,12 @@
     <Filter Include="Source Files\Game\Entity">
       <UniqueIdentifier>{abb12eb2-7589-4a62-87d8-52762534c70c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Mechanics">
+      <UniqueIdentifier>{6a229d93-c077-4cc0-a63a-dbd470bfebc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Mechanics">
+      <UniqueIdentifier>{08dcf241-a5aa-40bf-8250-c6acfc89cfa4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -102,6 +108,9 @@
     <ClInclude Include="Point.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Trackball.h">
+      <Filter>Header Files\Game\Mechanics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -148,6 +157,9 @@
     </ClCompile>
     <ClCompile Include="Mouse.cpp">
       <Filter>Source Files\Frame</Filter>
+    </ClCompile>
+    <ClCompile Include="Trackball.cpp">
+      <Filter>Source Files\Game\Mechanics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

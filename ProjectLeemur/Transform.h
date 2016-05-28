@@ -17,6 +17,7 @@ private:
 	Vector3f	position;
 	Quaternion	rotation;
 
+	/* Point in each respective space to another space*/
 	Matrix4f	localToWorldMatrix;
 	Matrix4f	worldToLocalMatrix;
 

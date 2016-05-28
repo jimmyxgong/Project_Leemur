@@ -30,10 +30,6 @@ Camera& Camera::setUpVector(const Vector3f & val) {
 
 
 
-Camera::Camera() : Camera(CAMERA_POSITION, CAMERA_LOOK_AT, CAMERA_UP_VECTOR) {}
-Camera::Camera(Vector3f position) : Camera(position, CAMERA_LOOK_AT) {}
-Camera::Camera(Vector3f position, Vector3f lookat) : Camera(position, lookat, CAMERA_UP_VECTOR) {}
-
 Camera::Camera(Vector3f position, Vector3f lookat, Vector3f upvector) :
 	lookAt(lookat), upVector(upvector)
 {

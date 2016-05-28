@@ -1,8 +1,11 @@
 #include "Player.h"
 #include "Keyboard.h"
+#include "Window.h"
 
 void Player::onStart() {
-	camera = unique<Camera>(transform.getPosition());
+	trackball = Trackball(&Window::getFocusedWindow());
+
+	camera = unique<Camera>();
 	queue = unique<std::queue<Movement>>();
 	
 	keybind.onKeyPressed(GLFW_KEY_W, [this](bool isShifted) {
@@ -21,6 +24,20 @@ void Player::onStart() {
 	keybind.onKeyPressed(GLFW_KEY_D, [this](bool isShifted) {
 		queue->push(Movement::RIGHT);
 	});
+
+
+	mousebind.setOnDrag([this](const Point & now, bool isLeft) {
+		if (isLeft) {
+			Quaternion rotation = trackball.fromPoints(Mouse::old, now);
+			camera->transform.rotateLocal(rotation);
+			Window::getFocusedWindow().setView(camera->viewMatrix());
+			
+		}
+
+		//Mouse::old = now;
+	});
+
+	Mouse::pushLayout(&mousebind);
 }
 
 void Player::onRender() {
@@ -38,3 +55,5 @@ void Player::onUpdate() {
 Camera & Player::getCamera() const {
 	return *camera.get();
 }
+
+Player::Player() {}

@@ -7,8 +7,10 @@ Keyboard::Layout * Keyboard::layout;
 std::stack<Keyboard::Layout*> Keyboard::layoutBackstack;
 
 void Keyboard::init() {
+	std::cout << "Keyboard initializng... " << std::endl;
 	layoutBackstack.push(&defaultLayout);
 
+	// Define the default layout here:
 	defaultLayout.onKeyPressed(GLFW_KEY_E, [](bool isShifted) -> void {
 
 	});

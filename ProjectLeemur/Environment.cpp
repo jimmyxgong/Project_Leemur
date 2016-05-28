@@ -12,7 +12,7 @@ void print(const char * const & val) {
 }
 
 void Environment::onCreate() {
-	print("Environment starting...");
+	print("Creating Environment...");
 	
 	skybox = unique<Skybox>(window);
 	Resources::addEntity(SKYBOX, skybox.get());

@@ -1,16 +1,22 @@
 #include "Mouse.h"
 
-void Mouse::Layout::setOnDrag(const std::function<void(const Point&, bool)> & listener) {
+void Mouse::Layout::setOnDrag(std::function<void(const Point&, bool)> listener) {
 	onDrag = listener;
 }
 
-void Mouse::Layout::setOnScroll(const std::function<void(bool)> & listener) {
+void Mouse::Layout::setOnScroll(std::function<void(bool)> listener) {
 	onScroll = listener;
 }
 
-void Mouse::Layout::setOnClick(const std::function<void()> & listener) {
+void Mouse::Layout::setOnClick(std::function<void()> listener) {
 	onClick = listener;
 }
+
+Mouse::Layout::Layout() : 
+	onDrag(defaultLayout.onDrag),
+	onScroll(defaultLayout.onScroll),
+	onClick(defaultLayout.onClick)
+{}
 
 
 
@@ -23,6 +29,9 @@ Point Mouse::old;
 Point Mouse::now;
 
 void Mouse::init() {
+	std::cout << "Mouse initializng... "<< std::endl;
+
+	pushLayout(&defaultLayout);
 	defaultLayout.setOnDrag([](const Point &, bool isLeft) {
 
 	});
@@ -68,7 +77,9 @@ void Mouse::onMouseScroll(GLFWwindow* window, double xoffset, double yoffset) {
 void Mouse::onMousePress(GLFWwindow* window, int button, int action, int mods) {
 	if ((button == GLFW_MOUSE_BUTTON_LEFT
 		|| button == GLFW_MOUSE_BUTTON_RIGHT)
-		&& action == GLFW_PRESS) {
+		&& action == GLFW_PRESS) 
+	{
+		old = now;
 
 		dragging = true;
 		clickedLeft = button == GLFW_MOUSE_BUTTON_LEFT;
