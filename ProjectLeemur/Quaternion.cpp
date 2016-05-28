@@ -30,7 +30,7 @@ void Quaternion::print() {
 
 
 
-Quaternion Quaternion::operator*(Quaternion& q1) {
+Quaternion Quaternion::operator*(const Quaternion & q1) {
 	Quaternion quat;
 	quat.x = (w * q1.x) + (x * q1.w) + (y * q1.z) - (z * q1.y);
 	quat.y = (w * q1.y) - (x * q1.z) + (y * q1.w) + (z * q1.x);

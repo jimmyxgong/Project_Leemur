@@ -2,33 +2,50 @@
 #include "Window.h"
 
 
-
+// TODO: FIXME Needs to use better Camera API
 Matrix4f Camera::viewMatrix() {
-	Matrix4f rotation;
-	Quaternion::toMatrix(transform.localRotation, rotation);
-	return glm::lookAt(transform.localPosition, CAMERA_LOOK_AT, CAMERA_UP_VECTOR) * rotation;
+	return glm::lookAt(transform.getLocalPosition(), lookAt, upVector) * transform.getLocalRotation().toMatrix();
 }
 
-void Camera::apply(Matrix4f const & value) {
-	relativeWorldMatrix = glm::inverse(value);
+//void Camera::use() {
+//	Window::getFocusedWindow()
+//		.setView(OriginViewMatrix * relativeWorldMatrix);
+//}
+
+
+
+
+Camera& Camera::setLookAt(const Vector3f & val) {
+	lookAt = val;
+	return *this;
 }
 
-void Camera::use() {
-	Window::getFocusedWindow()
-		.setView(OriginViewMatrix * relativeWorldMatrix);
+Camera& Camera::setUpVector(const Vector3f & val) {
+	upVector = val;
+	return *this;
 }
 
 
 
 
-Camera::Camera(Vector3f position) {
-	transform.localPosition = position;
-	OriginViewMatrix = glm::lookAt(position, CAMERA_LOOK_AT, CAMERA_UP_VECTOR);
+
+
+Camera::Camera() : Camera(CAMERA_POSITION, CAMERA_LOOK_AT, CAMERA_UP_VECTOR) {}
+Camera::Camera(Vector3f position) : Camera(position, CAMERA_LOOK_AT) {}
+Camera::Camera(Vector3f position, Vector3f lookat) : Camera(position, lookat, CAMERA_UP_VECTOR) {}
+
+Camera::Camera(Vector3f position, Vector3f lookat, Vector3f upvector) :
+	lookAt(lookat), upVector(upvector)
+{
+	transform.setLocalPosition(position);
+	view = glm::lookAt(position, lookat, upvector);
 }
 
-Camera::Camera() {
-	transform.localPosition = CAMERA_POSITION;
-	OriginViewMatrix = glm::lookAt(CAMERA_POSITION, CAMERA_LOOK_AT, CAMERA_UP_VECTOR);
+Camera::Camera(const Camera & cam) {
+	lookAt = cam.lookAt;
+	upVector = cam.upVector;
+	transform = cam.transform;
+	view = cam.view;
 }
 
 Camera::~Camera() {

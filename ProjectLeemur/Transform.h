@@ -6,23 +6,62 @@
 #include "Quaternion.h"
 
 class Transform {
-	
 private:
-
-	Matrix4f localToWorldMatrix;
-
-public:	
+	/* Orientation relative to a parent's world matrix */
 	Vector3f    localScale;
-	Vector3f    localPosition;
+	Vector3f	localPosition;
 	Quaternion  localRotation;
-	Matrix4f    localWorldMatrix;
 
-	Vector3f    scaling;
-	Vector3f    position;
-	Matrix4f    rotation;
+	/* Orientation in world matrix */
+	Vector3f	scaling;
+	Vector3f	position;
+	Quaternion	rotation;
+
+	Matrix4f	localToWorldMatrix;
+	Matrix4f	worldToLocalMatrix;
+
+
+public:	/* Getters and Setters */
+
 	Matrix4f    worldMatrix;
 
-public:
+	Vector3f getLocalScale() const;
+	Vector3f getLocalPosition() const;
+	Quaternion getLocalRotation() const;
+
+	Vector3f getPosition() const;
+	Quaternion getRotation() const;
+
+	Transform& setLocalScale(const Vector3f & val);
+	Transform& setLocalPosition(const Vector3f & val);
+	Transform& setLocalRotation(const Quaternion & val);
+
+	Transform& setPosition(const Vector3f & val);
+	Transform& setRotation(const Quaternion & val);
+
+public: /* Transformations on current orientation */
+
+	Transform& scaleLocal(float xyz);
+	Transform& scaleLocal(float x, float y, float z);
+	Transform& scaleLocal(const Vector3f & val);
+
+	Transform& rotateLocalX(float deg);
+	Transform& rotateLocalY(float deg);
+	Transform& rotateLocalZ(float deg);
+	Transform& rotateLocal(float x, float y, float z, float deg);
+	Transform& rotateLocal(Quaternion & val);
+
+	Transform& translateLocal(float x, float y, float z);
+	Transform& translateLocal(const Vector3f & val);
+
+	void evaluateMatrix(); // TODO
+
+	/* Copy Constructor */
+	Transform(const Transform &);	
+	Transform();
+	~Transform();
+
+	
 
 
 	void rotate(float x, float y, float z);
@@ -34,16 +73,11 @@ public:
 
 	void scale(float x);
 
-	Transform& scaleLocal(float xyz);
-	Transform& scaleLocal(float x, float y, float z);
-	Transform& scaleLocal(Vector3f const &);
 
-	Transform& rotateLocal(float x, float y, float z, float deg);
-	Transform& rotateLocal(Quaternion&);
-	//Transform& setRotation(Matrix4f const &);
 
-	Transform& translateLocal(float x, float y, float z);
-	Transform& translateLocal(Vector3f const &);
+
+
+
 
 	void updateWorldMatrix();
 	void updateLocalWorldMatrix();
@@ -55,13 +89,10 @@ public:
 
 
 public:
-	Transform()
-		: 
-	      localPosition(0.0f, 0.0f, 0.0f),
-		  localScale(1.0f),
-		  position(0.0f, 0.0f, 0.0f),
-		  localWorldMatrix(1.0f) {}
-	~Transform();
+
+
+
+
 
 	void destroy();
 

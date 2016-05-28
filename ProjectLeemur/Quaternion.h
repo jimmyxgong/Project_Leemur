@@ -13,10 +13,9 @@ public:
 	Quaternion normalize();
 	void print();
 
-	Quaternion operator*(Quaternion&);
+	Quaternion operator*(const Quaternion &);
 	Matrix4f operator*(Matrix4f const &);
 	Vector4f operator*(Vector4f&);
-
 	Quaternion operator+(Quaternion&);
 
 

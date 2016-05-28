@@ -20,7 +20,6 @@ void Environment::onCreate() {
 	player = unique<Player>();
 	Resources::addEntity(PLAYER, player.get());
 
-
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());
 }

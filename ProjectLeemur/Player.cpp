@@ -2,7 +2,7 @@
 #include "Keyboard.h"
 
 void Player::onStart() {
-	camera = unique<Camera>(transform.position);
+	camera = unique<Camera>(transform.getPosition());
 	queue = unique<std::queue<Movement>>();
 	
 	keybind.onKeyPressed(GLFW_KEY_W, [this](bool isShifted) {
