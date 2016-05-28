@@ -14,7 +14,6 @@ public:
 
 private:
 	static std::stack<Layout*> layoutBackStack;
-	static Layout * layout;
 	static void map();
 
 public:
@@ -24,6 +23,8 @@ public:
 	static void addLayout(Layout * layout);
 	static Layout * popLayout();
 
-	/*Deprecated*/
+	/*Deprecated */
+	static Layout * layout;
 	static void setFocusedLayout(Layout * layout);
+	/*			 */
 };
