@@ -1,6 +1,3 @@
-# final-project
-Final project for CSE167
+# Project Leemur
 
-
-### All code documentation will be posted in the wiki
-[GOTO Documentation](https://github.com/jimmyxgong/final-project/wiki/Code)
+[GOTO Documentation](https://github.com/jimmyxgong/final-project/wiki)
