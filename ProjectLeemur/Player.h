@@ -3,11 +3,13 @@
 #include "Commons.h"
 #include "Mob.h"
 #include "Camera.h"
+#include "Keyboard.h"
 
 #include <queue>
 
 class Player : public Mob {
 private:
+	Keyboard::Layout keybind;
 	UniquePointer<Camera> camera;
 	UniquePointer<std::queue<Movement>> queue;
 

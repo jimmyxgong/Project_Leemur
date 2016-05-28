@@ -1,8 +1,6 @@
 #include "Player.h"
 #include "Keyboard.h"
 
-Keyboard::Layout keybind;
-
 void Player::onStart() {
 	camera = unique<Camera>(transform.position);
 	queue = unique<std::queue<Movement>>();

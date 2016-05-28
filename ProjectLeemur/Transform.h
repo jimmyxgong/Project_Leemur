@@ -8,7 +8,8 @@
 class Transform {
 	
 private:
-	
+
+	Matrix4f localToWorldMatrix;
 
 public:	
 	Vector3f    localScale;
@@ -48,6 +49,9 @@ public:
 	void updateLocalWorldMatrix();
 	Matrix4f asMatrix();
 
+
+	//Matrix4f getLocalToWorldMatrix();
+	Vector3f getScale();
 
 
 public:
