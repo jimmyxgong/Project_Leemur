@@ -1,10 +1,5 @@
 #include "Environment.h"
-#include "Skybox.h"
 #include "Resources.h"
-#include "Player.h"
-
-UniquePointer<Skybox> skybox;
-UniquePointer<Player> player;
 
 // TODO LOGGER
 void print(const char * const & val) {
@@ -28,6 +23,9 @@ void Environment::onStart() {
 	print("Environment starting...");
 	skybox->onStart();
 	player->onStart();
+
+	// TODO add api for attaching entities
+	world.addChild(&player->transform);
 }
 
 void Environment::onRender() {

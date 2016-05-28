@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Commons.h"
 #include "Transform.h"
 
@@ -24,6 +25,7 @@ public:
 	Camera& setLookAt(const Vector3f & val);
 	Camera& setUpVector(const Vector3f & val);
 
+	void update();
 
 	//void use();
 

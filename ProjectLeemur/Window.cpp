@@ -22,11 +22,8 @@ void Window::onStart() {
 void Window::onRender(GLFWwindow* window) {
 	// Clear the color and depth buffers
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	if (advancedSettings.useSplitScreen) {
-		//environment->centrifuge->useCamera(false);
-		V = activeCamera->viewMatrix();
-	}
+	V = activeCamera->viewMatrix();
+	
 
 	glViewport(0, 0, settings.width / (advancedSettings.useSplitScreen ? 2 : 1), settings.height);
 	glMatrixMode(GL_PROJECTION);
@@ -43,7 +40,7 @@ void Window::onRender(GLFWwindow* window) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 
-		//environment->centrifuge->useCamera(true);
+		// TODO use second camera here
 		environment->onRender();
 	}
 
@@ -66,9 +63,16 @@ void Window::onResize(GLFWwindow* window, int width, int height) {
 	w.settings.height = height;
 
 	if (height > 0) {
+		
 		// Set the perspective of the projection viewing frustum
-		w.P = glm::perspective(w.settings.fov, (float)width / (float)height, w.settings.near, w.settings.far);
-		w.V = glm::lookAt(CAMERA_POSITION, CAMERA_LOOK_AT, CAMERA_UP_VECTOR);
+		w.P = glm::perspective(w.settings.fov, 
+							   (float)width / (float)height, 
+							   w.settings.near, 
+							   w.settings.far);
+
+		w.V = w.activeCamera == nullptr
+			? glm::lookAt(CAMERA_POSITION, CAMERA_LOOK_AT, CAMERA_UP_VECTOR)
+			: w.activeCamera->viewMatrix();
 	}
 }
 

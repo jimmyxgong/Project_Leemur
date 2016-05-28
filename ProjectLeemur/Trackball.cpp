@@ -4,15 +4,16 @@ Vector3f Trackball::toTrackBallPoint(const Point & point) {
 	return toTrackBallPoint(point.x, point.y);
 }
 
-Vector3f Trackball::toTrackBallPoint(int x, int y) {
+Vector3f Trackball::toTrackBallPoint(float x, float y) {
 	Vector3f mappedPoint;
-	mappedPoint.x = (2.0*x - window->width()) / window->width();
-	mappedPoint.y = (window->height() - 2.0*y) / window->height();
+	mappedPoint.x = (2.0f*x - window->width()) / window->width();
+	mappedPoint.y = (window->height() - 2.0f*y) / window->height();
 	mappedPoint.z = 0.0f;
+
 	double depth = length(mappedPoint);
 	if (depth > 1.0f) depth = 1.0f;
 
-	mappedPoint.z = glm::sqrt(1.001 - (depth*depth));
+	mappedPoint.z = (float) sqrt(1.001 - (depth*depth));
 	normalize(mappedPoint);
 	return mappedPoint;
 }
@@ -23,7 +24,7 @@ Quaternion Trackball::fromPoints(const Point & from, const Point & to) {
 
 	Vector3f direction = end - start;
 	Vector3f axis = cross(start, end);
-	normalize(axis);
+	axis = normalize(axis);
 
 	float angle = ROT_SCALE * length(direction);
 

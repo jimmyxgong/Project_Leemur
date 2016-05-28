@@ -60,6 +60,7 @@ Transform& Transform::scaleLocal(float xyz) {
 
 Transform& Transform::scaleLocal(float x, float y, float z) {
 	localScale = Vector3f(Scale(x, y, z) * Vector4f(localScale, 1.0f));
+	locallyUpdate(parent->localToWorldMatrix);
 	return *this;
 }
 
@@ -85,11 +86,13 @@ Transform& Transform::rotateLocal(float x, float y, float z, float deg) {
 
 Transform& Transform::rotateLocal(Quaternion & other) {
 	localRotation = other * localRotation;
+	locallyUpdate(parent->localToWorldMatrix);
 	return *this;
 }
 
 Transform& Transform::translateLocal(float x, float y, float z) {
 	localPosition = Vector3f(Translate(x, y, z) * Vector4f(localPosition, 1.0f));
+	locallyUpdate(parent->localToWorldMatrix);
 	return *this;
 }
 
@@ -100,22 +103,15 @@ Transform& Transform::translateLocal(const Vector3f & value) {
 
 
 
-
-
-
-void Transform::evaluateMatrix() {
-	// TODO: trickle down transform from parent
-	localToWorldMatrix = localRotation * Translate(localPosition) * Scale(localScale);
-}
-
-
 /* Copy Constructor */
 Transform::Transform(const Transform & transform) {
 	localScale = transform.getLocalScale();
 	localPosition = transform.getLocalPosition();
 	localRotation = transform.getLocalRotation();
+	localToWorldMatrix = transform.localToWorldMatrix;
+	children = transform.children;
 
-	evaluateMatrix();
+	locallyUpdate();
 }
 
 Transform::Transform() : 
@@ -123,11 +119,55 @@ Transform::Transform() :
 	localScale(1.0f),
 	position(0.0f, 0.0f, 0.0f),
 	scaling(1.0f)
-{}
+{
+	locallyUpdate();
+}
 
 Transform::~Transform() {}
 
+Transform& Transform::locallyUpdate(const Matrix4f & val) {
+	localToWorldMatrix = val * (localRotation * Translate(localPosition) * Scale(localScale));
+	for (Transform * child : children) {
+		child->locallyUpdate(localToWorldMatrix);
+	}
 
+	return *this;
+}
+
+Transform& Transform::resetScale() {
+	localScale = Vector3f(1.f);
+	return *this;
+}
+
+Transform& Transform::resetPosition() {
+	localPosition = Vector3f(0.f);
+	return *this;
+}
+
+Transform& Transform::resetRotation() {
+	localRotation = Quaternion();
+	return *this;
+}
+
+Transform& Transform::reset() {
+	return resetScale()
+		.resetPosition()
+		.resetRotation()
+		.locallyUpdate();
+}
+
+Transform& Transform::attachEntity(Entity *entity) {
+	component = entity;
+	return *this;
+}
+
+Transform& Transform::addChild(Transform * transform) {
+	transform->parent = this;
+	transform->locallyUpdate(localToWorldMatrix);
+	children.push_back(transform);
+	
+	return *this;
+}
 
 
 

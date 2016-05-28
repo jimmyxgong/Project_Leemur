@@ -4,7 +4,7 @@
 
 // TODO: FIXME Needs to use better Camera API
 Matrix4f Camera::viewMatrix() {
-	return glm::lookAt(transform.getLocalPosition(), lookAt, upVector) * transform.getLocalRotation().toMatrix();
+	return view;
 }
 
 //void Camera::use() {
@@ -25,7 +25,10 @@ Camera& Camera::setUpVector(const Vector3f & val) {
 	return *this;
 }
 
-
+void Camera::update() {
+	view = glm::lookAt(transform.getLocalPosition(), lookAt, upVector) 
+		* transform.getLocalRotation().toMatrix();
+}
 
 
 

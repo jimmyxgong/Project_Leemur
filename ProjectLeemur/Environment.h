@@ -3,10 +3,17 @@
 #include "Commons.h"
 #include "BaseEntity.h"
 #include "Window.h"
+#include "Player.h"
+#include "Skybox.h"
 
 class Environment : public BaseEntity {
 private:
 	Window * window;
+	UniquePointer<Skybox> skybox;
+	UniquePointer<Player> player;
+
+	/* Root of the game */
+	Transform world;
 
 public:
 	void onCreate() override;

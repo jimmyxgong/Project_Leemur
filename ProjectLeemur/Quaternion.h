@@ -1,5 +1,4 @@
-#ifndef QUATERNION_H
-#define QUATERNION_H
+#pragma once
 
 #include "Commons.h"
 
@@ -32,5 +31,3 @@ public:
 	static const Quaternion identity;
 
 };
-
-#endif // !QUATERNION_H

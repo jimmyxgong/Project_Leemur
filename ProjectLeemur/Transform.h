@@ -1,9 +1,10 @@
-#ifndef TRANSFORM_H
-#define TRANSFORM_H
-
+#pragma once
 
 #include "Commons.h"
 #include "Quaternion.h"
+#include "Entity.h"
+
+#include <list>
 
 class Transform {
 private:
@@ -21,6 +22,10 @@ private:
 	Matrix4f	localToWorldMatrix;
 	Matrix4f	worldToLocalMatrix;
 
+	/* Children used in Scene Graph */
+	std::list<Transform *> children;
+	Transform * parent;
+	Entity * component;
 
 public:	/* Getters and Setters */
 
@@ -55,14 +60,35 @@ public: /* Transformations on current orientation */
 	Transform& translateLocal(float x, float y, float z);
 	Transform& translateLocal(const Vector3f & val);
 
-	void evaluateMatrix(); // TODO
 
+public: /* Constructors */
 	/* Copy Constructor */
 	Transform(const Transform &);	
 	Transform();
 	~Transform();
 
-	
+public: /* Scene Graph */
+
+	// Get's the parent's localToWorldMatrix and update recursively
+	// itself and all of its children just like a regular scene graph
+	// node would.
+	Transform& locallyUpdate(const Matrix4f & val = Matrix4f(1.0f));
+
+	Transform& resetScale();
+	Transform& resetPosition();
+	Transform& resetRotation();
+
+	// Reset orientation to base orientation
+	Transform& reset();
+
+	// The corresponding Entity that this Transform is representing.
+	Transform& attachEntity(Entity * entity);
+
+	// Add a child to the Transform's children.
+	Transform& addChild(Transform * transform);
+
+public:
+	bool hasChanged();
 
 
 	void rotate(float x, float y, float z);
@@ -73,7 +99,7 @@ public: /* Transformations on current orientation */
 	void translate(Vector3f& vec);
 
 	void scale(float x);
-
+	
 
 
 
@@ -149,5 +175,3 @@ public:
 	const static Matrix4f StripTranslation(Matrix4f const &);
 	const static Matrix4f StripTranslation(Matrix4f const &, float val);
 };
-
-#endif // TRANSFORM_H

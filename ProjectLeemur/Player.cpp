@@ -25,19 +25,16 @@ void Player::onStart() {
 		queue->push(Movement::RIGHT);
 	});
 
-
 	mousebind.setOnDrag([this](const Point & now, bool isLeft) {
 		if (isLeft) {
 			Quaternion rotation = trackball.fromPoints(Mouse::old, now);
 			camera->transform.rotateLocal(rotation);
-			Window::getFocusedWindow().setView(camera->viewMatrix());
-			
+			camera->update();
 		}
-
-		//Mouse::old = now;
 	});
 
 	Mouse::pushLayout(&mousebind);
+	Window::getFocusedWindow().setActiveCamera(camera.get());
 }
 
 void Player::onRender() {

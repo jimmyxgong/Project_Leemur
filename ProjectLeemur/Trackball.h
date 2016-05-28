@@ -7,7 +7,7 @@
 
 /* Defaults */
 #define EPSILON 0.0001
-#define ROT_SCALE 0.5
+#define ROT_SCALE 0.5f
 
 class Trackball {
 
@@ -17,7 +17,7 @@ private:
 
 	Window * window;
 	Vector3f toTrackBallPoint(const Point &);
-	Vector3f toTrackBallPoint(int x, int y);
+	Vector3f toTrackBallPoint(float x, float y);
 
 public:
 	Quaternion fromPoints(const Point & from, const Point & to);
