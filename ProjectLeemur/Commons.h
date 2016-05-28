@@ -29,7 +29,6 @@
 * 3. Most used dependencies are store here as well.
 */
 
-
 typedef glm::vec3 Vector3f;
 typedef glm::vec4 Vector4f;
 typedef glm::mat3 Matrix3f;
