@@ -13,8 +13,7 @@ public:
 	
 
 private:
-	static std::stack<Layout*> layoutBackStack;
-	static void map();
+	static std::stack<Layout*> layoutBackstack;
 
 public:
 	static void init();
@@ -22,6 +21,7 @@ public:
 
 	static void addLayout(Layout * layout);
 	static Layout * popLayout();
+	static Layout & topLayout();
 
 	/*Deprecated */
 	static Layout * layout;

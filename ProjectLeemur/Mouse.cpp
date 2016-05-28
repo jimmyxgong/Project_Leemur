@@ -14,13 +14,16 @@ void Mouse::Layout::setOnClick(const std::function<void()> & listener) {
 
 
 
-Mouse::Layout defaulLayout;
-std::stack<Mouse::Layout*> layoutBackstack;
-bool dragging = false;
-bool clickedLeft = true;
+Mouse::Layout Mouse::defaultLayout;
+std::stack<Mouse::Layout*> Mouse::layoutBackstack;
+bool Mouse::dragging = false;
+bool Mouse::clickedLeft = true;
+
+Point Mouse::old;
+Point Mouse::now;
 
 void Mouse::init() {
-	defaulLayout.setOnDrag([](const Point &, bool isLeft) {
+	defaultLayout.setOnDrag([](const Point &, bool isLeft) {
 
 	});
 

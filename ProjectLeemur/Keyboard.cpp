@@ -4,21 +4,17 @@
 
 Keyboard::Layout Keyboard::defaultLayout;
 Keyboard::Layout * Keyboard::layout;
-std::stack<Keyboard::Layout*> Keyboard::layoutBackStack;
+std::stack<Keyboard::Layout*> Keyboard::layoutBackstack;
 
 void Keyboard::init() {
-	//layoutBackStack.push(&defaultLayout);
-	layout = &defaultLayout;
-	map();
-}
+	layoutBackstack.push(&defaultLayout);
 
-void Keyboard::map() {
 	defaultLayout.onKeyPressed(GLFW_KEY_E, [](bool isShifted) -> void {
 
 	});
 
 	defaultLayout.onKeyPressed(GLFW_KEY_I, [](bool) {
-	
+
 	});
 }
 
@@ -28,11 +24,6 @@ void Keyboard::Layout::onKeyPressed(int key, std::function<void(bool)> l) {
 
 
 void Keyboard::onKeyAction(GLFWwindow* window, int key, int scancode, int action, int mods) {
-	if (key == GLFW_KEY_ESCAPE) {
-		// Close the window. This causes the program to also terminate.
-		glfwSetWindowShouldClose(window, GL_TRUE);
-	}
-
 	if (action == GLFW_PRESS) {
 		if (key == GLFW_KEY_ESCAPE) {
 			// Close the window. This causes the program to also terminate.
@@ -40,24 +31,28 @@ void Keyboard::onKeyAction(GLFWwindow* window, int key, int scancode, int action
 		}
 
 		bool isShifted = mods == GLFW_MOD_SHIFT;
-		auto listener = layout->listeners.find(key);
-		if (listener != layout->listeners.end()) {
+		auto listener = topLayout().listeners.find(key);
+		if (listener != topLayout().listeners.end()) {
 			listener->second(isShifted);
 		}
 	}
 }
 
 void Keyboard::addLayout(Keyboard::Layout * layout) {
-	layoutBackStack.push(layout);
+	layoutBackstack.push(layout);
 }
 
 Keyboard::Layout * Keyboard::popLayout() {
 	// do not pop the default keyboard layout
-	if (layoutBackStack.size() < 2) return nullptr;
+	if (layoutBackstack.size() <= 1) return &defaultLayout;
 
-	Layout * popped = layoutBackStack.top();
-	layoutBackStack.pop();
+	Layout * popped = layoutBackstack.top();
+	layoutBackstack.pop();
 	return popped;
+}
+
+Keyboard::Layout & Keyboard::topLayout() {
+	return *layoutBackstack.top();
 }
 
 

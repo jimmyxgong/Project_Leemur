@@ -127,7 +127,9 @@
     <ClInclude Include="Environment.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Mob.h" />
+    <ClInclude Include="Mouse.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Point.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Shader.h" />
@@ -144,6 +146,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mob.cpp" />
+    <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Resources.cpp" />

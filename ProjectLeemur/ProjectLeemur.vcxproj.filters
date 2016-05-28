@@ -96,6 +96,12 @@
     <ClInclude Include="Player.h">
       <Filter>Header Files\Game\Entity</Filter>
     </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>Header Files\Frame</Filter>
+    </ClInclude>
+    <ClInclude Include="Point.h">
+      <Filter>Header Files\Utility</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -139,6 +145,9 @@
     </ClCompile>
     <ClCompile Include="Mob.cpp">
       <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>Source Files\Frame</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
