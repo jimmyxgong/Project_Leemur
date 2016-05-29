@@ -49,6 +49,15 @@
     <Filter Include="Source Files\Game\Entity\Template">
       <UniqueIdentifier>{c12f3dbe-9bda-4876-8909-9ba101ad1e5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Entity\Terrain">
+      <UniqueIdentifier>{d8949084-4862-469f-9472-e5d4570e9e81}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Entity\Terrain">
+      <UniqueIdentifier>{5b4b35a3-9954-43b8-bef1-b7566b3f3576}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Entity\Cells">
+      <UniqueIdentifier>{f7d363ee-812b-4d20-8f2d-617d376b6668}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -81,14 +90,8 @@
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Frame</Filter>
     </ClInclude>
-    <ClInclude Include="Skybox.h">
-      <Filter>Header Files\Game</Filter>
-    </ClInclude>
     <ClInclude Include="Resources.h">
       <Filter>Header Files\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files\Game</Filter>
     </ClInclude>
     <ClInclude Include="Mob.h">
       <Filter>Header Files\Game\Entity</Filter>
@@ -135,6 +138,24 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files\Game\Mechanics</Filter>
     </ClInclude>
+    <ClInclude Include="Camera.h">
+      <Filter>Header Files\Game\Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="Skybox.h">
+      <Filter>Header Files\Game\Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="Chunk.h">
+      <Filter>Header Files\Game\Entity\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Cell.h">
+      <Filter>Header Files\Game\Entity\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="SolidCell.h">
+      <Filter>Header Files\Game\Entity\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files\Game\Entity\Terrain</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -158,14 +179,8 @@
     <ClCompile Include="Shader.cpp">
       <Filter>Source Files\Frame</Filter>
     </ClCompile>
-    <ClCompile Include="Skybox.cpp">
-      <Filter>Source Files\Game</Filter>
-    </ClCompile>
     <ClCompile Include="Resources.cpp">
       <Filter>Source Files\Utility</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Game</Filter>
     </ClCompile>
     <ClCompile Include="Keyboard.cpp">
       <Filter>Source Files\Frame</Filter>
@@ -202,6 +217,24 @@
     </ClCompile>
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="Skybox.cpp">
+      <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="Chunk.cpp">
+      <Filter>Source Files\Game\Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
+      <Filter>Source Files\Game\Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="SolidCell.cpp">
+      <Filter>Source Files\Game\Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

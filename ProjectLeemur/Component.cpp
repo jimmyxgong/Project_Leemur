@@ -2,7 +2,7 @@
 
 
 Component::~Component() {
-	onDestroy();
+	BaseEntity::~BaseEntity();
 }
 
 void Component::onDestroy() {

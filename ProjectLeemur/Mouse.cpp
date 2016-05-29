@@ -31,6 +31,8 @@ Point Mouse::now;
 void Mouse::init() {
 	std::cout << "Mouse initializng... "<< std::endl;
 
+	// If the a key isn't set for a defined layout, 
+	// it will automatically be filled with the default layout's bindings.
 	pushLayout(&defaultLayout);
 	defaultLayout.setOnDrag([](const Point &, bool isLeft) {
 
@@ -62,8 +64,8 @@ Mouse::Layout & Mouse::topLayout() {
 }
 
 void Mouse::onMouseUpdate(GLFWwindow* window, double x, double y) {
-	Mouse::now.x = (int) x;
-	Mouse::now.y = (int) y;
+	Mouse::now.x = (float) x;
+	Mouse::now.y = (float) y;
 
 	if (dragging) {
 		topLayout().onDrag(now, clickedLeft);

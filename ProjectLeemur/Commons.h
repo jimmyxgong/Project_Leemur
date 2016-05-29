@@ -1,7 +1,4 @@
 #pragma once
-#ifndef COMMONS_H
-#define COMMONS_H
-
 
 #include <GL\glew.h>
 #include <GLFW\glfw3.h>
@@ -64,5 +61,3 @@ auto unique(Args&&... args) {
 
 template <typename T>
 using WeakPointer = std::weak_ptr<T>;
-
-#endif // !COMMONS_H

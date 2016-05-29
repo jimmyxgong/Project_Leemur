@@ -70,12 +70,13 @@ Shader::~Shader() {
 
 
 
-
+/* The following functions are for loading the shaders from text files */
 
 bool readFile(std::string& filepath, std::string& out) {
-	std::ifstream fileread(filepath, std::ios::in);
+	using namespace std;
+	ifstream fileread(filepath, ios::in);
 	if (fileread.is_open()) {
-		std::string Line = "";
+		string Line = "";
 		while (getline(fileread, Line))
 			out += "\n" + Line;
 		fileread.close();

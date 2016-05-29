@@ -4,7 +4,11 @@
 #include "Centrifuge.h"
 #include "Light.h"
 
-UniquePointer<Centrifuge> centrifuge;
+/* See the centrifuge for an example as to how to use
+	the scene graph. NOTE: Animations are not implemented in
+	the scene graph yet.
+*/
+SharedPointer<Centrifuge> centrifuge;
 
 // TODO LOGGER
 void print(const char * const & val) {
@@ -13,23 +17,21 @@ void print(const char * const & val) {
 
 void Environment::onCreate() {
 	print("Creating Environment...");
+
 	Light::init();
 
 	skybox = unique<Skybox>(window);
-	Resources::addEntity(SKYBOX, skybox.get());
-
 	player = unique<Player>();
+	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
 	// Create Pod object and add it to resources.
-	Resources::newObjEntity(POD_OBJ, "pod.obj");
-	((Component&)Resources::getEntity(POD_OBJ))
+	Resources::newObjEntity(POD_OBJ, "pod.obj")
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
 		.setMaterial(&Material::RedPlastic);
 
 	// Create Cylinder object and add it to resources.
-	Resources::newObjEntity(CYL_OBJ, "cylinder.obj");
-	((Component&)Resources::getEntity(CYL_OBJ))
+	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
 		.setMaterial(&Material::Gold);
 
@@ -37,15 +39,14 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());
+
 }
 
 void Environment::onStart() {
 	print("Environment starting...");
 	skybox->onStart();
 	player->onStart();
-	centrifuge->onStart();
-
-	// TODO add api for attaching entities
+	//centrifuge->onStart();
 	//world.addChild(player->transform);
 }
 
@@ -57,7 +58,6 @@ void Environment::onRender() {
 }
 
 void Environment::onUpdate() {
-	
 	player->onUpdate();
 	//centrifuge->onUpdate();
 }

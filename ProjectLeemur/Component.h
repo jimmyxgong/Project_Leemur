@@ -15,6 +15,7 @@ protected:
 	std::vector<unsigned int> indices;
 
 	Material * material;
+
 protected:
 	virtual void renderVaoWithIndices();
 

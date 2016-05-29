@@ -30,19 +30,19 @@ Matrix4f Transform::getLocalToWorldMatrix() const {
 }
 
 
-Transform & Transform::setLocalScale(Vector3f const & val) {
+Transform & Transform::setLocalScale(const Vector3f & val) {
 	localScale = val;
 	changed = true;
 	return *this;
 }
 
-Transform & Transform::setLocalPosition(Vector3f const & val) {
+Transform & Transform::setLocalPosition(const Vector3f & val) {
 	localPosition = val;
 	changed = true;
 	return *this;
 }
 
-Transform & Transform::setLocalRotation(Quaternion const & val) {
+Transform & Transform::setLocalRotation(const Quaternion & val) {
 	localRotation = val;
 	changed = true;
 	return *this;
@@ -118,7 +118,7 @@ Transform::Transform(const Transform & transform) {
 	localPosition = transform.getLocalPosition();
 	localRotation = transform.getLocalRotation();
 	localToWorldMatrix = transform.localToWorldMatrix;
-	ownedChildren = transform.ownedChildren;
+	children = transform.children;
 	parent = transform.parent;
 
 	locallyUpdate();
@@ -142,7 +142,7 @@ Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	localToWorldMatrix = val * localToWorldMatrix;
 	changed = false;
 
-	for (WeakPointer<Transform> child : ownedChildren) {
+	for (WeakPointer<Transform> child : children) {
 		child.lock()->locallyUpdate(localToWorldMatrix);
 	}
 
@@ -175,26 +175,26 @@ Transform& Transform::reset() {
 }
 
 
-Transform& Transform::addOwnedChild(SharedPointer<Transform> const & transform) {
+Transform& Transform::addChild(SharedPointer<Transform> const & transform) {
 	transform->parent = this;
 	transform->locallyUpdate(localToWorldMatrix);
-	ownedChildren.push_back(transform);
+	children.push_back(transform);
 	
 	return *this;
 }
 
-Transform& Transform::addOwnedChild(SharedPointer<GameObject> const & gameObject) {
+Transform& Transform::addChild(SharedPointer<GameObject> const & gameObject) {
 	this->gameObject = gameObject;
-	return addOwnedChild(gameObject->transform);
+	return addChild(gameObject->transform);
 }
 
 Transform& Transform::detachChildren() {
-	ownedChildren.clear();
+	children.clear();
 	return *this;
 }
 
 Transform& Transform::detachTree() {
-	for (WeakPointer<Transform> child : ownedChildren) {
+	for (WeakPointer<Transform> child : children) {
 		child.lock()->detachTree();
 	}
 
@@ -208,7 +208,7 @@ void Transform::renderAll() {
 	}
 
 	// DFS rendering
-	for (WeakPointer<Transform> child : ownedChildren) {
+	for (WeakPointer<Transform> child : children) {
 		child.lock()->renderAll();
 	}
 }
@@ -220,7 +220,7 @@ void Transform::updateAll() {
 	}
 
 	// If this transform hasn't changed, maybe its children has:
-	for (WeakPointer<Transform> child : ownedChildren) {
+	for (WeakPointer<Transform> child : children) {
 		child.lock()->updateAll();
 	}
 }

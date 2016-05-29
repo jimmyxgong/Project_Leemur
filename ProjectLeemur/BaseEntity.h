@@ -10,4 +10,6 @@ public:
 	virtual void onUpdate() override;
 	virtual void onFixedUpdate() override;
 	virtual void onDestroy() override;
+
+	~BaseEntity();
 };

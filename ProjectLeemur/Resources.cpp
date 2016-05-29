@@ -23,10 +23,7 @@ Resources & Resources::addShader
 	return getInstance();
 }
 
-Resources & Resources::addShader
-	(int key, 
-	 Shader * value) 
-{
+Resources & Resources::addShader(int key, Shader * value) {
 	getInstance()
 		.shaders
 		.emplace(key, value);
@@ -35,9 +32,7 @@ Resources & Resources::addShader
 }
 
 Entity & Resources::getEntity(int key) {
-	return *getInstance()
-			.entities
-			.at(key);
+	return *(getInstance().entities.at(key));
 }
 
 Resources & Resources::addEntity(int key, Entity * value) {
@@ -48,8 +43,10 @@ Resources & Resources::addEntity(int key, Entity * value) {
 	return getInstance();
 }
 
-Resources & Resources::newObjEntity(int key, std::string const & obj) {
-	return addEntity(key, ObjObject::create(obj));
+ObjObject & Resources::newObjEntity(int key, const std::string & obj) {
+	ObjObject * ob = ObjObject::create(obj);
+	addEntity(key, ob);
+	return *ob;
 }
 
 

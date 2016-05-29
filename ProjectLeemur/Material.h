@@ -3,6 +3,12 @@
 #include <glm\vec4.hpp>
 #include <glm\vec3.hpp>
 
+
+#define AIR 0
+#define GRASS 1
+#define SNOW 2
+#define SAND 3
+
 using namespace glm;
 struct Material {
 	vec4 ambient;
