@@ -95,6 +95,8 @@ public: /* Scene Graph */
 	Transform& addChild(SharedPointer<Transform> const & transform);
 
 	Transform& addChild(SharedPointer<GameObject> const & transform);
+	Transform& detachChildren();
+	Transform& detachTree();
 
 	// Render itself if has an attached gameObject, and its children
 	void renderAll();

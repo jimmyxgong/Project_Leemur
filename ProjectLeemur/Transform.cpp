@@ -118,7 +118,7 @@ Transform::Transform(const Transform & transform) {
 	localPosition = transform.getLocalPosition();
 	localRotation = transform.getLocalRotation();
 	localToWorldMatrix = transform.localToWorldMatrix;
-	children = transform.children;
+	ownedChildren = transform.ownedChildren;
 	parent = transform.parent;
 
 	locallyUpdate();
@@ -142,7 +142,7 @@ Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	localToWorldMatrix = val * localToWorldMatrix;
 	changed = false;
 
-	for (WeakPointer<Transform> child : children) {
+	for (WeakPointer<Transform> child : ownedChildren) {
 		child.lock()->locallyUpdate(localToWorldMatrix);
 	}
 
@@ -175,17 +175,31 @@ Transform& Transform::reset() {
 }
 
 
-Transform& Transform::addChild(SharedPointer<Transform> const & transform) {
+Transform& Transform::addOwnedChild(SharedPointer<Transform> const & transform) {
 	transform->parent = this;
 	transform->locallyUpdate(localToWorldMatrix);
-	children.push_back(transform);
+	ownedChildren.push_back(transform);
 	
 	return *this;
 }
 
-Transform& Transform::addChild(SharedPointer<GameObject> const & gameObject) {
+Transform& Transform::addOwnedChild(SharedPointer<GameObject> const & gameObject) {
 	this->gameObject = gameObject;
-	return addChild(gameObject->transform);
+	return addOwnedChild(gameObject->transform);
+}
+
+Transform& Transform::detachChildren() {
+	ownedChildren.clear();
+	return *this;
+}
+
+Transform& Transform::detachTree() {
+	for (WeakPointer<Transform> child : ownedChildren) {
+		child.lock()->detachTree();
+	}
+
+	detachChildren();
+	return *this;
 }
 
 void Transform::renderAll() {
@@ -194,7 +208,7 @@ void Transform::renderAll() {
 	}
 
 	// DFS rendering
-	for (WeakPointer<Transform> child : children) {
+	for (WeakPointer<Transform> child : ownedChildren) {
 		child.lock()->renderAll();
 	}
 }
@@ -206,7 +220,7 @@ void Transform::updateAll() {
 	}
 
 	// If this transform hasn't changed, maybe its children has:
-	for (WeakPointer<Transform> child : children) {
+	for (WeakPointer<Transform> child : ownedChildren) {
 		child.lock()->updateAll();
 	}
 }

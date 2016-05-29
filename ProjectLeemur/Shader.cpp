@@ -6,7 +6,7 @@
 #include "Shader.h"
 
 
-Shader* Shader::instance = NULL;
+Shader* Shader::instance = nullptr;
 
 
 void Shader::use() {
@@ -16,14 +16,6 @@ void Shader::use() {
 
 GLint Shader::getId() {
 	return id;
-}
-
-Shader& Shader::init(GLint& shader) {
-	if (instance == NULL) {
-		instance = new Shader(shader);
-	}
-
-	return *instance;
 }
 
 GLuint Shader::getLocation(const GLchar* where) {

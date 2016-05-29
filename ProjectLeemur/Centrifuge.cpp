@@ -13,7 +13,6 @@
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
-typedef SharedPointer<Entity>			entity;
 
 // Random number generator for 
 std::random_device rng;

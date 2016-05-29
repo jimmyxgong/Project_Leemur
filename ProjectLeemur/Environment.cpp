@@ -21,11 +21,13 @@ void Environment::onCreate() {
 	player = unique<Player>();
 	Resources::addEntity(PLAYER, player.get());
 
+	// Create Pod object and add it to resources.
 	Resources::newObjEntity(POD_OBJ, "pod.obj");
 	((Component&)Resources::getEntity(POD_OBJ))
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
 		.setMaterial(&Material::RedPlastic);
 
+	// Create Cylinder object and add it to resources.
 	Resources::newObjEntity(CYL_OBJ, "cylinder.obj");
 	((Component&)Resources::getEntity(CYL_OBJ))
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
@@ -51,12 +53,13 @@ void Environment::onRender() {
 	skybox->onRender();
 	player->onRender();
 
-	centrifuge->onRender();
+	//centrifuge->onRender();
 }
 
 void Environment::onUpdate() {
+	
 	player->onUpdate();
-	centrifuge->onUpdate();
+	//centrifuge->onUpdate();
 }
 
 void Environment::onDestroy() {
