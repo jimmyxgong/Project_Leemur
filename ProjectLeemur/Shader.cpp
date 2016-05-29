@@ -26,6 +26,10 @@ Shader& Shader::init(GLint& shader) {
 	return *instance;
 }
 
+GLuint Shader::getLocation(const GLchar* where) {
+	return glGetUniformLocation(instance->getId(), where);
+}
+
 Shader& Shader::loadVector(const GLchar* where, const Vector4f & vector) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniform4f(id, vector.x, vector.y, vector.z, vector.w);
@@ -41,6 +45,12 @@ Shader& Shader::loadVector(const GLchar* where, const Vector3f & vector) {
 Shader& Shader::loadMatrix(const GLchar* where, const Matrix4f & matrix) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniformMatrix4fv(id, 1, GL_FALSE, &matrix[0][0]);
+	return *instance;
+}
+
+Shader& Shader::loadMatrix(const GLchar* where, const Matrix3f & matrix) {
+	GLuint id = getLocation(where);
+	glUniformMatrix3fv(id, 1, GL_FALSE, &matrix[0][0]);
 	return *instance;
 }
 

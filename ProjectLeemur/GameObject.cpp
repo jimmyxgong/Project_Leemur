@@ -31,7 +31,7 @@ void GameObject::loadToShader() {
 
 	Shader::loadMatrix("MVP", MVP);
 	Shader::loadMatrix("model", model);
-	Shader::loadMatrix("NormalMatrix", transpose(inverse(model)));
+	Shader::loadMatrix("NormalMatrix", Matrix3f(transpose(inverse(model))));
 
 	// TODO: there might be some side-effects of using CAMERA_POSITION
 	// instead of using the actual Window active camera. Too lazy to

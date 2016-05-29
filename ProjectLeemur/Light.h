@@ -18,6 +18,7 @@ public:
 	float spotExponent;
 
 	float attenuation;
+	int type;
 
 	Shader * shader;
 

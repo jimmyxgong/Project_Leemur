@@ -51,7 +51,6 @@ void Environment::onRender() {
 	skybox->onRender();
 	player->onRender();
 
-	Light::Directional.loadToShader();
 	centrifuge->onRender();
 }
 

@@ -4,16 +4,12 @@
 #include "Transform.h"
 #include "Quaternion.h"
 #include "Time.h"
+#include "Light.h"
 
 #include "Resources.h"
 #include "ObjObject.h"
 
 #include <random>
-
-#define BAR_TRANSITION_AMOUNT 5
-#define BAR_TOP_TRANSITION_STEP 0.15f
-#define BAR_MID_TRANSITION_STEP 0.10f
-#define WHICH_POD_HAS_CAMERA 5
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
@@ -45,6 +41,7 @@ transform_group Centrifuge::CreatePod() {
 		
 	game_object podObject = share<GameObject>(&pod);
 	podObject->transform->scaleLocal(0.4f, 0.4f, 0.4f);
+	pod_center->addChild(podObject);
 	parent->addChild(pod_center);
 	return parent;
 }
@@ -180,10 +177,11 @@ void Centrifuge::onStart() {
 	top->rotateLocal(1.0f, 0.0f, 0.0f, 90.0f)
 		.rotateLocal(0.0f, 0.0f, 1.0f, 195.0f);
 	center_pillar_top->addChild(top);
-	world->locallyUpdate();
+	world->locallyUpdate(transform.asMatrix());
 }
 
 void Centrifuge::onRender() {
+	Light::Directional.loadToShader();
 	world->renderAll();
 }
 

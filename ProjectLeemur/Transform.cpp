@@ -32,26 +32,31 @@ Matrix4f Transform::getLocalToWorldMatrix() const {
 
 Transform & Transform::setLocalScale(Vector3f const & val) {
 	localScale = val;
+	changed = true;
 	return *this;
 }
 
 Transform & Transform::setLocalPosition(Vector3f const & val) {
 	localPosition = val;
+	changed = true;
 	return *this;
 }
 
 Transform & Transform::setLocalRotation(Quaternion const & val) {
 	localRotation = val;
+	changed = true;
 	return *this;
 }
 
 Transform & Transform::setPosition(const Vector3f & pos) {
 	position = pos;
+	changed = true;
 	return *this;
 }
 
 Transform & Transform::setRotation(const Quaternion & rot) {
 	rotation = rot;
+	changed = true;
 	return *this;
 }
 
@@ -64,7 +69,7 @@ Transform& Transform::scaleLocal(float xyz) {
 
 Transform& Transform::scaleLocal(float x, float y, float z) {
 	localScale = Vector3f(Scale(x, y, z) * Vector4f(localScale, 1.0f));
-	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
+	changed = true;
 	return *this;
 }
 
@@ -90,13 +95,13 @@ Transform& Transform::rotateLocal(float x, float y, float z, float deg) {
 
 Transform& Transform::rotateLocal(Quaternion & other) {
 	localRotation = other * localRotation;
-	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
+	changed = true;
 	return *this;
 }
 
 Transform& Transform::translateLocal(float x, float y, float z) {
 	localPosition = Vector3f(Translate(x, y, z) * Vector4f(localPosition, 1.0f));
-	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
+	changed = true;
 	return *this;
 }
 

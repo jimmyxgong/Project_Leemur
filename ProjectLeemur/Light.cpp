@@ -10,9 +10,10 @@ Light Light::Directional = {
 	{ 1.0f, 1.0f, 1.0f, 1.0f },		// intensity
 
 	{},
-	0.0f,
+	45.0f,
 	1.0f,
 	1.0f,
+	0
 };
 
 
@@ -28,7 +29,7 @@ void Light::loadToShader() {
 		.loadFloat("licht.spotCutoff", spotCutoff)
 		.loadFloat("licht.spotExponent", spotExponent)
 		.loadFloat("licht.attenuationConstant", attenuation)
-		.loadInt("licht.type", 0);
+		.loadInt("licht.type", type);
 }
 
 

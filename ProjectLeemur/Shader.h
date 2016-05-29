@@ -17,10 +17,13 @@ public:
 	GLint getId();
 	void destroy();
 
+	static GLuint getLocation(const GLchar* where);
+
 	static Shader & init(GLint&);
 	static Shader & loadVector(const GLchar*, const Vector4f &);
 	static Shader & loadVector(const GLchar*, const Vector3f &);
 	static Shader & loadMatrix(const GLchar*, const Matrix4f &);
+	static Shader & loadMatrix(const GLchar*, const Matrix3f &);
 	static Shader & loadFloat(const GLchar*, GLfloat);
 	static Shader & loadInt(const GLchar*, GLint);
 	
