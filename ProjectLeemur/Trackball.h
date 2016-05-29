@@ -7,7 +7,7 @@
 
 /* Defaults */
 #define EPSILON 0.0001
-#define ROT_SCALE 0.5f
+#define ROT_SCALE 0.3f
 
 class Trackball {
 

@@ -6,6 +6,11 @@
 
 #include <list>
 
+#define IDENTITY Matrix4f()
+
+// Forward declaration for bypassing cross referencing
+class GameObject;
+
 class Transform {
 private:
 	/* Orientation relative to a parent's world matrix */
@@ -23,9 +28,12 @@ private:
 	Matrix4f	worldToLocalMatrix;
 
 	/* Children used in Scene Graph */
-	std::list<Transform *> children;
+	std::list<SharedPointer<Transform>> children;
 	Transform * parent;
-	Entity * component;
+
+	// Needs to be shared so that gameObject does not get
+	// deleted if it is just a locally bound variable
+	SharedPointer<GameObject> gameObject;
 
 public:	/* Getters and Setters */
 
@@ -37,6 +45,8 @@ public:	/* Getters and Setters */
 
 	Vector3f getPosition() const;
 	Quaternion getRotation() const;
+
+	Matrix4f getLocalToWorldMatrix() const;
 
 	Transform& setLocalScale(const Vector3f & val);
 	Transform& setLocalPosition(const Vector3f & val);
@@ -72,7 +82,7 @@ public: /* Scene Graph */
 	// Get's the parent's localToWorldMatrix and update recursively
 	// itself and all of its children just like a regular scene graph
 	// node would.
-	Transform& locallyUpdate(const Matrix4f & val = Matrix4f(1.0f));
+	Transform& locallyUpdate(const Matrix4f & val = IDENTITY);
 
 	Transform& resetScale();
 	Transform& resetPosition();
@@ -81,14 +91,28 @@ public: /* Scene Graph */
 	// Reset orientation to base orientation
 	Transform& reset();
 
-	// The corresponding Entity that this Transform is representing.
-	Transform& attachEntity(Entity * entity);
-
 	// Add a child to the Transform's children.
-	Transform& addChild(Transform * transform);
+	Transform& addChild(SharedPointer<Transform> const & transform);
+
+	Transform& addChild(SharedPointer<GameObject> const & transform);
+
+	// Render itself if has an attached gameObject, and its children
+	void renderAll();
+	void updateAll();
 
 public:
+	bool changed;
 	bool hasChanged();
+
+
+
+
+
+
+
+
+
+
 
 
 	void rotate(float x, float y, float z);
@@ -111,9 +135,6 @@ public:
 	Matrix4f asMatrix();
 
 
-	//Matrix4f getLocalToWorldMatrix();
-	Vector3f getScale();
-
 
 public:
 
@@ -127,31 +148,8 @@ public:
 
 
 
-
-	/**
-	* Creates and returns the viewport matrix provided with sizes of the screen.
-	*
-	* originX = base origin coordinate x of the viewport
-	* originY = base origin coordinate y of the viewport
-	* width = width of the viewport
-	* height = height of the viewport
-	*/
-	static Matrix4f Viewport(int originX, int originY, int width, int height);
-
-	static Matrix4f Orthographic(int, int, int, int, int, int);
-
-	// The View matrix in the ModelView 
-	static Matrix4f CameraMatrix(float, Vector3f, Vector3f);
-
-	// Perspective frustum
-	static Matrix4f Frustum(float fov, float ratio, float near, float far);
-	static Matrix4f Frustum(int, int, int, int, int, int);
-
 	// Create a scalable matrix
 	static Matrix4f ScaleMatrix(float);
-
-	// Apply a scaled matrix to input matrix with provided float
-	static Matrix4f Scale(Matrix4f& input, float);
 	
 	// Rotate input matrix about the pitch axis
 	static Matrix4f RotateX(Matrix4f&, float);

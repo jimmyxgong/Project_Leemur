@@ -43,6 +43,7 @@ public:
 	Matrix4f getPerspective() const;
 	Window & setView(Matrix4f const & val);
 	Matrix4f getView() const;
+	Matrix4f VP() const;
 
 	Window & setActiveCamera(Camera * cam);
 	Window & setSecondActiveCamera(Camera * cam);

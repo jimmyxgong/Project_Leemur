@@ -3,6 +3,7 @@
 #include "Commons.h"
 #include "TransformEntity.h"
 #include "Shader.h"
+#include "Material.h"
 
 /* Components are like Graphical Resources that one loads from files */
 class Component : public BaseEntity {
@@ -13,15 +14,23 @@ protected:
 	std::vector<Vector3f> normals;
 	std::vector<unsigned int> indices;
 
-	WeakPointer<Shader> attachedShader;
-
-	~Component();
+	Material * material;
+protected:
+	virtual void renderVaoWithIndices();
 
 public:
-	void onDestroy() override;
-	void renderVaoWithIndices();
+	Shader * attachedShader;
 
-	/* Readonly values */
-	const std::vector<Vector3f>& getVertices() const;
-	const std::vector<Vector3f>& getNormals() const;
+	virtual void onDestroy() override;
+
+	Component& setMaterial(Material * mat);
+	Component& attachShader(Shader * shader);
+
+	Shader& getShader();
+	Material& getMaterial();
+
+	std::vector<Vector3f>& getVertices();
+	std::vector<Vector3f>& getNormals();
+
+	~Component();
 };

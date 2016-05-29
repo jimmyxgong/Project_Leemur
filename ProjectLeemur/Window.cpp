@@ -104,6 +104,11 @@ Matrix4f Window::getView() const {
 	return V;
 }
 
+Matrix4f Window::VP() const {
+	return P * V;
+}
+
+
 Window & Window::setActiveCamera(Camera * cam) {
 	activeCamera = cam;
 	return std::move(*this);

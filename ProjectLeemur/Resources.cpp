@@ -1,4 +1,5 @@
 #include "Resources.h"
+#include "ObjObject.h"
 
 Resources & Resources::getInstance() {
 	static Resources res;
@@ -47,6 +48,9 @@ Resources & Resources::addEntity(int key, Entity * value) {
 	return getInstance();
 }
 
+Resources & Resources::newObjEntity(int key, std::string const & obj) {
+	return addEntity(key, ObjObject::create(obj));
+}
 
 
 

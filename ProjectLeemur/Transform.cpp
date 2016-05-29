@@ -1,4 +1,6 @@
 #include "Transform.h"
+#include "GameObject.h"
+
 #include <math.h>
 
 
@@ -23,7 +25,9 @@ Quaternion Transform::getRotation() const {
 	return rotation;
 }
 
-
+Matrix4f Transform::getLocalToWorldMatrix() const {
+	return localToWorldMatrix;
+}
 
 
 Transform & Transform::setLocalScale(Vector3f const & val) {
@@ -60,7 +64,7 @@ Transform& Transform::scaleLocal(float xyz) {
 
 Transform& Transform::scaleLocal(float x, float y, float z) {
 	localScale = Vector3f(Scale(x, y, z) * Vector4f(localScale, 1.0f));
-	locallyUpdate(parent->localToWorldMatrix);
+	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
 	return *this;
 }
 
@@ -86,13 +90,13 @@ Transform& Transform::rotateLocal(float x, float y, float z, float deg) {
 
 Transform& Transform::rotateLocal(Quaternion & other) {
 	localRotation = other * localRotation;
-	locallyUpdate(parent->localToWorldMatrix);
+	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
 	return *this;
 }
 
 Transform& Transform::translateLocal(float x, float y, float z) {
 	localPosition = Vector3f(Translate(x, y, z) * Vector4f(localPosition, 1.0f));
-	locallyUpdate(parent->localToWorldMatrix);
+	//locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
 	return *this;
 }
 
@@ -110,6 +114,7 @@ Transform::Transform(const Transform & transform) {
 	localRotation = transform.getLocalRotation();
 	localToWorldMatrix = transform.localToWorldMatrix;
 	children = transform.children;
+	parent = transform.parent;
 
 	locallyUpdate();
 }
@@ -118,7 +123,9 @@ Transform::Transform() :
 	localPosition(0.0f, 0.0f, 0.0f),
 	localScale(1.0f),
 	position(0.0f, 0.0f, 0.0f),
-	scaling(1.0f)
+	scaling(1.0f),
+	parent(nullptr),
+	worldToLocalMatrix(IDENTITY)
 {
 	locallyUpdate();
 }
@@ -126,9 +133,12 @@ Transform::Transform() :
 Transform::~Transform() {}
 
 Transform& Transform::locallyUpdate(const Matrix4f & val) {
-	localToWorldMatrix = val * (localRotation * Translate(localPosition) * Scale(localScale));
-	for (Transform * child : children) {
-		child->locallyUpdate(localToWorldMatrix);
+	localToWorldMatrix = (localRotation * Translate(localPosition) * Scale(localScale));
+	localToWorldMatrix = val * localToWorldMatrix;
+	changed = false;
+
+	for (WeakPointer<Transform> child : children) {
+		child.lock()->locallyUpdate(localToWorldMatrix);
 	}
 
 	return *this;
@@ -136,16 +146,19 @@ Transform& Transform::locallyUpdate(const Matrix4f & val) {
 
 Transform& Transform::resetScale() {
 	localScale = Vector3f(1.f);
+	changed = true;
 	return *this;
 }
 
 Transform& Transform::resetPosition() {
 	localPosition = Vector3f(0.f);
+	changed = true;
 	return *this;
 }
 
 Transform& Transform::resetRotation() {
 	localRotation = Quaternion();
+	changed = true;
 	return *this;
 }
 
@@ -156,18 +169,51 @@ Transform& Transform::reset() {
 		.locallyUpdate();
 }
 
-Transform& Transform::attachEntity(Entity *entity) {
-	component = entity;
-	return *this;
-}
 
-Transform& Transform::addChild(Transform * transform) {
+Transform& Transform::addChild(SharedPointer<Transform> const & transform) {
 	transform->parent = this;
 	transform->locallyUpdate(localToWorldMatrix);
 	children.push_back(transform);
 	
 	return *this;
 }
+
+Transform& Transform::addChild(SharedPointer<GameObject> const & gameObject) {
+	this->gameObject = gameObject;
+	return addChild(gameObject->transform);
+}
+
+void Transform::renderAll() {
+	if (gameObject) {
+		gameObject->onRender();
+	}
+
+	// DFS rendering
+	for (WeakPointer<Transform> child : children) {
+		child.lock()->renderAll();
+	}
+}
+
+void Transform::updateAll() {
+	if (hasChanged()) {
+		locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
+		return;
+	}
+
+	// If this transform hasn't changed, maybe its children has:
+	for (WeakPointer<Transform> child : children) {
+		child.lock()->updateAll();
+	}
+}
+
+bool Transform::hasChanged() {
+	return changed;
+}
+
+
+
+
+
 
 
 

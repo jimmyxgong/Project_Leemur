@@ -8,7 +8,10 @@
 // Put all keys here:
 #define SKYBOX 0
 #define PLAYER 1
+#define POD_OBJ 2
+#define CYL_OBJ 3
 
+#define SHADER_LIGHT 0
 
 class Resources {
 private:
@@ -35,6 +38,7 @@ public:
 
 	static Entity & getEntity(int key);
 	static Resources & addEntity(int key, Entity*);
+	static Resources & newObjEntity(int key, std::string const &);
 
 
 	static void destroy();

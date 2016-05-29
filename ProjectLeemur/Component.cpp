@@ -23,10 +23,28 @@ void Component::renderVaoWithIndices() {
 	glBindVertexArray(0);
 }
 
-const std::vector<Vector3f>& Component::getVertices() const {
+Component& Component::setMaterial(Material * mat) {
+	material = mat;
+	return *this;
+}
+
+Component& Component::attachShader(Shader * shader) {
+	this->attachedShader = shader;
+	return *this;
+}
+
+Shader& Component::getShader() {
+	return *attachedShader;
+}
+
+Material& Component::getMaterial() {
+	return *material;
+}
+
+std::vector<Vector3f>& Component::getVertices() {
 	return vertices;
 }
 
-const std::vector<Vector3f>& Component::getNormals() const {
+std::vector<Vector3f>& Component::getNormals() {
 	return normals;
 }

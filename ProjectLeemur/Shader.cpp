@@ -19,43 +19,51 @@ GLint Shader::getId() {
 }
 
 Shader& Shader::init(GLint& shader) {
-	if (Shader::instance == NULL) {
-		Shader::instance = new Shader(shader);
+	if (instance == NULL) {
+		instance = new Shader(shader);
 	}
 
-	return *Shader::instance;
+	return *instance;
 }
 
-Shader& Shader::loadVector(const GLchar* where, glm::vec4 vector) {
+Shader& Shader::loadVector(const GLchar* where, const Vector4f & vector) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniform4f(id, vector.x, vector.y, vector.z, vector.w);
-	return *Shader::instance;
+	return *instance;
 }
 
-Shader& Shader::loadVector(const GLchar* where, glm::vec3 vector) {
+Shader& Shader::loadVector(const GLchar* where, const Vector3f & vector) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniform3f(id, vector.x, vector.y, vector.z);
-	return *Shader::instance;
+	return *instance;
+}
+
+Shader& Shader::loadMatrix(const GLchar* where, const Matrix4f & matrix) {
+	GLuint id = glGetUniformLocation(instance->getId(), where);
+	glUniformMatrix4fv(id, 1, GL_FALSE, &matrix[0][0]);
+	return *instance;
 }
 
 Shader& Shader::loadFloat(const GLchar* where, GLfloat value) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniform1f(id, value);
-	return *Shader::instance;
+	return *instance;
 }
 
 Shader& Shader::loadInt(const GLchar* where, GLint value) {
 	GLuint id = glGetUniformLocation(instance->getId(), where);
 	glUniform1ui(id, value);
 	
-	return *Shader::instance;
+	return *instance;
 }
 
-void Shader::cleanup() {
-	delete Shader::instance;
+void Shader::destroy() {
+	glDeleteProgram(getId());
 }
 
-Shader::~Shader() {}
+Shader::~Shader() {
+	destroy();
+}
 
 
 

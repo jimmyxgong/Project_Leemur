@@ -43,6 +43,12 @@
     <Filter Include="Source Files\Game\Mechanics">
       <UniqueIdentifier>{08dcf241-a5aa-40bf-8250-c6acfc89cfa4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Entity\Template">
+      <UniqueIdentifier>{eaad2620-5a1c-4d15-ad9a-204a16be94bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Entity\Template">
+      <UniqueIdentifier>{c12f3dbe-9bda-4876-8909-9ba101ad1e5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -66,20 +72,11 @@
     <ClInclude Include="Environment.h">
       <Filter>Header Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="BaseEntity.h">
-      <Filter>Header Files\Game\Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Header Files\Game\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="Quaternion.h">
       <Filter>Header Files\Utility</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
       <Filter>Header Files\Utility</Filter>
-    </ClInclude>
-    <ClInclude Include="TransformEntity.h">
-      <Filter>Header Files\Game\Entity</Filter>
     </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>Header Files\Frame</Filter>
@@ -111,6 +108,33 @@
     <ClInclude Include="Trackball.h">
       <Filter>Header Files\Game\Mechanics</Filter>
     </ClInclude>
+    <ClInclude Include="ObjObject.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseEntity.h">
+      <Filter>Header Files\Game\Entity\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>Header Files\Game\Entity\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Entity.h">
+      <Filter>Header Files\Game\Entity\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="TransformEntity.h">
+      <Filter>Header Files\Game\Entity\Template</Filter>
+    </ClInclude>
+    <ClInclude Include="Centrifuge.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Light.h">
+      <Filter>Header Files\Game\Mechanics</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Game\Mechanics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -121,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\Frame</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseEntity.cpp">
-      <Filter>Source Files\Game\Entity</Filter>
     </ClCompile>
     <ClCompile Include="Environment.cpp">
       <Filter>Source Files\Game</Filter>
@@ -159,6 +180,27 @@
       <Filter>Source Files\Frame</Filter>
     </ClCompile>
     <ClCompile Include="Trackball.cpp">
+      <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjObject.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseEntity.cpp">
+      <Filter>Source Files\Game\Entity\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>Source Files\Game\Entity\Template</Filter>
+    </ClCompile>
+    <ClCompile Include="Centrifuge.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Light.cpp">
+      <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
       <Filter>Source Files\Game\Mechanics</Filter>
     </ClCompile>
   </ItemGroup>
