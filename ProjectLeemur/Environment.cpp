@@ -3,6 +3,7 @@
 #include "ObjObject.h"
 #include "Centrifuge.h"
 #include "Light.h"
+#include "LSystem.h"
 
 /* See the centrifuge for an example as to how to use
 	the scene graph. NOTE: Animations are not implemented in
@@ -34,6 +35,8 @@ void Environment::onCreate() {
 	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
 		.setMaterial(&Material::Gold);
+
+	std::shared_ptr<LSystem> test1 = std::make_shared<LSystem>("lsystemtest1.txt");
 
 	centrifuge = unique<Centrifuge>();
 
@@ -74,8 +77,6 @@ void Environment::onDestroy() {
 
 	delete &pod;
 	delete &cyl;
-
-
 }
 
 UniquePointer<Environment> Environment::create(Window * ref) {

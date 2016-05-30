@@ -29,7 +29,7 @@ Component& Component::setMaterial(Material * mat) {
 }
 
 Component& Component::attachShader(Shader * shader) {
-	this->attachedShader = shader;
+	attachedShader = shader;
 	return *this;
 }
 

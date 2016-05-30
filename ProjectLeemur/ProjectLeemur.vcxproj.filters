@@ -58,6 +58,12 @@
     <Filter Include="Source Files\Game\Entity\Cells">
       <UniqueIdentifier>{f7d363ee-812b-4d20-8f2d-617d376b6668}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Entity\LSystem">
+      <UniqueIdentifier>{d2d78aa9-9842-444b-a742-53ce77e15566}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Entity\LSystems">
+      <UniqueIdentifier>{afeb2328-ea1b-4e23-827d-0dd75ef1204f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -156,6 +162,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>Header Files\Game\Entity\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="LSystem.h">
+      <Filter>Header Files\Game\Entity\LSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -235,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LSystem.cpp">
+      <Filter>Source Files\Game\Entity\LSystems</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
