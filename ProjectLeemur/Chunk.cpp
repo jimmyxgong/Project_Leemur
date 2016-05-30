@@ -12,16 +12,21 @@
 #define DIV 4.3	// 0.7
 #define CUTOFF 3.3 // 5.3
 
-double _parts = 1.2;
-double _div = 0.5;
-double _cutoff = 0.3;
+//double _parts = 3.2;
+//double _div = 0.7;
+//double _cutoff = 5.3;
+
+double _parts = 10.2;
+double _div = 20.7;
+double _cutoff = 9.8;
 
 // cutoff div = -33 parts 1.2
 
 // persist 7.2
 Terrain terrain = {
-	6.6, 0.6, 1.0, 2, 1		//6.7, 0.6, 1.0, 8, 1 
+	0.25, 1, 1, 6, 1		//6.7, 0.6, 1.0, 8, 1 
 };
+// parts 10.2 div 20.7 cutoff 9.8
 
 Keyboard::Layout bindings;
 
@@ -36,10 +41,12 @@ void print(double val) {
 void Chunk::onCreate() {
 	cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
+	interpolatedHeightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		cells[i].resize(CHUNK_SIZE);
+		cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
-		for (int j = 0; j < CHUNK_SIZE; j++) {
+		interpolatedHeightMap.resize(CHUNK_SIZE);
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			cells[i][j].resize(CHUNK_SIZE);
 		}
 	}
@@ -50,12 +57,14 @@ void Chunk::onCreate() {
 		print("parts");
 		print(_parts);
 	});
+
 	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
 		this->changed = true;
 		_div += shifted ? 1 : -1;
 		print("div");
 		print(_div);
 	});
+	
 	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
 		changed = true;
 		_cutoff += shifted ? 1 : -1;
@@ -118,10 +127,10 @@ void Chunk::loadToShader() {
 void Chunk::onStart() {
 	generateChunk();
 	printHeightMap();
-	//buildMeshData();
+	buildMeshData();
 
-	//mesh.recalculateNormals();
-	//mesh.onStart();
+	mesh.recalculateNormals();
+	mesh.onStart();
 }
 
 void Chunk::onRender() {
@@ -137,7 +146,7 @@ void Chunk::onUpdate() {
 		print("Updating");
 		generateChunk();
 		printHeightMap();
-		//renderMesh();
+		renderMesh();
 		changed = false;
 	}
 }
@@ -145,14 +154,21 @@ void Chunk::onUpdate() {
 void Chunk::generateChunk() {
 	clear();
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		for (int j = 0; j < CHUNK_SIZE; j++) {
+		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			for (int k = 0; k < CHUNK_SIZE; k++) {
 
 				double x = i + round(transform.getPosition().x);
+				double y = j;
 				double z = k + round(transform.getPosition().z);
+				//x /= 10.0;
+				//y /= 10.0;
+				//z /= 10.0;
 
-				double height = terrain.height(x, z);
-				if (j > 1 && height > _cutoff) {
+
+				double height;
+					height = terrain.perlinNoise(x, j, z, _parts, _div);
+					//height = terrain.height(x, z);
+				if (j > 0 && height > _cutoff) {
 					cells[i][j][k] = Cell::Air;
 					continue;
 				}
@@ -193,12 +209,12 @@ void Chunk::renderMesh() {
 
 void Chunk::printHeightMap() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		std::string sb = "{ ";
+		std::string sb = "{\t";
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			sb.append(std::to_string(heightMap[i][k]));
-			sb.append(", ");
+			sb.append(",\t");
 		}
-		sb.append(" }");
+		sb.append("\t}");
 		std::cout << sb << std::endl;
 		sb.clear();
 	}
@@ -221,7 +237,7 @@ Cell & Chunk::removeCell(int x, int y, int z) {
 
 bool Chunk::isOutOfBounds(int x, int y, int z) const {
 	if (x >= CHUNK_SIZE || x < 0) return true;
-	if (y >= CHUNK_SIZE || y < 0) return true;
+	if (y >= CHUNK_HEIGHT || y < 0) return true;
 	if (z >= CHUNK_SIZE || z < 0) return true;
 
 	return false;
@@ -266,12 +282,16 @@ std::vector<unsigned int> Chunk::generateTriangles(int i) {
 	return{ 0, 1, 2, 3, 2, 1 };
 }
 
+bool Chunk::isTransparentAt(int x, int y, int z) {
+	return getCell(x, y, z).isTransparent();
+}
+
 
 void Chunk::clear() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			heightMap[i][k] = 0;
-			for (int j = 0; j < CHUNK_SIZE; j++) {
+			for (int j = 0; j < CHUNK_HEIGHT; j++) {
 				cells[i][j][k] = Cell::Air;
 			}
 		}

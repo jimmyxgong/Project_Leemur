@@ -3,6 +3,7 @@
 #include "Commons.h"
 #include "BaseEntity.h"
 #include "Material.h"
+#include "Mesh.h"
 
 class Chunk;
 
@@ -22,6 +23,7 @@ public:
 
 public:
 	void onRender() override;
+	void draw(Mesh &, Chunk &, Vector3f const &);
 
 	bool operator==(Cell const &) const;
 	unsigned int getType() const;

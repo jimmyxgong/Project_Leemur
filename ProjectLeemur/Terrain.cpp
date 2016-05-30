@@ -5,10 +5,18 @@
 
 
 const double Terrain::randomness = 0.931322574615478515625e-9;
-std::uniform_real_distribution<double> dis(-1000, 1000);
+std::uniform_real_distribution<double> dis(-100, 100);
 
 double Terrain::lerp(double a0, double a1, double w) const {
-	return ((1.0 - w) * a0) + (w * a1);
+	//return ((1.0 - w) * a0) + (w * a1);
+	double ww = 1.0 - w;
+	double ww2 = ww * ww;
+	double f0 = 3.0 * ww2 - 2.0 * ww2 * w;
+
+	double w2 = w * w;
+	double f1 = 3.0 * w2 - 2.0 * w2 * w;
+
+	return a0 * f0 + a1 * f1;
 }
 
 double Terrain::noise(double x, double z) const {
@@ -83,7 +91,7 @@ double Terrain::perlinNoise(double x, double y, double z, double parts, double d
 	double p2 = height(y / parts, x + dis(gen) / parts) / div;
 	double p3 = height(z + dis(gen) / parts, y / parts) / div;
 
-	return round(p0 + p1 + p2 + p3);
+	return (int) round(p0 + p1 + p2 + p3 + y / 2);
 }
 
 
