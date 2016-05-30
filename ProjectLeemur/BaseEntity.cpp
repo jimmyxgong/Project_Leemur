@@ -11,7 +11,7 @@ void BaseEntity::onDestroy() {
 }
 
 BaseEntity::~BaseEntity() {
-	// If onDestroy is called before, don't 
-	// call it again. 
-	if (active) onDestroy();
+	// If onDestroy is called before, don't
+	// call it again.
+	if (isActive()) onDestroy();
 }
