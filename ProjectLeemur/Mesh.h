@@ -7,14 +7,14 @@ class Mesh : public Component {
 
 private:
 	bool changed = false;
-	Mesh& updateVertices();
 
 public:
 
 	void onStart() override;
-	void onRender() override;
 	void onUpdate() override;
 
+	void updateMeshData();
+	Mesh& clear();
 	Mesh& recalculateNormals();
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);
 	Mesh& setNormals(std::vector<Vector3f> const & normals);

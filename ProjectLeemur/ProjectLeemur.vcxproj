@@ -134,6 +134,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
+    <ClInclude Include="MeshData.h" />
     <ClInclude Include="Mob.h" />
     <ClInclude Include="Mouse.h" />
     <ClInclude Include="ObjObject.h" />

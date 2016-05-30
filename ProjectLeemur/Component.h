@@ -30,7 +30,9 @@ public:
 	Material& getMaterial();
 
 	virtual Component& addVertex(float x, float y, float z);
+	virtual Component& addVertex(Vector3f const &);
 	virtual Component& addNormal(float x, float y, float z);
+	virtual Component& addNormal(Vector3f const &);
 	virtual Component& addFace(unsigned int x, unsigned int y, unsigned z);
 	virtual Component& addIndex(unsigned int i);
 
@@ -39,4 +41,7 @@ public:
 	std::vector<Vector3f>& getNormals();
 
 	~Component();
+
+
+	static SharedPointer<Component> EMPTY;
 };

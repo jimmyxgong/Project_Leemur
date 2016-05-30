@@ -1,26 +1,53 @@
 #include "Mesh.h"
 
-Mesh& Mesh::updateVertices() {
-	Component::onStart(GL_DYNAMIC_DRAW);
-	return *this;
+void Mesh::updateMeshData() {
+	const static GLint offset = 0;
+
+	// update vertices
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferSubData(
+		GL_ARRAY_BUFFER,
+		offset, 
+		vertices.size() * sizeof(Vector3f), 
+		&vertices[0]
+	);
+
+	// update indices
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferSubData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		offset,
+		indices.size() * sizeof(unsigned int),
+		&indices[0]
+	);
+
+	// update normals
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferSubData(
+		GL_ARRAY_BUFFER,
+		offset,
+		normals.size() * sizeof(Vector3f),
+		&normals[0]
+	);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void Mesh::onStart() {
-	updateVertices();
+	Component::onStart(GL_DYNAMIC_DRAW);
 	changed = false;
 }
 
-void Mesh::onRender() {
-	Component::onRender();
-}
-
 void Mesh::onUpdate() {
-	if (hasChanged()) {
-		updateVertices();
-		changed = false;
-	}
+
 }
 
+Mesh& Mesh::clear() {
+	vertices.clear();
+	indices.clear();
+	normals.clear();
+	return *this;
+}
 
 Mesh& Mesh::recalculateNormals() {
 	for (int i = 0; i < indices.size(); i += 3) {
@@ -32,9 +59,20 @@ Mesh& Mesh::recalculateNormals() {
 		Vector3f CA = C - A;
 
 		Vector3f N = normalize(cross(BA, CA));
-		addNormal(N.x, N.y, N.z);
-		addNormal(N.x, N.y, N.z);
-		addNormal(N.x, N.y, N.z);
+
+		if (normals.size() > i + 2) {
+			Vector3f NA = normals.at(indices.at(i + 0));
+			Vector3f NB = normals.at(indices.at(i + 1));
+			Vector3f NC = normals.at(indices.at(i + 2));
+
+			addNormal(N + NA);
+			addNormal(N + NB);
+			addNormal(N + NC);
+			continue;
+		}
+		addNormal(N);
+		addNormal(N);
+		addNormal(N);
 	}
 
 	return *this;

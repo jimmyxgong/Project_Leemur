@@ -18,7 +18,7 @@ private:
 	Mesh mesh;
 	Array<Array<int>> heightMap;
 	Array<Array<Array<Cell>>> cells;
-
+	bool changed = false;
 
 public: /* Lifecycle */
 	void onCreate() override;
@@ -28,16 +28,19 @@ public: /* Lifecycle */
 
 	void loadToShader();
 	void generateChunk();
-	void buildMesh();
+	void buildMeshData();
 	void renderMesh();
 	void printHeightMap();
+
+	void setCell(int x, int y, int z, Cell const & cell);
+	Cell & removeCell(int x, int y, int z);
 
 	bool isOutOfBounds(int x, int y, int z) const;
 	bool isCell(int x, int y, int z) const;
 	Cell& getCell(int x, int y, int z);
-	std::vector<Vector4f> getSequence(int i, int j, int k);
 	Vector4f getLeast(int i, int j, int k);
 	std::vector<unsigned int> generateTriangles(int i);
+	void clear();
 
 	void onDestroy() override;
 };

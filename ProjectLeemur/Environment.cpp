@@ -61,17 +61,13 @@ void Environment::onRender() {
 	player->onRender();
 	chunk.onRender();
 
-	//Resources::getShader(SHADER_LIGHT).use();
-	//Light::Directional.loadToShader();
-	//Material::RedPlastic.loadToShader();
-	//loadToShader();
-	//Resources::getEntity(POD_OBJ).onRender();
 
 	//centrifuge->onRender();
 }
 
 void Environment::onUpdate() {
 	player->onUpdate();
+	chunk.onUpdate();
 	//centrifuge->onUpdate();
 }
 

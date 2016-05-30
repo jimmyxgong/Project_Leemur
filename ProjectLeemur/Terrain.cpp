@@ -5,16 +5,14 @@
 
 
 const double Terrain::randomness = 0.931322574615478515625e-9;
-std::uniform_real_distribution<double> dis(-100, 100);
-
-
+std::uniform_real_distribution<double> dis(-1000, 1000);
 
 double Terrain::lerp(double a0, double a1, double w) const {
 	return ((1.0 - w) * a0) + (w * a1);
 }
 
 double Terrain::noise(double x, double z) const {
-	int n = x + (((int)z) << 6);
+	int n = x + (z * 57);
 	n = (n << 13) ^ n;
 
 	int step = (n * (n*n * 15731 + 789221) + 1376312589) & 0x7fffffff;
@@ -78,7 +76,7 @@ double Terrain::height(double x, double z) const {
 double Terrain::perlinNoise(double x, double y, double z, double parts, double div) const {
 	using namespace std::chrono;
 
-	double seed0 = system_clock::now().time_since_epoch().count();
+	double seed0 = seed; //system_clock::now().time_since_epoch().count();
 	std::minstd_rand gen(seed0);
 	double p0 = height(x + dis(gen) / parts, z + dis(gen) / parts) / div;
 	double p1 = height(z + dis(gen) / parts, x + dis(gen) / parts) / div;

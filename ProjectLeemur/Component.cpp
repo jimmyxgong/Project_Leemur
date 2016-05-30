@@ -1,5 +1,6 @@
 #include "Component.h"
 
+SharedPointer<Component> Component::EMPTY = share<Component>();
 
 Component::~Component() {
 	BaseEntity::~BaseEntity();
@@ -106,16 +107,27 @@ std::vector<Vector3f>& Component::getNormals() {
 }
 
 Component& Component::addVertex(float x, float y, float z) {
-	vertices.push_back(Vector3f(x, y, z));
+	return addVertex(Vector3f(x, y, z));
+}
+
+Component& Component::addVertex(Vector3f const & vec) {
+	vertices.push_back(vec);
 	return *this;
 }
 
 Component& Component::addNormal(float x, float y, float z) {
-	normals.push_back(Vector3f(x, y, z));
+	return addNormal(Vector3f(x, y, z));
+}
+
+Component& Component::addNormal(Vector3f const & vec) {
+	normals.push_back(vec);
 	return *this;
 }
 
-Component& Component::addFace(unsigned int x, unsigned int y, unsigned int z) {
+Component& Component::addFace(unsigned int x,	
+							  unsigned int y, 
+							  unsigned int z) 
+{
 	return addIndex(x)
 		.addIndex(y)
 		.addIndex(z);

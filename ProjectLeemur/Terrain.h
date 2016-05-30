@@ -3,16 +3,13 @@
 #include "Commons.h"
 
 struct Terrain {
-private:
-	
+public:
 	double persistence;
 	double frequency;
 	double amplitude;
-
 	int octaves;
 	long long seed;
 
-public:
 	const static double randomness;
 
 	double lerp(double x, double z, double weight) const;
