@@ -1,4 +1,6 @@
 #include "Mouse.h"
+#include "Camera.h"
+#include "Window.h"
 
 void Mouse::Layout::setOnDrag(std::function<void(const Point&, bool)> listener) {
 	onDrag = listener;
@@ -39,6 +41,19 @@ void Mouse::init() {
 	});
 
 	defaultLayout.setOnScroll([](bool isUp) {
+		Camera & cam = Window::getFocusedWindow().getActiveCamera();
+
+		// TODO Transform Position isn't working
+		Vector3f position = cam.transform.getLocalPosition();
+		std::cout << to_string(position) << std::endl;
+		if (position.x == 0 && position.y == 0 && position.z == 0) {
+			position = CAMERA_POSITION;
+		}
+
+		position = abs(normalize(position)) / 5.0f;
+		if (isUp) position = -position;
+		cam.transform.translateLocal(position);
+		cam.update();
 
 	});
 

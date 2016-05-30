@@ -2,12 +2,17 @@
 #include "TransparentCell.h"
 #include "Chunk.h"
 
-const Cell Cell::Air = TransparentCell();
+Cell Cell::Air = TransparentCell();
 
 void Cell::onRender() {
 	// locked. Don't use.
 }
 
+
+
+bool Cell::operator==(Cell const & other) const {
+	return getType() == other.getType();
+}
 
 unsigned int Cell::getType() const {
 	return data.type;

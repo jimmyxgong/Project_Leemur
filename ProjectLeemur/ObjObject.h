@@ -8,10 +8,5 @@ public:
 	void onRender() override;
 	void onUpdate() override;
 
-	ObjObject& addVertex(float x, float y, float z);
-	ObjObject& addNormal(float x, float y, float z);
-	ObjObject& addFace(unsigned int x, unsigned int y, unsigned int z);
-	ObjObject& addIndex(unsigned int i);
-
 	static ObjObject * create(std::string const & val);
 };

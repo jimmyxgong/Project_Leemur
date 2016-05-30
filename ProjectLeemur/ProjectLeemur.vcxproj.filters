@@ -61,6 +61,12 @@
     <Filter Include="Header Files\Game\Entity\Cells">
       <UniqueIdentifier>{3d28ca04-6893-499e-8137-4e9f9baa4e07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Graphics">
+      <UniqueIdentifier>{4a28afd5-df5a-4dae-b2b2-d173d6b633ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Game\Graphics">
+      <UniqueIdentifier>{6ac34178-9bc8-4404-af98-8ba4eb3ad2a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -162,6 +168,12 @@
     <ClInclude Include="TransparentCell.h">
       <Filter>Header Files\Game\Entity\Cells</Filter>
     </ClInclude>
+    <ClInclude Include="ProceduralEntity.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Game\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -239,11 +251,17 @@
     <ClCompile Include="SolidCell.cpp">
       <Filter>Source Files\Game\Entity\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TransparentCell.cpp">
       <Filter>Source Files\Game\Entity\Cells</Filter>
+    </ClCompile>
+    <ClCompile Include="ProceduralEntity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Game\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\Game\Entity\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

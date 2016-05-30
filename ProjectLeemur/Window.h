@@ -48,6 +48,8 @@ public:
 	Window & setActiveCamera(Camera * cam);
 	Window & setSecondActiveCamera(Camera * cam);
 
+	Camera & getActiveCamera();
+
 	GLFWwindow * getGlfwWindow() const;
 
 	int width() const;

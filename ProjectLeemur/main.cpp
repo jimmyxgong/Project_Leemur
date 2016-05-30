@@ -10,7 +10,6 @@
 #define FAR 1000.0f
 #define FPS 60.0f
 
-
 int main(void) {
 	Window & window =
 		Window::of(TITLE)
@@ -36,3 +35,4 @@ int main(void) {
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }
+

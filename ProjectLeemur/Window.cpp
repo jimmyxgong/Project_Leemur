@@ -119,6 +119,10 @@ Window & Window::setSecondActiveCamera(Camera * cam) {
 	return std::move(*this);
 }
 
+Camera & Window::getActiveCamera() {
+	return *activeCamera;
+}
+
 
 
 GLFWwindow * Window::getGlfwWindow() const {

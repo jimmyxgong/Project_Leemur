@@ -61,33 +61,11 @@ void ObjObject::onStart() {
 }
 
 void ObjObject::onRender() {
-	// TODO add shader
-	renderVaoWithIndices();
+	Component::onRender();
 }
 
 void ObjObject::onUpdate() {
 
-}
-
-ObjObject& ObjObject::addVertex(float x, float y, float z) {
-	vertices.push_back(Vector3f(x, y, z));
-	return *this;
-}
-
-ObjObject& ObjObject::addNormal(float x, float y, float z) {
-	normals.push_back(Vector3f(x, y, z));
-	return *this;
-}
-
-ObjObject& ObjObject::addFace(unsigned int x, unsigned int y, unsigned int z) {
-	return addIndex(x)
-		.addIndex(y)
-		.addIndex(z);
-}
-
-ObjObject& ObjObject::addIndex(unsigned int i) {
-	indices.push_back(i - 1);
-	return *this;
 }
 
 

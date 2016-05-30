@@ -12,16 +12,14 @@ protected:
 
 	std::vector<Vector3f> vertices;
 	std::vector<Vector3f> normals;
-	std::vector<unsigned int> indices;
+	std::vector<uint> indices;
 
 	Material * material;
-
-protected:
-	virtual void renderVaoWithIndices();
 
 public:
 	Shader * attachedShader;
 
+	virtual void onRender() override;
 	virtual void onDestroy() override;
 
 	Component& setMaterial(Material * mat);
@@ -30,7 +28,13 @@ public:
 	Shader& getShader();
 	Material& getMaterial();
 
+	Component& addVertex(float x, float y, float z);
+	Component& addNormal(float x, float y, float z);
+	Component& addFace(unsigned int x, unsigned int y, unsigned z);
+	Component& addIndex(unsigned int i);
+
 	std::vector<Vector3f>& getVertices();
+	std::vector<unsigned int>& getIndices();
 	std::vector<Vector3f>& getNormals();
 
 	~Component();

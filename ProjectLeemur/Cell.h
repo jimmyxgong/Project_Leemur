@@ -23,8 +23,7 @@ public:
 public:
 	void onRender() override;
 
-public:
-
+	bool operator==(Cell const &) const;
 	unsigned int getType() const;
 	bool isTransparent() const;
 	
@@ -32,6 +31,6 @@ public:
 	bool isNegligible() const;
 
 public:
-	const static Cell Air;
+	static Cell Air;
 
 };

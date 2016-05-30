@@ -19,6 +19,7 @@
 #include <list>
 #include <memory>
 #include <unordered_map>
+#include <typeinfo>
 
 /**   NOTES
 * 1. All naming conventions are done here.
@@ -26,10 +27,10 @@
 * 3. Most used dependencies are store here as well.
 */
 
-typedef glm::vec3 Vector3f;
-typedef glm::vec4 Vector4f;
-typedef glm::mat3 Matrix3f;
-typedef glm::mat4 Matrix4f;
+typedef glm::vec3	Vector3f;
+typedef glm::vec4	Vector4f;
+typedef glm::mat3	Matrix3f;
+typedef glm::mat4	Matrix4f;
 
 template <typename T>
 using SharedPointer = std::shared_ptr<T>;
