@@ -109,6 +109,26 @@ Transform& Transform::translateLocal(const Vector3f & value) {
 	return translateLocal(value.x, value.y, value.z);
 }
 
+Transform& Transform::translate(float x, float y, float z) {
+	position = Vector3f(Translate(x, y, z) * Vector4f(localPosition, 1.0f));
+	changed = true;
+	return *this;
+}
+
+Transform& Transform::translate(const Vector3f & val) {
+	return translate(val.x, val.y, val.z);
+}
+
+Transform& Transform::rotate(const Quaternion & quat) {
+	rotation = quat * rotation;
+	return *this;
+}
+
+
+
+
+
+
 
 
 
@@ -140,6 +160,9 @@ Transform::~Transform() {}
 Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	localToWorldMatrix = (localRotation * Translate(localPosition) * Scale(localScale));
 	localToWorldMatrix = val * localToWorldMatrix;
+
+	position = GetPosition(localToWorldMatrix);
+	rotation = Quaternion::FromMatrix(localToWorldMatrix);
 	changed = false;
 
 	for (WeakPointer<Transform> child : children) {
@@ -240,40 +263,6 @@ bool Transform::hasChanged() {
 
 
 
-///////// functions past here are deprecated except for the static functions
-
-void Transform::rotate(float x, float y, float z) {
-	worldMatrix = Quaternion(x, y, z, 1.0f) * worldMatrix;
-}
-
-void Transform::rotate(Quaternion& quat) {
-	worldMatrix = quat * worldMatrix;
-}
-
-void Transform::rotate(Vector3f& v) {
-	rotate(v.x, v.y, v.z);
-}
-
-void Transform::translate(float x, float y, float z) {
-
-	Matrix4f translation;
-	Transform::Translate(translation, x, y, z);
-
-	worldMatrix = translation * worldMatrix;
-}
-
-void Transform::translate(Vector3f& v) {
-	translate(v.x, v.y, v.z);
-}
-
-void Transform::scale(float x) {
-	Matrix4f scale = Transform::ScaleMatrix(x);
-	worldMatrix = worldMatrix * scale;
-}
-
-
-
-
 
 
 void Transform::updateWorldMatrix() {
@@ -291,10 +280,6 @@ Matrix4f Transform::asMatrix() {
 }
 
 
-
-void Transform::destroy() {
-	delete this;
-}
 
 
 
@@ -357,7 +342,7 @@ Matrix4f Transform::Translate(Matrix4f& t, float x, float y, float z) {
 
 
 
-const Matrix4f Transform::Translate(float x, float y, float z) {
+Matrix4f Transform::Translate(float x, float y, float z) {
 	return { 
 		{ 1, 0, 0, 0 },
 		{ 0, 1, 0, 0 },
@@ -366,11 +351,11 @@ const Matrix4f Transform::Translate(float x, float y, float z) {
 	};
 }
 
-const Matrix4f Transform::Translate(Vector3f& value) {
+Matrix4f Transform::Translate(Vector3f& value) {
 	return std::move(Translate(value.x, value.y, value.z));
 }
 
-const Matrix4f Transform::Scale(float x, float y, float z) {
+Matrix4f Transform::Scale(float x, float y, float z) {
 	return { 
 		{ x, 0, 0, 0 },
 		{ 0, y, 0, 0 },
@@ -379,16 +364,24 @@ const Matrix4f Transform::Scale(float x, float y, float z) {
 	};
 }
 
-const Matrix4f Transform::Scale(Vector3f& value) {
+Matrix4f Transform::Scale(Vector3f& value) {
 	return std::move(Scale(value.x, value.y, value.z));
 }
 
-const Matrix4f Transform::StripTranslation(Matrix4f const & matrix) {
-	return (StripTranslation(matrix, 0.0f));
+Matrix4f Transform::StripTranslation(Matrix4f const & matrix) {
+	return (ReplaceTranslation(matrix, 0.0f));
 }
 
-const Matrix4f Transform::StripTranslation(Matrix4f const & matrix, float val) {
+Matrix4f Transform::ReplaceTranslation(Matrix4f const & matrix, float val) {
 	Matrix4f mat = matrix;
 	mat[3] = { val, val, val, 1.0f };
 	return mat;
+}
+
+Vector4f Transform::GetTranslation(Matrix4f const & mat) {
+	return mat[3];
+}
+
+Vector3f Transform::GetPosition(Matrix4f const & mat) {
+	return Vector3f(mat[3]);
 }

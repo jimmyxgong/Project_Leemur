@@ -82,7 +82,7 @@ void Skybox::onRender() {
 	glDepthMask(GL_FALSE);
 
 	shader->use();
-	glm::mat4 VP = window->getPerspective() * (Transform::StripTranslation((window->getView()), 0.0f));
+	glm::mat4 VP = window->getPerspective() * (Transform::ReplaceTranslation((window->getView()), 0.0f));
 	glUniformMatrix4fv(glGetUniformLocation(shader->getId(), "VP"), 1, GL_FALSE, &VP[0][0]);
 	// skybox cube
 	glBindVertexArray(VAO);

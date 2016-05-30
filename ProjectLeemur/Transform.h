@@ -70,6 +70,15 @@ public: /* Transformations on current orientation */
 	Transform& translateLocal(float x, float y, float z);
 	Transform& translateLocal(const Vector3f & val);
 
+	Transform& translate(float x, float y, float z);
+	Transform& translate(const Vector3f &);
+
+	Transform& rotate(const Quaternion &);
+	Transform& rotate(float x, float y, float z, float deg);
+	Transform& rotateX(float deg);
+	Transform& rotateY(float deg);
+	Transform& rotateZ(float deg);
+
 
 public: /* Constructors */
 	/* Copy Constructor */
@@ -113,18 +122,6 @@ public:
 
 
 
-
-
-
-
-	void rotate(float x, float y, float z);
-	void rotate(Quaternion& quat);
-	void rotate(Vector3f& vec);
-
-	void translate(float x, float y, float z);
-	void translate(Vector3f& vec);
-
-	void scale(float x);
 	
 
 
@@ -139,12 +136,6 @@ public:
 
 
 public:
-
-
-
-
-
-	void destroy();
 
 
 
@@ -166,12 +157,15 @@ public:
 	static Matrix4f Translate(Matrix4f&, float x, float y, float z);
 
 
-	const static Matrix4f Translate(float x, float y, float z);
-	const static Matrix4f Translate(Vector3f&);
+	static Matrix4f Translate(float x, float y, float z);
+	static Matrix4f Translate(Vector3f&);
 
-	const static Matrix4f Scale(float x, float y, float z);
-	const static Matrix4f Scale(Vector3f&);
+	static Matrix4f Scale(float x, float y, float z);
+	static Matrix4f Scale(Vector3f&);
 
-	const static Matrix4f StripTranslation(Matrix4f const &);
-	const static Matrix4f StripTranslation(Matrix4f const &, float val);
+	static Matrix4f StripTranslation(Matrix4f const &);
+	static Matrix4f ReplaceTranslation(Matrix4f const &, float val);
+
+	static Vector4f GetTranslation(Matrix4f const &);
+	static Vector3f GetPosition(Matrix4f const &);
 };
