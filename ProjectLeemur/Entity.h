@@ -3,7 +3,7 @@
 
 class Entity {
 public:
-	bool active = false;
+	bool active = true;
 	virtual bool isActive() { return active; }
 
 	// Initialize objects here. Called onCreation of the object
@@ -16,12 +16,12 @@ public:
 	virtual void onRender() = 0;
 
 	// Called every frame. A frame can take any number of time before they can
-	// be processed. 
+	// be processed.
 	virtual void onUpdate() = 0;
-	
+
 	// Called on a fixed cycle of 60x per second.
 	virtual void onFixedUpdate() = 0;
-	
+
 	// Destroy the object.
 	virtual void onDestroy() = 0;
 
