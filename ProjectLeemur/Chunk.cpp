@@ -29,16 +29,7 @@ void Chunk::onCreate() {
 		}
 	}
 
-	
-
-	// Allocate memory to the 3D Grid of cells
-	//cells = new Cell**[CHUNK_SIZE];
-	//for (int i = 0; i < CHUNK_SIZE; i++) {
-	//	cells[i] = new Cell*[CHUNK_SIZE];
-	//	for (int j = 0; j < CHUNK_SIZE; j++) {
-	//		cells[i][j] = new Cell[CHUNK_SIZE];
-	//	}
-	//}
+	glGenVertexArrays(1, &VAO);
 }
 
 void Chunk::onStart() {
@@ -47,17 +38,14 @@ void Chunk::onStart() {
 }
 
 void Chunk::onRender() {
-
+	
 }
 
 void Chunk::onUpdate() {
-
+	
 }
 
-
-
 void Chunk::generateChunk() {
-
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int j = 0; j < CHUNK_SIZE; j++) {
 			for (int k = 0; k < CHUNK_SIZE; k++) {
@@ -98,16 +86,5 @@ void Chunk::printHeightMap() {
 
 
 void Chunk::onDestroy() {
-	BaseEntity::onDestroy();
-
-
-
-	//for (int i = 0; i < CHUNK_SIZE; i++) {
-	//	for (int j = 0; j < CHUNK_SIZE; j++) {
-	//		delete[] cells[i][j];
-	//	}
-	//	delete[] cells[i];
-	//}
-	//delete[] cells;
-
+	Component::onDestroy();
 }

@@ -2,15 +2,16 @@
 
 #include "Commons.h"
 #include "Cell.h"
-#include "TransformEntity.h"
+#include "Component.h"
 
 #define CHUNK_SIZE 8
 
 template <class T>
 using Array = std::vector<T>;
 
-class Chunk : public TransformEntity {
+class Chunk : public Component {
 public:
+	Transform transform;
 
 private:
 	Array<Array<int>> heightMap;
