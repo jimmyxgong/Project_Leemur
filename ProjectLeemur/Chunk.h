@@ -10,9 +10,12 @@ template <class T>
 using Array = std::vector<T>;
 
 class Chunk : public TransformEntity {
+public:
+
 private:
 	Array<Array<int>> heightMap;
 	Array<Array<Array<Cell>>> cells;
+
 
 public: /* Lifecycle */
 	void onCreate() override;
@@ -20,11 +23,9 @@ public: /* Lifecycle */
 	void onRender() override;
 	void onUpdate() override;
 
-	void generateCells();
+	void generateChunk();
 	void renderMesh();
-
-
-
+	void printHeightMap();
 
 	void onDestroy() override;
 };

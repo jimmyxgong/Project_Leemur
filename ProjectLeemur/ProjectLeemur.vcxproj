@@ -148,6 +148,7 @@
     <ClInclude Include="Trackball.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformEntity.h" />
+    <ClInclude Include="TransparentCell.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
@@ -176,6 +177,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Trackball.cpp" />
     <ClCompile Include="Transform.cpp" />
+    <ClCompile Include="TransparentCell.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>

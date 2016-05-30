@@ -20,7 +20,7 @@ public:
 
 
 	Vector4f asVector();
-	Matrix4f toMatrix();
+	Matrix4f asMatrix();
 
 	Quaternion();
 	Quaternion(float x, float y, float z, float w);

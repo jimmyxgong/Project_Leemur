@@ -4,7 +4,12 @@
 #include "BaseEntity.h"
 #include "Material.h"
 
+class Chunk;
+
 class Cell : BaseEntity {
+public:
+
+
 public:
 	struct Data {
 	public:
@@ -12,6 +17,8 @@ public:
 		bool transparent = false;
 		bool voidable = false;
 	} data;
+
+	Chunk * chunk;
 
 public:
 	void onRender() override;
@@ -23,5 +30,8 @@ public:
 	
 	/* Only one type of cell can be negligible: voidables */
 	bool isNegligible() const;
+
+public:
+	const static Cell Air;
 
 };

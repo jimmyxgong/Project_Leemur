@@ -128,10 +128,6 @@ Transform& Transform::rotate(const Quaternion & quat) {
 
 
 
-
-
-
-
 /* Copy Constructor */
 Transform::Transform(const Transform & transform) {
 	localScale = transform.getLocalScale();
@@ -156,6 +152,12 @@ Transform::Transform() :
 }
 
 Transform::~Transform() {}
+
+
+
+
+
+
 
 Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	localToWorldMatrix = (localRotation * Translate(localPosition) * Scale(localScale));

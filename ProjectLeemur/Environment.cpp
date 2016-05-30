@@ -3,12 +3,14 @@
 #include "ObjObject.h"
 #include "Centrifuge.h"
 #include "Light.h"
+#include "Chunk.h"
 
 /* See the centrifuge for an example as to how to use
 	the scene graph. NOTE: Animations are not implemented in
 	the scene graph yet.
 */
 SharedPointer<Centrifuge> centrifuge;
+Chunk chunk;
 
 // TODO LOGGER
 void print(const char * const & val) {
@@ -40,12 +42,14 @@ void Environment::onCreate() {
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());
 
+	chunk.onCreate();
 }
 
 void Environment::onStart() {
 	print("Environment starting...");
 	skybox->onStart();
 	player->onStart();
+	chunk.onStart();
 	//centrifuge->onStart();
 	//world.addChild(player->transform);
 }

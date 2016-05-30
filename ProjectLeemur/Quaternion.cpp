@@ -45,7 +45,7 @@ Quaternion Quaternion::operator*(const Quaternion & q) {
 }
 
 Matrix4f Quaternion::operator*(Matrix4f const & m) {
-	return toMatrix() * m;
+	return asMatrix() * m;
 }
 
 Vector4f Quaternion::operator*(Vector4f& in) {
@@ -72,7 +72,7 @@ Vector4f Quaternion::asVector() {
 	return{ x, y, z, w };
 }
 
-Matrix4f Quaternion::toMatrix() {
+Matrix4f Quaternion::asMatrix() {
 	Matrix4f output;
 	toMatrix(*this, output);
 	return output;

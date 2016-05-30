@@ -1,7 +1,13 @@
 #include "Terrain.h"
 
+#include <chrono>
+#include <random>
+
 
 const double Terrain::randomness = 0.931322574615478515625e-9;
+std::uniform_real_distribution<double> dis(-100, 100);
+
+
 
 double Terrain::lerp(double a0, double a1, double w) const {
 	return ((1.0 - w) * a0) + (w * a1);
@@ -67,6 +73,19 @@ double Terrain::height(double x, double z) const {
 		freq *= 2;
 	}
 	return amplitude * value;
+}
+
+double Terrain::perlinNoise(double x, double y, double z, double parts, double div) const {
+	using namespace std::chrono;
+
+	double seed0 = system_clock::now().time_since_epoch().count();
+	std::minstd_rand gen(seed0);
+	double p0 = height(x + dis(gen) / parts, z + dis(gen) / parts) / div;
+	double p1 = height(z + dis(gen) / parts, x + dis(gen) / parts) / div;
+	double p2 = height(y / parts, x + dis(gen) / parts) / div;
+	double p3 = height(z + dis(gen) / parts, y / parts) / div;
+
+	return round(p0 + p1 + p2 + p3);
 }
 
 

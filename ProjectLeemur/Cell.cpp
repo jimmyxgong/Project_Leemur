@@ -1,4 +1,8 @@
 #include "Cell.h"
+#include "TransparentCell.h"
+#include "Chunk.h"
+
+const Cell Cell::Air = TransparentCell();
 
 void Cell::onRender() {
 	// locked. Don't use.

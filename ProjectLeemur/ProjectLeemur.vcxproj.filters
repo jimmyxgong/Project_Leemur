@@ -58,6 +58,9 @@
     <Filter Include="Source Files\Game\Entity\Cells">
       <UniqueIdentifier>{f7d363ee-812b-4d20-8f2d-617d376b6668}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Game\Entity\Cells">
+      <UniqueIdentifier>{3d28ca04-6893-499e-8137-4e9f9baa4e07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -156,6 +159,9 @@
     <ClInclude Include="Terrain.h">
       <Filter>Header Files\Game\Entity\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="TransparentCell.h">
+      <Filter>Header Files\Game\Entity\Cells</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -235,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TransparentCell.cpp">
+      <Filter>Source Files\Game\Entity\Cells</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
