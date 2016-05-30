@@ -5,6 +5,56 @@ Component::~Component() {
 	BaseEntity::~BaseEntity();
 }
 
+
+void Component::onStart(GLint glDrawType) {
+	glGenVertexArrays(1, &VAO);
+	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &NBO);
+
+	glGenBuffers(1, &EBO);
+	glBindVertexArray(VAO);
+
+	// Bind vertices
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		vertices.size() * sizeof(Vector3f),
+		&vertices[0],
+		glDrawType
+	);
+
+	// Bind indices
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices.size() * sizeof(unsigned int),
+		&indices[0],
+		glDrawType
+	);
+
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
+
+
+	// Bind normals
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		normals.size() * sizeof(Vector3f),
+		&normals[0],
+		glDrawType
+	);
+
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
 void Component::onRender() {
 	glBindVertexArray(VAO);
 	glDrawElements(
@@ -31,7 +81,7 @@ Component& Component::setMaterial(Material * mat) {
 }
 
 Component& Component::attachShader(Shader * shader) {
-	this->attachedShader = shader;
+	attachedShader = shader;
 	return *this;
 }
 
@@ -72,6 +122,6 @@ Component& Component::addFace(unsigned int x, unsigned int y, unsigned int z) {
 }
 
 Component& Component::addIndex(unsigned int i) {
-	indices.push_back(i - 1);
+	indices.push_back(i);
 	return *this;
 }

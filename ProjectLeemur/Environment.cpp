@@ -51,32 +51,10 @@ void Environment::onStart() {
 	skybox->onStart();
 	player->onStart();
 
-
-
 	chunk.onStart();
 	//centrifuge->onStart();
 	//world.addChild(player->transform);
 }
-
-void loadToShader() {
-	//component->getShader().use();
-	//component->getMaterial().loadToShader();
-
-	Matrix4f model = Matrix4f(1.0f);// transform->getLocalToWorldMatrix();
-	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
-		* Window::getFocusedWindow().getView()
-		* model;
-
-	Shader::loadMatrix("MVP", MVP);
-	Shader::loadMatrix("model", model);
-	Shader::loadMatrix("NormalMatrix", Matrix3f(transpose(inverse(model))));
-
-	// TODO: there might be some side-effects of using CAMERA_POSITION
-	// instead of using the actual Window active camera. Too lazy to
-	// write another method to get the active camera.
-	Shader::loadVector("CameraPosition", CAMERA_POSITION);
-}
-
 
 void Environment::onRender() {
 	skybox->onRender();

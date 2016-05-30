@@ -45,7 +45,7 @@ void Mouse::init() {
 
 		// TODO Transform Position isn't working
 		Vector3f position = cam.transform.getLocalPosition();
-		std::cout << to_string(position) << std::endl;
+		//std::cout << to_string(position) << std::endl;
 		if (position.x == 0 && position.y == 0 && position.z == 0) {
 			position = CAMERA_POSITION;
 		}

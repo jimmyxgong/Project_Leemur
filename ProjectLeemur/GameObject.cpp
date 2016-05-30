@@ -33,10 +33,8 @@ void GameObject::loadToShader() {
 	Shader::loadMatrix("model", model);
 	Shader::loadMatrix("NormalMatrix", Matrix3f(transpose(inverse(model))));
 
-	// TODO: there might be some side-effects of using CAMERA_POSITION
-	// instead of using the actual Window active camera. Too lazy to
-	// write another method to get the active camera.
-	Shader::loadVector("CameraPosition", CAMERA_POSITION);
+	Camera & cam = Window::getFocusedWindow().getActiveCamera();
+	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
 
 GameObject::GameObject(Component * component) :

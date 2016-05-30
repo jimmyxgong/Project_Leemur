@@ -19,6 +19,7 @@ protected:
 public:
 	Shader * attachedShader;
 
+	virtual void onStart(GLint);
 	virtual void onRender() override;
 	virtual void onDestroy() override;
 
@@ -28,10 +29,10 @@ public:
 	Shader& getShader();
 	Material& getMaterial();
 
-	Component& addVertex(float x, float y, float z);
-	Component& addNormal(float x, float y, float z);
-	Component& addFace(unsigned int x, unsigned int y, unsigned z);
-	Component& addIndex(unsigned int i);
+	virtual Component& addVertex(float x, float y, float z);
+	virtual Component& addNormal(float x, float y, float z);
+	virtual Component& addFace(unsigned int x, unsigned int y, unsigned z);
+	virtual Component& addIndex(unsigned int i);
 
 	std::vector<Vector3f>& getVertices();
 	std::vector<unsigned int>& getIndices();

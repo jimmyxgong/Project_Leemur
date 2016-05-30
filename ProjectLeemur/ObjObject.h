@@ -8,5 +8,7 @@ public:
 	void onRender() override;
 	void onUpdate() override;
 
+	ObjObject& addIndex(unsigned int) override;
+
 	static ObjObject * create(std::string const & val);
 };
