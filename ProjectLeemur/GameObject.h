@@ -44,7 +44,7 @@ public:
 	void onUpdate() override;
 
 	template <class T>
-	auto & getComponent();
+	T & getComponent();
 
 	virtual void loadToShader();
 

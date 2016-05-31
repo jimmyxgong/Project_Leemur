@@ -6,39 +6,29 @@
 #include "Material.h"
 
 /* Components are like Graphical Resources that one loads from files */
-class Component : public BaseEntity {
+class Component : BaseEntity {
+private:
+	void onCreate() override;
+	void onStart() override;
+	void onRender() override;
+	void onUpdate() override;
+	void onDestroy() override;
+
 protected:
-	GLuint VBO, NBO, VAO, EBO;
-
-	std::vector<Vector3f> vertices;
-	std::vector<Vector3f> normals;
-	std::vector<uint> indices;
-
 	Material * material;
 
 public:
 	Shader * attachedShader;
 
-	virtual void onStart(GLint);
-	virtual void onRender() override;
-	virtual void onDestroy() override;
+
+	//virtual void render();
+	//virtual void destroy();
 
 	Component& setMaterial(Material * mat);
 	Component& attachShader(Shader * shader);
 
 	Shader& getShader();
 	Material& getMaterial();
-
-	virtual Component& addVertex(float x, float y, float z);
-	virtual Component& addVertex(Vector3f const &);
-	virtual Component& addNormal(float x, float y, float z);
-	virtual Component& addNormal(Vector3f const &);
-	virtual Component& addFace(unsigned int x, unsigned int y, unsigned z);
-	virtual Component& addIndex(unsigned int i);
-
-	std::vector<Vector3f>& getVertices();
-	std::vector<unsigned int>& getIndices();
-	std::vector<Vector3f>& getNormals();
 
 	~Component();
 

@@ -3,6 +3,7 @@
 #include "Environment.h"
 #include "Keyboard.h"
 #include "Mouse.h"
+#include "Resources.h"
 
 UniquePointer<Environment> environment;
 UniquePointer<Camera> defaultCamera;
@@ -10,6 +11,7 @@ UniquePointer<Camera> defaultCamera;
 void Window::onStart() {
 	Keyboard::init();
 	Mouse::init();
+	Resources::init();
 
 	activeCamera = defaultCamera.get();
 	secondActiveCamera = defaultCamera.get();
@@ -53,6 +55,7 @@ void Window::onUpdate() {
 }
 
 void Window::onDestroy() {
+	Resources::destroy();
 	environment->onDestroy();
 	delete this;
 }

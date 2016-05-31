@@ -12,6 +12,8 @@
 template <class T>
 using Array = std::vector<T>;
 
+class Environment;
+
 class Chunk : public BaseEntity {
 public:
 	Transform transform;
@@ -24,11 +26,15 @@ private:
 	Array<Array<Array<Cell>>> cells;
 	bool changed = false;
 
+	Environment * environment;
+	Vector3f position;
+
 public: /* Lifecycle */
 	void onCreate() override;
 	void onStart() override;
 	void onRender() override;
 	void onUpdate() override;
+	void onDestroy() override;
 
 	void loadToShader();
 	void generateChunk();
@@ -51,5 +57,7 @@ public: /* Lifecycle */
 
 	void clear();
 
-	void onDestroy() override;
+
+
+	Chunk(Environment * env = nullptr);
 };

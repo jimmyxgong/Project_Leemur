@@ -31,7 +31,6 @@ private: /* Pool of resources */
 
 
 public: /* Singleton */
-	
 	Resources(Resources const &) = delete;
 	void operator=(Resources const &) = delete;
 
@@ -39,6 +38,7 @@ public: /* Singleton */
 public: /* Singleton methods */
 
 	static Resources & getInstance();
+	static void init();
 	
 	static Shader & getShader(int key);
 	static Resources & addShader(

@@ -7,25 +7,53 @@ class Mesh : public Component {
 
 private:
 	bool changed = false;
+	GLint glDrawType;
+
+	GLuint VBO, NBO, VAO, EBO;
+
+	std::vector<Vector3f> vertices;
+	std::vector<Vector3f> normals;
+	std::vector<unsigned int> indices;
 
 public:
 
-	void onStart() override;
-	void onUpdate() override;
-
+	void init();
+	void render();
+	void destroy();
+	
 	void updateMeshData();
 	Mesh& clear();
 	Mesh& recalculateNormals();
+
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);
 	Mesh& setNormals(std::vector<Vector3f> const & normals);
 	Mesh& setTriangles(std::vector<unsigned int> const & indices);
-	
+
+	/* 
+	* addFace is different from addTriangle(s) since it 
+	* does not take into account the vertex size when adding
+	* to indices.
+	*/
+	Mesh& addFace(unsigned int x, unsigned int y, unsigned z);
 	Mesh& addTriangle(unsigned int i, unsigned int j, unsigned int k);
 	Mesh& addTriangles(std::vector<unsigned int> const & triangles);
 
+	Mesh& addVertex(float x, float y, float z);
+	Mesh& addVertex(Vector3f const &);
+	Mesh& addNormal(float x, float y, float z);
+	Mesh& addNormal(Vector3f const &);
+
+	virtual Mesh& addIndex(unsigned int);
+
+	std::vector<Vector3f>& getVertices();
+	std::vector<unsigned int>& getIndices();
+	std::vector<Vector3f>& getNormals();
+
 	bool hasChanged() const;
 
-	void onDestroy() override;
+	Mesh(GLint drawType = GL_STATIC_DRAW);
+
+	//void onDestroy() override;
 private:
-	void onCreate() override;
+	//void onCreate() override;
 };

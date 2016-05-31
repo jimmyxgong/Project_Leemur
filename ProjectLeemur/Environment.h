@@ -5,13 +5,15 @@
 #include "Window.h"
 #include "Player.h"
 #include "Skybox.h"
-
+#include "Chunk.h"
 
 class Environment : public BaseEntity {
 private:
 	Window * window;
 	UniquePointer<Skybox> skybox;
 	UniquePointer<Player> player;
+
+	std::unordered_map<std::string, UniquePointer<Chunk>> chunks;
 
 	/* Root of the game's scene graph */
 	Transform world;
@@ -31,6 +33,14 @@ public:
 	void onRender() override;
 	void onUpdate() override;
 	void onDestroy() override;
+
+
+	void buildWorld();
+	void newChunk(int x, int y);
+
+
+
+	Environment& addEntity(UniquePointer<Entity> & entity);
 
 	static UniquePointer<Environment> create(Window * ref);
 };

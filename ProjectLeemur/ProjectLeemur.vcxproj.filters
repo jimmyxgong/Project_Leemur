@@ -168,9 +168,6 @@
     <ClInclude Include="TransparentCell.h">
       <Filter>Header Files\Game\Entity\Cells</Filter>
     </ClInclude>
-    <ClInclude Include="ProceduralEntity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Game\Graphics</Filter>
     </ClInclude>
@@ -248,22 +245,22 @@
     <ClCompile Include="Chunk.cpp">
       <Filter>Source Files\Game\Entity\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="Cell.cpp">
-      <Filter>Source Files\Game\Entity\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="SolidCell.cpp">
       <Filter>Source Files\Game\Entity\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="TransparentCell.cpp">
       <Filter>Source Files\Game\Entity\Cells</Filter>
     </ClCompile>
-    <ClCompile Include="ProceduralEntity.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Mesh.cpp">
       <Filter>Source Files\Game\Graphics</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files\Game\Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshData.cpp">
+      <Filter>Source Files\Game\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Cell.cpp">
       <Filter>Source Files\Game\Entity\Terrain</Filter>
     </ClCompile>
   </ItemGroup>

@@ -11,7 +11,7 @@
 	the scene graph yet.
 */
 SharedPointer<Centrifuge> centrifuge;
-Chunk chunk;
+//Chunk chunk;
 
 // TODO LOGGER
 void print(const char * const & val) {
@@ -21,29 +21,18 @@ void print(const char * const & val) {
 void Environment::onCreate() {
 	print("Creating Environment...");
 
-	Light::init();
-
+	//centrifuge = unique<Centrifuge>();
 	skybox = unique<Skybox>(window);
 	player = unique<Player>();
 	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
-	// Create Pod object and add it to resources.
-	Resources::newObjEntity(POD_OBJ, "pod.obj")
-		.attachShader(&Resources::getShader(SHADER_LIGHT))
-		.setMaterial(&Material::RedPlastic);
+	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	// Create Cylinder object and add it to resources.
-	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
-		.attachShader(&Resources::getShader(SHADER_LIGHT))
-		.setMaterial(&Material::Gold);
-
-	centrifuge = unique<Centrifuge>();
-
-	Window::getFocusedWindow()
-		.setActiveCamera(&player->getCamera());
-
-	chunk.onCreate();
+	//chunk.onCreate();
+	for (auto & entity : entities) {
+		entity->onCreate();
+	}
 }
 
 void Environment::onStart() {
@@ -51,7 +40,12 @@ void Environment::onStart() {
 	skybox->onStart();
 	player->onStart();
 
-	chunk.onStart();
+	for (auto & entity : entities) {
+		entity->onStart();
+	}
+
+
+	//chunk.onStart();
 	//centrifuge->onStart();
 	//world.addChild(player->transform);
 }
@@ -59,7 +53,7 @@ void Environment::onStart() {
 void Environment::onRender() {
 	skybox->onRender();
 	player->onRender();
-	chunk.onRender();
+	//chunk.onRender();
 
 
 	//centrifuge->onRender();
@@ -67,7 +61,7 @@ void Environment::onRender() {
 
 void Environment::onUpdate() {
 	player->onUpdate();
-	chunk.onUpdate();
+	//chunk.onUpdate();
 	//centrifuge->onUpdate();
 }
 
@@ -76,16 +70,35 @@ void Environment::onDestroy() {
 
 	skybox->onDestroy();
 
-	Component& pod = (Component&) Resources::getEntity(POD_OBJ);
-	Component& cyl = (Component&) Resources::getEntity(CYL_OBJ);
-	pod.onDestroy();
-	cyl.onDestroy();
+	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
+	Mesh& cyl = (Mesh&) Resources::getEntity(CYL_OBJ);
+	pod.destroy();
+	cyl.destroy();
 
 	delete &pod;
 	delete &cyl;
+}
 
+
+void Environment::buildWorld() {
 
 }
+
+void Environment::newChunk(int x, int y) {
+	std::string key = std::to_string(x);
+	key.append("|");
+	key.append(std::to_string(y));
+	chunks[key] = unique<Chunk>(this);
+}
+
+
+
+Environment& Environment::addEntity(UniquePointer<Entity> & entity) {
+	entities.push_back(UniquePointer<Entity>(std::move(entity)));
+	return *this;
+}
+
+
 
 UniquePointer<Environment> Environment::create(Window * ref) {
 	UniquePointer<Environment> instance = unique<Environment>();

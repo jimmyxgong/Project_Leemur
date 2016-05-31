@@ -1,6 +1,7 @@
 #include "GameObject.h"
 #include "Window.h"
 #include "Camera.h"
+#include "ObjObject.h"
 
 /* Used for type_id mapping */
 std::size_t Hasher::operator()(TypeRef code) const {
@@ -28,9 +29,12 @@ void GameObject::onStart() {
 }
 
 void GameObject::onRender() {
+	//getComponent<Mesh>().render();
+	//getComponent<ObjObject>();
+	//if (m != *Component::EMPTY)
 	if (component->attachedShader) 
 		loadToShader();
-	component->onRender();
+	((Mesh*)component)->render();
 }
 
 void GameObject::onUpdate() {
@@ -38,15 +42,15 @@ void GameObject::onUpdate() {
 }
 
 template <class T>
-auto & GameObject::getComponent() {
+T & GameObject::getComponent() {
 	const std::type_info & id = typeid(T);
 	auto & val = components.find(id);
 	if (val != components.end()) {
-		return *val->second;
+		return (T &) *val->second;
 	}
 
 	std::cout << "Empty component returned" << std::endl;
-	return Component::EMPTY;
+	return (T&) (T());
 }
 
 template <class T>

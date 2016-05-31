@@ -1,14 +1,16 @@
 #pragma once
 
 #include "Component.h"
+#include "Mesh.h"
 
-class ObjObject : public Component {
+class ObjObject : public Mesh {
+private:
+	ObjObject(GLint drawType = GL_STATIC_DRAW);
+	static ObjObject * load(const std::string & filepath);
 public:
-	void onStart() override;
-	void onRender() override;
-	void onUpdate() override;
 
 	ObjObject& addIndex(unsigned int) override;
-
 	static ObjObject * create(std::string const & val);
+
+
 };

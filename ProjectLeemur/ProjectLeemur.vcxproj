@@ -140,7 +140,6 @@
     <ClInclude Include="ObjObject.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point.h" />
-    <ClInclude Include="ProceduralEntity.h" />
     <ClInclude Include="Quaternion.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Shader.h" />
@@ -168,11 +167,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
+    <ClCompile Include="MeshData.cpp" />
     <ClCompile Include="Mob.cpp" />
     <ClCompile Include="Mouse.cpp" />
     <ClCompile Include="ObjObject.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="ProceduralEntity.cpp" />
     <ClCompile Include="Quaternion.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Shader.cpp" />

@@ -2,20 +2,13 @@
 #include <fstream>
 #include <sstream>
 
-void ObjObject::onStart() {
-	Component::onStart(GL_STATIC_DRAW);
-}
 
-void ObjObject::onRender() {
-	Component::onRender();
-}
-
-void ObjObject::onUpdate() {
+ObjObject::ObjObject(GLint drawType) : Mesh(drawType) {
 
 }
 
 ObjObject& ObjObject::addIndex(unsigned int i) {
-	return (ObjObject&) Component::addIndex(i - 1);
+	return (ObjObject&) Mesh::addIndex(i - 1);
 }
 
 
@@ -42,7 +35,7 @@ std::vector<std::string> stringSplit(const std::string& input, const char delim 
 	return tokens;
 }
 
-ObjObject* load(const std::string & filepath) {
+ObjObject* ObjObject::load(const std::string & filepath) {
 	// Print name of the object being loaded:
 	using namespace glm;
 	using namespace std;
@@ -130,9 +123,6 @@ ObjObject* load(const std::string & filepath) {
 			v = toMin + ((v - min) / spanFrom) * spanTo;
 		}
 	}
-	// ObjObject successfully loaded. 
-	// Time to start its internals:
-	object->onStart();
 
 	return object;
 }

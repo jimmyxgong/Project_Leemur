@@ -7,6 +7,7 @@
 #include "Resources.h"
 #include "Camera.h"
 #include "Keyboard.h"
+#include "Environment.h"
 
 #define PARTS 1.2 // 3.2
 #define DIV 4.3	// 0.7
@@ -51,23 +52,24 @@ void Chunk::onCreate() {
 		}
 	}
 
+	// Testing values
 	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
 		this->changed = true;
-		_parts += shifted ? 1 : -1;
+		_parts += shifted ? -0.2 : 0.2;
 		print("parts");
 		print(_parts);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
 		this->changed = true;
-		_div += shifted ? 1 : -1;
+		_div += shifted ? -0.2 : 0.2;
 		print("div");
 		print(_div);
 	});
 	
 	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
 		changed = true;
-		_cutoff += shifted ? 1 : -1;
+		_cutoff += shifted ? -0.2 : 0.2;
 		print("cutoff");
 		print(_cutoff);
 	});
@@ -130,7 +132,7 @@ void Chunk::onStart() {
 	buildMeshData();
 
 	mesh.recalculateNormals();
-	mesh.onStart();
+	mesh.init();
 }
 
 void Chunk::onRender() {
@@ -138,7 +140,7 @@ void Chunk::onRender() {
 	Light::Directional.loadToShader();
 	Material::Gold.loadToShader();
 	loadToShader();
-	mesh.onRender();
+	mesh.render();
 }
 
 void Chunk::onUpdate() {
@@ -300,5 +302,8 @@ void Chunk::clear() {
 
 void Chunk::onDestroy() {
 	BaseEntity::onDestroy();
-	mesh.onDestroy();
+	mesh.destroy();
 }
+
+
+Chunk::Chunk(Environment * env) : environment(env) {}
