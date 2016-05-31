@@ -12,10 +12,11 @@
 template <class T>
 using Array = std::vector<T>;
 
-class Environment;
+class World;
 
 class Chunk : public BaseEntity {
 public:
+	static UniquePointer<Chunk> EMPTY;
 	Transform transform;
 
 private:
@@ -26,22 +27,25 @@ private:
 	Array<Array<Array<Cell>>> cells;
 	bool changed = false;
 
-	Environment * environment;
+	World * world;
 	Vector3f position;
 
 public: /* Lifecycle */
-	void onCreate() override;
 	void onStart() override;
 	void onRender() override;
 	void onUpdate() override;
 	void onDestroy() override;
 
+public: /* terrain generations */
+	void allowKeyBindings();
+	void resizeStructure();
 	void loadToShader();
 	void generateChunk();
 	void buildMeshData();
 	void renderMesh();
 	void printHeightMap();
 
+public: /* Info functions */
 	void setCell(int x, int y, int z, Cell const & cell);
 	Cell & removeCell(int x, int y, int z);
 
@@ -57,7 +61,5 @@ public: /* Lifecycle */
 
 	void clear();
 
-
-
-	Chunk(Environment * env = nullptr);
+	Chunk(World * world = nullptr);
 };

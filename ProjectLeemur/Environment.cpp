@@ -4,6 +4,7 @@
 #include "Centrifuge.h"
 #include "Light.h"
 #include "Chunk.h"
+#include "World.h"
 
 /* 
 	See the centrifuge for an example as to how to use
@@ -14,7 +15,7 @@ SharedPointer<Centrifuge> centrifuge;
 //Chunk chunk;
 
 // TODO LOGGER
-void print(const char * const & val) {
+void print(std::string const & val) {
 	std::cout << val << std::endl;
 }
 
@@ -23,12 +24,17 @@ void Environment::onCreate() {
 
 	//centrifuge = unique<Centrifuge>();
 	skybox = unique<Skybox>(window);
-	player = unique<Player>();
+	player = share<Player>();
 	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
+	UniquePointer<World> world = unique<World>();
+	world->setPlayer(player);
+
+
+	addEntity((UniquePointer<Entity>&) world);
 	//chunk.onCreate();
 	for (auto & entity : entities) {
 		entity->onCreate();
@@ -55,12 +61,17 @@ void Environment::onRender() {
 	player->onRender();
 	//chunk.onRender();
 
-
+	for (auto & entity : entities) {
+		entity->onRender();
+	}
 	//centrifuge->onRender();
 }
 
 void Environment::onUpdate() {
 	player->onUpdate();
+	for (auto & entity : entities) {
+		entity->onRender();
+	}
 	//chunk.onUpdate();
 	//centrifuge->onUpdate();
 }
@@ -77,21 +88,11 @@ void Environment::onDestroy() {
 
 	delete &pod;
 	delete &cyl;
+
+	for (auto & entity : entities) {
+		entity->onDestroy();
+	}
 }
-
-
-void Environment::buildWorld() {
-
-}
-
-void Environment::newChunk(int x, int y) {
-	std::string key = std::to_string(x);
-	key.append("|");
-	key.append(std::to_string(y));
-	chunks[key] = unique<Chunk>(this);
-}
-
-
 
 Environment& Environment::addEntity(UniquePointer<Entity> & entity) {
 	entities.push_back(UniquePointer<Entity>(std::move(entity)));

@@ -91,7 +91,7 @@ void Window::onError(int error, const char* description) {
 
 Window & Window::setPerspective(Matrix4f const & val) {
 	P = val;
-	return std::move(*this);
+	return (*this);
 }
 
 Matrix4f Window::getPerspective() const {
@@ -100,7 +100,7 @@ Matrix4f Window::getPerspective() const {
 
 Window & Window::setView(Matrix4f const & val) {
 	V = val;
-	return std::move(*this);
+	return (*this);
 }
 
 Matrix4f Window::getView() const {
@@ -114,12 +114,12 @@ Matrix4f Window::VP() const {
 
 Window & Window::setActiveCamera(Camera * cam) {
 	activeCamera = cam;
-	return std::move(*this);
+	return (*this);
 }
 
 Window & Window::setSecondActiveCamera(Camera * cam) {
 	secondActiveCamera = cam;
-	return std::move(*this);
+	return (*this);
 }
 
 Camera & Window::getActiveCamera() {
@@ -147,13 +147,25 @@ int Window::height() const {
 
 
 GLFWwindow * Window::newGlfwWindow() {
+#ifndef _WIN32 
+	glewExperimental = GL_TRUE;
+#endif
+
 	if (!glfwInit()) {
 		fprintf(stderr, "Failed to initialize GLFW\n");
 		return NULL;
 	}
 
+#ifndef _WIN32 
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+
+#endif
 
 	glfwWindowHint(GLFW_SAMPLES, 4);				// 4x antialiasing
+
 	GLFWwindow* window = glfwCreateWindow(settings.width,
 		settings.height,
 		settings.title.c_str(),
@@ -203,6 +215,7 @@ void setupOpenGLsettings() {
 	// Enable backface culling for skybox
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
+
 }
 
 
@@ -235,8 +248,8 @@ Window & Window::setFar(float far) {
 
 Window & Window::start() {
 	focusedWindow = this;
-	glfwWindow = newGlfwWindow();
 
+	glfwWindow = newGlfwWindow();
 	glfwSetErrorCallback(onError);
 	glfwSetWindowSizeCallback(glfwWindow, onResize);
 

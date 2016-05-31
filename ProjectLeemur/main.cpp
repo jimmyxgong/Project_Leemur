@@ -11,6 +11,7 @@
 #define FPS 60.0f
 
 int main(void) {
+
 	Window & window =
 		Window::of(TITLE)
 			.setSize(WIDTH, HEIGHT)
@@ -18,10 +19,10 @@ int main(void) {
 			.setNear(NEAR)
 			.setFar(FAR)
 			.start();
-		
 	Window::PrintVersion();
 	GLFWwindow * glWindow = window.getGlfwWindow();
 	Time timer(FPS);
+
 
 	while (!glfwWindowShouldClose(glWindow)) {
 		if (timer.ready()) {

@@ -1,7 +1,7 @@
 #include "Component.h"
 
 SharedPointer<Component> Component::EMPTY = share<Component>();
-
+/* don't use the lifecycles. */
 void Component::onCreate() {}
 void Component::onStart() {}
 void Component::onRender() {}

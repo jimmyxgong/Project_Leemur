@@ -11,9 +11,8 @@ class Environment : public BaseEntity {
 private:
 	Window * window;
 	UniquePointer<Skybox> skybox;
-	UniquePointer<Player> player;
+	SharedPointer<Player> player;
 
-	std::unordered_map<std::string, UniquePointer<Chunk>> chunks;
 
 	/* Root of the game's scene graph */
 	Transform world;
@@ -35,12 +34,17 @@ public:
 	void onDestroy() override;
 
 
-	void buildWorld();
-	void newChunk(int x, int y);
 
 
 
 	Environment& addEntity(UniquePointer<Entity> & entity);
+
+	Chunk & getChunk(int x, int z);
+	Vector3f getChunk(Transform const & transform);
+	Chunk * getChunkRelativeToPlayer();
+	Vector3f getPlayerPosInChunkMap();
+	
+
 
 	static UniquePointer<Environment> create(Window * ref);
 };

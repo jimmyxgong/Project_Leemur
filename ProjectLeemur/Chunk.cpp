@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Keyboard.h"
 #include "Environment.h"
+#include "World.h"
 
 #define PARTS 1.2 // 3.2
 #define DIV 4.3	// 0.7
@@ -31,15 +32,102 @@ Terrain terrain = {
 
 Keyboard::Layout bindings;
 
-void print(std::string const & val) {
-	std::cout << val << std::endl;
-}
+
+UniquePointer<Chunk> Chunk::EMPTY = unique<Chunk>();
+
 
 void print(double val) {
-	print(std::to_string(val));
+	std::cout << (std::to_string(val)) << std::endl;
 }
 
-void Chunk::onCreate() {
+void Chunk::onStart() {
+	resizeStructure();
+	//testBindings();
+
+	generateChunk();
+	//printHeightMap();
+	buildMeshData();
+
+	mesh.recalculateNormals();
+	mesh.init();
+}
+
+void Chunk::onRender() {
+	Resources::getShader(SHADER_LIGHT).use();
+	Light::Directional.loadToShader();
+	Material::Gold.loadToShader();
+	loadToShader();
+	mesh.render();
+}
+
+void Chunk::onUpdate() {
+	if (changed) {
+		printf("Updating");
+		generateChunk();
+		//printHeightMap();
+		renderMesh();
+		changed = false;
+	}
+}
+
+
+void Chunk::allowKeyBindings() {
+	// Testing values
+	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
+		this->changed = true;
+		_parts += shifted ? -0.2 : 0.2;
+		printf("parts");
+		print(_parts);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
+		this->changed = true;
+		_div += shifted ? -0.2 : 0.2;
+		printf("div");
+		print(_div);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
+		changed = true;
+		_cutoff += shifted ? -0.2 : 0.2;
+		printf("cutoff");
+		print(_cutoff);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_J, [this](bool shifted) {
+		changed = true;
+		terrain.persistence += shifted ? -0.2 : 0.2;
+		printf("persist");
+		print(terrain.persistence);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
+		changed = true;
+		terrain.frequency += shifted ? -0.2 : 0.2;
+
+		printf("freq");
+		print(terrain.frequency);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_L, [this](bool shifted) {
+		changed = true;
+		terrain.amplitude += shifted ? -0.2 : 0.2;
+
+		printf("amp");
+		print(terrain.amplitude);
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_H, [this](bool shifted) {
+		changed = true;
+		terrain.octaves += shifted ? -1 : 1;
+		printf("Oct");
+		print(terrain.octaves);
+	});
+
+	Keyboard::addLayout(&bindings);
+}
+
+void Chunk::resizeStructure() {
 	cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
 	interpolatedHeightMap.resize(CHUNK_SIZE);
@@ -51,60 +139,6 @@ void Chunk::onCreate() {
 			cells[i][j].resize(CHUNK_SIZE);
 		}
 	}
-
-	// Testing values
-	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
-		this->changed = true;
-		_parts += shifted ? -0.2 : 0.2;
-		print("parts");
-		print(_parts);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
-		this->changed = true;
-		_div += shifted ? -0.2 : 0.2;
-		print("div");
-		print(_div);
-	});
-	
-	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
-		changed = true;
-		_cutoff += shifted ? -0.2 : 0.2;
-		print("cutoff");
-		print(_cutoff);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_J, [this](bool shifted) {
-		changed = true;
-		terrain.persistence += shifted ? -0.2 : 0.2;
-		print("persist");
-		print(terrain.persistence);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
-		changed = true;
-		terrain.frequency += shifted ? -0.2 : 0.2;
-
-		print("freq");
-		print(terrain.frequency);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_L, [this](bool shifted) {
-		changed = true;
-		terrain.amplitude += shifted ? -0.2 : 0.2;
-
-		print("amp");
-		print(terrain.amplitude);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_H, [this](bool shifted) {
-		changed = true;
-		terrain.octaves += shifted ? -1 : 1;
-		print("Oct");
-		print(terrain.octaves);
-	});
-
-	Keyboard::addLayout(&bindings);
 }
 
 void Chunk::loadToShader() {
@@ -125,50 +159,22 @@ void Chunk::loadToShader() {
 	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
 
-
-void Chunk::onStart() {
-	generateChunk();
-	printHeightMap();
-	buildMeshData();
-
-	mesh.recalculateNormals();
-	mesh.init();
-}
-
-void Chunk::onRender() {
-	Resources::getShader(SHADER_LIGHT).use();
-	Light::Directional.loadToShader();
-	Material::Gold.loadToShader();
-	loadToShader();
-	mesh.render();
-}
-
-void Chunk::onUpdate() {
-	if (changed) {
-		print("Updating");
-		generateChunk();
-		printHeightMap();
-		renderMesh();
-		changed = false;
-	}
-}
-
 void Chunk::generateChunk() {
 	clear();
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			for (int k = 0; k < CHUNK_SIZE; k++) {
 
-				double x = i + round(transform.getPosition().x);
+				Vector3f pos = transform.getPosition();
+				double x = i + round(pos.x);
 				double y = j;
-				double z = k + round(transform.getPosition().z);
+				double z = k + round(pos.z);
 				//x /= 10.0;
 				//y /= 10.0;
 				//z /= 10.0;
 
 
-				double height;
-					height = terrain.perlinNoise(x, j, z, _parts, _div);
+				double height = terrain.perlinNoise(x, y, z, _parts, _div);
 					//height = terrain.height(x, z);
 				if (j > 0 && height > _cutoff) {
 					cells[i][j][k] = Cell::Air;
@@ -185,18 +191,23 @@ void Chunk::generateChunk() {
 }
 
 void Chunk::buildMeshData() {
+
+	const Vector3f pos = transform.getPosition();
+	const double d = HEIGHT_UNIT;
+
 	for (int i = 0; i < CHUNK_SIZE - 1; i++) {
 		for (int k = 0; k < CHUNK_SIZE - 1; k++) {
 			int j = heightMap[i][k];
 			Vector4f min = getLeast(i, j, k);
 
 			mesh.addTriangles(generateTriangles(min.w));
+			double x = i + pos.x;
+			double z = k + pos.z;
 
-			const double d = HEIGHT_UNIT;
-			mesh.addVertex(i, j * d, k);
-			mesh.addVertex(i + 1, heightMap[i + 1][k] * d, k);
-			mesh.addVertex(i, heightMap[i][k + 1] * d, k + 1);
-			mesh.addVertex(i + 1, heightMap[i + 1][k + 1] * d, k + 1);
+			mesh.addVertex(x, j * d, z);
+			mesh.addVertex(x + 1, heightMap[i + 1][k] * d, z);
+			mesh.addVertex(x, heightMap[i][k + 1] * d, z + 1);
+			mesh.addVertex(x + 1, heightMap[i + 1][k + 1] * d, z + 1);
 		}
 	}
 }
@@ -306,4 +317,4 @@ void Chunk::onDestroy() {
 }
 
 
-Chunk::Chunk(Environment * env) : environment(env) {}
+Chunk::Chunk(World * _world) : world(_world) {}

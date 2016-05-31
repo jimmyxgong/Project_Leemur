@@ -152,6 +152,7 @@
     <ClInclude Include="TransformEntity.h" />
     <ClInclude Include="TransparentCell.h" />
     <ClInclude Include="Window.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BaseEntity.cpp" />
@@ -183,6 +184,7 @@
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransparentCell.cpp" />
     <ClCompile Include="Window.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="down-under_bk.tga" />
