@@ -190,11 +190,11 @@ void Chunk::buildMeshData() {
 
 			mesh.addTriangles(generateTriangles(min.w));
 
-			const int d = 1;
-			mesh.addVertex(i, j / d, k);
-			mesh.addVertex(i + 1, heightMap[i + 1][k] / d, k);
-			mesh.addVertex(i, heightMap[i][k + 1] / d, k + 1);
-			mesh.addVertex(i + 1, heightMap[i + 1][k + 1] / d, k + 1);
+			const double d = HEIGHT_UNIT;
+			mesh.addVertex(i, j * d, k);
+			mesh.addVertex(i + 1, heightMap[i + 1][k] * d, k);
+			mesh.addVertex(i, heightMap[i][k + 1] * d, k + 1);
+			mesh.addVertex(i + 1, heightMap[i + 1][k + 1] * d, k + 1);
 		}
 	}
 }

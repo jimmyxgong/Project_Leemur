@@ -7,7 +7,7 @@
 
 #define CHUNK_SIZE 8
 #define CHUNK_HEIGHT 24
-#define HEIGHT_UNIT 0.2f
+#define HEIGHT_UNIT 0.2
 
 template <class T>
 using Array = std::vector<T>;
