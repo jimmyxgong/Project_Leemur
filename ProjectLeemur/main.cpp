@@ -1,6 +1,5 @@
 #include "Window.h"
 #include "Time.h"
-#include "vld.h"
 
 #define WIDTH 2160
 #define HEIGHT (WIDTH / 16 * 9)

@@ -49,7 +49,8 @@ Transform& Transform::scaleLocal(Vector3f const & value) {
 }
 
 Transform& Transform::rotateLocal(float x, float y, float z, float deg) {
-	rotateLocal(Quaternion::FromAxis(x, y, z, deg));
+    Quaternion q = Quaternion::FromAxis(x, y, z, deg);
+    Transform::rotateLocal(q);
 	return *this;
 }
 
