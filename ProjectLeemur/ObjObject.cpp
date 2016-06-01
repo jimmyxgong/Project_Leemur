@@ -67,31 +67,55 @@ ObjObject* ObjObject::load(const std::string & filepath) {
 			if (line[1] == ' ') {
 				float r = -1, g, b;
 				// read in the line wtih a standard format:
-				sscanf(
-					line.substr(2, line.size() - 2).c_str(),
+#ifdef _WIN32
+				sscanf_s(line.substr(2, line.size() - 2).c_str(),
 					"%f %f %f %f %f %f",
 					&vx, &vy, &vz, &r, &g, &b
 				);
+#else
+				sscanf(line.substr(2, line.size() - 2).c_str(),
+					"%f %f %f %f %f %f",
+					&vx, &vy, &vz, &r, &g, &b
+				);
+#endif
+					
 
 				object->addVertex(vx, vy, vz);
 				continue;
 			}
 
 			// Else: start parsing vector normals:
+#ifdef _WIN32
+			sscanf_s(
+				line.substr(3, line.size() - 3).c_str(),
+				"%f %f %f",
+				&vx, &vy, &vz
+			);
+#else
 			sscanf(
 				line.substr(3, line.size() - 3).c_str(),
 				"%f %f %f",
 				&vx, &vy, &vz
 			);
+#endif
+
 			object->addNormal(vx, vy, vz);
 		}
 		else if (line[0] == 'f') {
 			unsigned int vx, vy, vz, vnx, vny, vnz;
+#ifdef _WIN32
+			sscanf_s(
+				line.substr(2, line.size() - 2).c_str(),
+				"%d//%d %d//%d %d//%d",
+				&vx, &vnx, &vy, &vny, &vz, &vnz
+			);
+#else
 			sscanf(
 				line.substr(2, line.size() - 2).c_str(),
 				"%d//%d %d//%d %d//%d",
 				&vx, &vnx, &vy, &vny, &vz, &vnz
 			);
+#endif
 
 			object->addFace(vx, vy, vz);
 		}
