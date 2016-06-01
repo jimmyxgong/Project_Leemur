@@ -43,8 +43,8 @@ void GameObject::onUpdate() {
 
 template <class T>
 T & GameObject::getComponent() {
-	const std::type_info & id = typeid(T);
-	auto & val = components.find(id);
+    const std::type_info & id = typeid(T);
+	const auto & val = components.find(id);
 	if (val != components.end()) {
 		return (T &) *val->second;
 	}

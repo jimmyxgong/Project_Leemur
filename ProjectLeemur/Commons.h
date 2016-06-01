@@ -77,3 +77,5 @@ auto unique(Args&&... args) {
 
 template <typename T>
 using WeakPointer = std::weak_ptr<T>;
+
+#endif

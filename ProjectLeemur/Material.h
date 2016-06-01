@@ -1,8 +1,12 @@
 #pragma once
 
+#ifdef _WIN32
 #include <glm\vec4.hpp>
 #include <glm\vec3.hpp>
-
+#else
+#include <glm/vec4.hpp>
+#include <glm/vec3.hpp>
+#endif
 
 #define AIR 0
 #define GRASS 1
