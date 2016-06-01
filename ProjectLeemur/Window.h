@@ -57,7 +57,7 @@ public:
 	
 
 private:
-	GLFWwindow * Window::newGlfwWindow();
+    GLFWwindow * newGlfwWindow();
 
 public:
 

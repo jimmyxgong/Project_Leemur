@@ -101,7 +101,8 @@ GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_pat
 
 	// Read the Vertex Shader code from the file
 	string VertexShaderCode = "";
-	if (!readFile(string(vertex_file_path), VertexShaderCode)) {
+    string path = string(vertex_file_path);
+	if (!readFile(path, VertexShaderCode)) {
 		printf(
 			"Impossible to open %s. Check to make sure the file exists and is in the right directory !\n", 
 			vertex_file_path
@@ -119,7 +120,8 @@ GLuint LoadShaders(const char * vertex_file_path, const char * fragment_file_pat
 
 	// Read the Fragment Shader code from the file
 	string FragmentShaderCode = "";
-	readFile(string(fragment_file_path), FragmentShaderCode);
+    path = string(fragment_file_path);
+	readFile(path, FragmentShaderCode);
 
 	GLint Result = GL_FALSE;
 	int InfoLogLength;
