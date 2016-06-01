@@ -224,6 +224,3 @@ void World::setPlayer(WeakPointer<Player> player) {
 	this->player = player;
 }
 
-World::~World() {
-	
-}

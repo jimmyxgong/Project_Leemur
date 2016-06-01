@@ -49,4 +49,5 @@ public:
 	virtual void loadToShader();
 
 	GameObject(Component * component);
+	~GameObject();
 };

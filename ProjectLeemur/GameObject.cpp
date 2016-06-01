@@ -32,9 +32,12 @@ void GameObject::onRender() {
 	//getComponent<Mesh>().render();
 	//getComponent<ObjObject>();
 	//if (m != *Component::EMPTY)
-	if (component->attachedShader) 
-		loadToShader();
-	((Mesh*)component)->render();
+	if (component) {
+		if (component->attachedShader)
+			loadToShader();
+		((Mesh*)component)->render();
+	}
+	
 }
 
 void GameObject::onUpdate() {
@@ -43,8 +46,8 @@ void GameObject::onUpdate() {
 
 template <class T>
 T & GameObject::getComponent() {
-	const std::type_info & id = typeid(T);
-	auto & val = components.find(id);
+    const std::type_info & id = typeid(T);
+	const auto & val = components.find(id);
 	if (val != components.end()) {
 		return (T &) *val->second;
 	}
@@ -83,3 +86,5 @@ GameObject::GameObject(Component * component)
 {
 	onCreate();
 }
+
+GameObject::~GameObject() {}

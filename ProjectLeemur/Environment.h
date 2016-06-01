@@ -15,7 +15,7 @@ private:
 
 
 	/* Root of the game's scene graph */
-	Transform world;
+	Transform transform;
 
 	/* 
 		Owned entities by the environment 
@@ -23,7 +23,7 @@ private:
 		entities, but for now we will have entities here 
 		if we end up using it for some specifc reason.
 	*/
-	std::vector<UniquePointer<Entity>> entities;
+	std::vector<SharedPointer<Entity>> entities;
 	
 
 public:
@@ -35,6 +35,6 @@ public:
 
 
 
-	void addEntity(UniquePointer<Entity> & entity);
+	void addEntity(SharedPointer<Entity> & entity);
 	static UniquePointer<Environment> create(Window * ref);
 };

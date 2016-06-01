@@ -90,7 +90,9 @@ Transform& Transform::rotateLocalZ(float deg) {
 }
 
 Transform& Transform::rotateLocal(float x, float y, float z, float deg) {
-	return rotateLocal(Quaternion::FromAxis(x, y, z, deg));
+    Quaternion q = Quaternion::FromAxis(x, y, z, deg);
+    Transform::rotateLocal(q);
+	return *this;
 }
 
 Transform& Transform::rotateLocal(Quaternion & other) {

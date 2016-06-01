@@ -24,31 +24,30 @@ void print(std::string const & val) {
 void Environment::onCreate() {
 	print("Creating Environment...");
 
+	//world = unique<World>();
+
 	centrifuge = unique<Centrifuge>();
 	skybox = unique<Skybox>(window);
 	player = share<Player>();
 	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
-	//GameObject obj = GameObject()
-	pod = unique<GameObject>((Component*) &Resources::getEntity(POD_OBJ));
-	//GameObject obj
+
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	//UniquePointer<World> world = unique<World>();
-	//world->setPlayer(player);
+	SharedPointer<World> world = unique<World>();
+	world->setPlayer(player);
+	//addEntity((SharedPointer<Entity> &) world);
 
-	// Skybox needs to be added first.
-	//addEntity((UniquePointer<Entity> &) skybox);
-	//addEntity((UniquePointer<Entity> &) world);
-	//addEntity((UniquePointer<Entity> &) pod);
+	// Create pod and add a reference to what it should render.
+	SharedPointer<GameObject> pod =
+		share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
+	addEntity((SharedPointer<Entity> &) pod);
 
 	for (auto & entity : entities) {
 		entity->onCreate();
 	}
-	//pod->onCreate();
-	centrifuge->onCreate();
 }
 
 void Environment::onStart() {
@@ -57,30 +56,28 @@ void Environment::onStart() {
 	for (auto & entity : entities) {
 		entity->onStart();
 	}
-	centrifuge->onStart();
-	//pod->onStart();
 
 	player->onStart();
-	//world.addChild(player->transform);
 }
 
 void Environment::onRender() {
 	skybox->onRender();
-	for (auto & entity : entities) {
-		entity->onRender();
-	}
-	player->onRender();
-	//pod->onRender();
-	centrifuge->onRender();
-}
 
-void Environment::onUpdate() {
+	// call lighting:
+	Light::Directional.loadToShader();
+
 	
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
+	player->onRender();
+}
+
+void Environment::onUpdate() {
+	for (auto & entity : entities) {
+		entity->onRender();
+	}
 	player->onUpdate();
-	centrifuge->onUpdate();
 }
 
 void Environment::onDestroy() {
@@ -92,17 +89,18 @@ void Environment::onDestroy() {
 	pod.destroy();
 	cyl.destroy();
 
-	delete &pod;
 	delete &cyl;
+	delete &pod;
 
 	for (int i = 0; i < entities.size(); i++) {
 		std::cout << "deleteing" << std::endl;
 		entities[i]->onDestroy();
+		entities[i] = nullptr;
 	}
 	entities.clear();
 }
 
-void Environment::addEntity(UniquePointer<Entity> & entity) {
+void Environment::addEntity(SharedPointer<Entity> & entity) {
 	entities.push_back(std::move(entity));
 }
 

@@ -9,7 +9,7 @@ Resources & Resources::getInstance() {
 
 void Resources::init() {
 	Light::init();
-
+#ifdef _WIN32
 	// Create Pod object and add it to resources.
 	Resources::newObjEntity(POD_OBJ, "pod.obj")
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
@@ -19,8 +19,17 @@ void Resources::init() {
 	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
 		.attachShader(&Resources::getShader(SHADER_LIGHT))
 		.setMaterial(&Material::Gold);
-
-
+#else
+    // Create Pod object and add it to resources.
+    Resources::newObjEntity(POD_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/pod.obj")
+    .attachShader(&Resources::getShader(SHADER_LIGHT))
+    .setMaterial(&Material::RedPlastic);
+    
+    // Create Cylinder object and add it to resources.
+    Resources::newObjEntity(CYL_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/cylinder.obj")
+    .attachShader(&Resources::getShader(SHADER_LIGHT))
+    .setMaterial(&Material::Gold);
+#endif
 
 
 

@@ -53,5 +53,5 @@ public:
 
 
 	void setPlayer(WeakPointer<Player> player);
-	~World();
+	~World() = default;
 };

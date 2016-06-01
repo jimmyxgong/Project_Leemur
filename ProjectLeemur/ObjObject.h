@@ -10,6 +10,5 @@ private:
 public:
 
 	ObjObject& addIndex(unsigned int) override;
-	//ObjObject& addFace(unsigned int, unsigned int, unsigned int) override;
 	static ObjObject * create(std::string const & val);
 };

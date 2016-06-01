@@ -147,11 +147,10 @@ int Window::height() const {
 
 
 GLFWwindow * Window::newGlfwWindow() {
-#ifndef _WIN32 
-	glewExperimental = GL_TRUE;
+#ifndef _WIN32
+    glewExperimental = GL_TRUE;
 #endif
-
-	if (!glfwInit()) {
+    if (!glfwInit()) {
 		fprintf(stderr, "Failed to initialize GLFW\n");
 		return NULL;
 	}
@@ -165,7 +164,6 @@ GLFWwindow * Window::newGlfwWindow() {
 #endif
 
 	glfwWindowHint(GLFW_SAMPLES, 4);				// 4x antialiasing
-
 	GLFWwindow* window = glfwCreateWindow(settings.width,
 		settings.height,
 		settings.title.c_str(),
