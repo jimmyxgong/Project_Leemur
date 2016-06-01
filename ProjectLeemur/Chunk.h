@@ -65,7 +65,7 @@ public: /* Info functions */
 	Vector4f getLeast(int i, int j, int k);
 	
 	Chunk & getNeighbor(int x, int z);
-	void addMeshOutOfBounds(int x, int z, int fi, int fk, int i, int k);
+	void addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k);
 
 	void clear();
 

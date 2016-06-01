@@ -26,7 +26,7 @@ double _cutoff = 9.8;
 
 // persist 7.2
 Terrain terrain = {
-	0.25, 1, 1, 6, 1		//6.7, 0.6, 1.0, 8, 1 
+	0.25, 1, 1, 6, 1	//6.7, 0.6, 1.0, 8, 1 
 };
 // parts 10.2 div 20.7 cutoff 9.8
 
@@ -195,7 +195,7 @@ void Chunk::generateChunk() {
 
 // When there are two chunks: we need to interwove their vertices together
 // while also maintaining their out of bounds checking.
-void Chunk::addMeshOutOfBounds(int x, int z, int fi, int fk, int i, int k) {
+void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k) {
 	const double d = HEIGHT_UNIT;
 
 	int oi = 0;
@@ -286,8 +286,10 @@ void Chunk::buildMeshData() {
 
 
 			int j = heightMap[i][k];
-			int x = i + pos.x;
-			int z = k + pos.z;
+			double x = i + pos.x;
+			double z = k + pos.z;
+			double zz = z + (i % 2 == 0 ? 0 : 0.5);
+			double val = i % 2 == 0 ? 0.5 : 0;
 			
 			/* Do not include vertices if chunk does not exist*/
 
@@ -296,10 +298,10 @@ void Chunk::buildMeshData() {
 			//Vector4f min = getLeast(i, j, k);
 			mesh.addTriangles(generateTriangles(0));
 
-			mesh.addVertex(x, j * d, z);
-			addMeshOutOfBounds(x, z, i, k, 1, 0);
-			addMeshOutOfBounds(x, z, i, k, 0, 1);
-			addMeshOutOfBounds(x, z, i, k, 1, 1);
+			mesh.addVertex(x, j * d, zz);
+			addMeshOutOfBounds(x, z + val, i, k, 1, 0);
+			addMeshOutOfBounds(x, zz, i, k, 0, 1);
+			addMeshOutOfBounds(x, z + val, i, k, 1, 1);
 
 			//hMap = addMeshOutOfBounds(&heightMap, i, k, 1, 0);
 			//mesh.addVertex(x + 1, (*hMap)[i + 1][k] * d, z);
