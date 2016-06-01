@@ -46,11 +46,14 @@ public: /* terrain generations */
 	void printHeightMap();
 
 public: /* Info functions */
+	bool isOutOfBounds(int x, int y, int z) const;
+	bool isCell(int x, int y, int z) const;
+	
+	
+	
 	void setCell(int x, int y, int z, Cell const & cell);
 	Cell & removeCell(int x, int y, int z);
 
-	bool isOutOfBounds(int x, int y, int z) const;
-	bool isCell(int x, int y, int z) const;
 
 	Cell& getCell(int x, int y, int z);
 	Vector4f getLeast(int i, int j, int k);

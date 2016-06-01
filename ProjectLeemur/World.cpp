@@ -88,6 +88,13 @@ void World::updateChunks() {
 	}
 }
 
+void World::setNewChunk(int x, int z) {
+	std::string key = toKey(x, z);
+	if (containsKey(key)) {
+		chunks[key] = nullptr;
+	}
+	addNewChunk(x, z);
+}
 
 void World::addNewChunk(int x, int z) {
 	Vector3f position(x << 3, 0, z << 3);
@@ -96,6 +103,8 @@ void World::addNewChunk(int x, int z) {
 
 void World::addNewChunk(Vector3f const & chunkPos, int x, int y) {
 	std::string key = toKey(x, y);
+	if (containsKey(key)) return;
+
 	chunks[key] = unique<Chunk>(this);
 	Chunk & chunk = getChunk(key);
 	chunk.transform.setPosition(chunkPos);
@@ -109,12 +118,20 @@ std::string World::toKey(int x, int z) {
 	return key;
 }
 
+bool World::containsKey(int x, int z) {
+	return containsKey(toKey(x, z));
+}
+
+bool World::containsKey(std::string const & key) {
+	return chunks.find(key) != chunks.end();
+}
+
 Chunk & World::getChunk(int x, int z) {
 	return getChunk(toKey(x, z));
 }
 
 Chunk & World::getChunk(std::string const & key) {
-	if (chunks.find(key) == chunks.end())
+	if (!containsKey(key))
 		return *Chunk::EMPTY;
 	return *chunks[key];
 }

@@ -24,9 +24,15 @@ public:
 	void renderChunks();
 	void updateChunks();
 	
+	void setNewChunk(int x, int z);
+	//void setNewChunk()
 	void addNewChunk(int x, int z);
 	void addNewChunk(Vector3f const & chunkPos, int x, int z);
 	std::string toKey(int x, int z);
+
+	bool containsKey(int x, int z);
+	bool containsKey(std::string const & key);
+
 	Chunk & getChunk(int x, int z);
 	Chunk & getChunk(std::string const & key);
 	Vector3f getChunkPosition(Transform const & transform);
