@@ -2,7 +2,18 @@
 #ifndef COMMONS_H
 #define COMMONS_H
 
+#ifdef _WIN32
+#include <GL\glew.h>
+#include <GLFW\glfw3.h>
+#include <glm\glm.hpp>
 
+#include <glm\vec2.hpp>
+#include <glm\vec3.hpp>
+#include <glm\vec4.hpp>
+#include <glm\matrix.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtx\string_cast.hpp>
+#else
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -13,6 +24,7 @@
 #include <glm/matrix.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/string_cast.hpp>
+#endif
 
 #include <algorithm>
 #include <iostream>

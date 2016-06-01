@@ -20,7 +20,4 @@ public:
 	GLuint getTexture();
 
 	Skybox(Window * ref);
-    
-    GLuint loadCubemap(std::vector<const GLchar*> faces);
-    unsigned char* loadPPM(const char* filename, int& width, int& height);
 };

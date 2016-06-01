@@ -4,7 +4,12 @@
 #include "Transform.h"
 #include "Window.h"
 
-#include <SOIL/SOIL.h>
+#ifdef _WIN32
+#include <SOIL.h>
+#else
+GLuint loadCubemap(std::vector<const GLchar*> faces);
+unsigned char* loadPPM(const char* filename, int& width, int& height);
+#endif
 
 GLuint skyboxTexture;
 
@@ -54,7 +59,11 @@ const static GLfloat skyboxVertices[] = {
 };
 
 void Skybox::onStart() {
+#ifdef _WIN32
+    shader = new Shader(LoadShaders("skybox.vert.shader", "skybox.frag.shader"));
+#else
 	shader = new Shader(LoadShaders("/Users/sebastian/Google\ Drive/College/Year\ 3/Spring\ 16/ProjectLeemur/ProjectLeemur/skybox.vert.shader", "/Users/sebastian/Google\ Drive/College/Year\ 3/Spring\ 16/ProjectLeemur/ProjectLeemur/skybox.frag.shader"));
+#endif
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
 	glBindVertexArray(VAO);
@@ -64,19 +73,20 @@ void Skybox::onStart() {
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
 	glBindVertexArray(0);
 
-//	skyboxTexture =
-//		SOIL_load_OGL_cubemap(
-//			"down-under_rt.tga",
-//			"down-under_lf.tga",
-//			"down-under_up.tga",
-//			"down-under_dn.tga",
-//			"down-under_bk.tga",
-//			"down-under_ft.tga",
-//			SOIL_LOAD_RGB,
-//			SOIL_CREATE_NEW_ID,
-//			SOIL_FLAG_MIPMAPS
-//		);
-    
+#ifdef _WIN32
+	skyboxTexture =
+		SOIL_load_OGL_cubemap(
+			"down-under_rt.tga",
+			"down-under_lf.tga",
+			"down-under_up.tga",
+			"down-under_dn.tga",
+			"down-under_bk.tga",
+			"down-under_ft.tga",
+			SOIL_LOAD_RGB,
+			SOIL_CREATE_NEW_ID,
+			SOIL_FLAG_MIPMAPS
+		);
+#else
     // Cubemap (Skybox)
     std::vector<const GLchar*> faces;
     faces.push_back("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/down-under_rt.ppm");
@@ -86,6 +96,7 @@ void Skybox::onStart() {
     faces.push_back("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/down-under_bk.ppm");
     faces.push_back("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/down-under_ft.ppm");
     skyboxTexture = loadCubemap(faces);
+#endif
 }
 
 void Skybox::onRender() {
@@ -132,8 +143,8 @@ Skybox::Skybox(Window * ref) {
 	this->window = ref;
 }
 
-
-GLuint Skybox::loadCubemap(std::vector<const GLchar*> faces)
+#ifndef _WIN32
+GLuint loadCubemap(std::vector<const GLchar*> faces)
 {
     GLuint textureID;
     glGenTextures(1, &textureID);
@@ -165,9 +176,9 @@ GLuint Skybox::loadCubemap(std::vector<const GLchar*> faces)
     return textureID;
 }
 
-unsigned char* Skybox::loadPPM(const char* filename, int& width, int& height)
+unsigned char* loadPPM(const char* filename, int& width, int& height)
 {
-//    std::cout << "Loading image : " << filename << std::endl;
+    //    std::cout << "Loading image : " << filename << std::endl;
     
     const int BUFSIZE = 128;
     FILE* fp;
@@ -215,6 +226,7 @@ unsigned char* Skybox::loadPPM(const char* filename, int& width, int& height)
         height = 0;
         return NULL;
     }
-//    std::cout << "w: " << width << " h: " << height << std::endl;
+    //    std::cout << "w: " << width << " h: " << height << std::endl;
     return rawData;
 }
+#endif
