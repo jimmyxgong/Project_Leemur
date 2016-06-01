@@ -193,40 +193,127 @@ void Chunk::generateChunk() {
 	}
 }
 
+// When there are two chunks: we need to interwove their vertices together
+// while also maintaining their out of bounds checking.
+void Chunk::addMeshOutOfBounds(int x, int z, int fi, int fk, int i, int k) {
+	const double d = HEIGHT_UNIT;
+
+	int oi = 0;
+	int ok = 0;
+	int ii = 0;
+	int kk = 0;
+	bool outOfBounds = false;
+
+	// out of bounds in x coordinate
+	if (isOutOfBounds(fi + i, 0, fk)) {
+		outOfBounds = true;
+		kk = fk + k;
+		oi = 1;
+	}
+
+	// out of bounds in z coordinate
+	if (isOutOfBounds(fi, 0, fk + k)) {
+		ii = fi + i;
+		ok = 1;
+		if (outOfBounds) {
+			ii = 0;
+			kk = 0;
+		}
+
+		outOfBounds = true;
+	}
+
+	if (outOfBounds) {
+		// Get neighboring chunk
+		
+		std::string key = world->toKey(mapPosition.x + oi, mapPosition.z + ok);
+		Chunk const & chunk = world->getChunk(key);
+		if (chunk.isInvalid()) {
+			printf("INVALID chunk found in out of bounds\n");
+			printf("at %d, %d", i, k);
+			return;
+		}
+		Array<Array<int>> const & map = world->getChunk(key).getHeightMap();
+		mesh.addVertex(x + i, map[ii][kk] * d, z + k);
+		return;
+	}
+
+	mesh.addVertex(x + i, heightMap[fi + i][fk + k] * d, z + k);
+}
+
 void Chunk::buildMeshData() {
 
 	const Vector3f pos = transform.getPosition();
 	const double d = HEIGHT_UNIT;
 
-	std::vector<std::vector<int>> hMap = heightMap;
+	bool key10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
+	bool key01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
+	bool key11 = !world->containsKey(mapPosition.x + 1, mapPosition.z + 1);
+
+	// A lot of Debugging:
+	//std::string key = world->toKey(mapPosition.x + 1, mapPosition.z);
+	//if (world->getChunk(key).isInvalid()) {
+	//	printf("INVALID chunk found in out of bounds\n");
+	//}
+
+	//key = world->toKey(mapPosition.x, mapPosition.z + 1);
+	//if (world->getChunk(key).isInvalid()) {
+	//	printf("INVALID chunk found in out of bounds\n");
+	//}
+
+	//key = world->toKey(mapPosition.x + 1, mapPosition.z + 1);
+	//if (world->getChunk(key).isInvalid()) {
+	//	printf("INVALID chunk found in out of bounds\n");
+	//}
+
+	//std::string log = key10 ? "\ntrue," : "\nfalse,";
+	//log.append(key01 ? "true," : "false,");
+	//log.append(key11 ? "true," : "false:  ");
+	//log.append(to_string(mapPosition));
+	//printf(log.c_str());
+
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
+			if (i == CHUNK_SIZE - 1) {
+				if (key10) break;
+				if (k == CHUNK_SIZE - 1 && key11 && key01)
+					break;
+			}
+			if (k == CHUNK_SIZE - 1) {
+				if (key01) break;
+				//if (i == CHUNK_SIZE - 1) break;
+			}
+
+
 			int j = heightMap[i][k];
-			Vector4f min = getLeast(i, j, k);
+			int x = i + pos.x;
+			int z = k + pos.z;
+			
+			/* Do not include vertices if chunk does not exist*/
 
-			mesh.addTriangles(generateTriangles(min.w));
-			double x = i + pos.x;
-			double z = k + pos.z;
+			//if (key01 || key10 || key11) continue;
 
-
+			//Vector4f min = getLeast(i, j, k);
+			mesh.addTriangles(generateTriangles(0));
 
 			mesh.addVertex(x, j * d, z);
-			std::string key;
-			if (isOutOfBounds(i + 1, 0, k)) {
-				key = world->toKey(position.x + i + 1, position.z + k);
-				if (world->containsKey(key))
-					hMap = world->getChunk(key).getHeightMap();
-			}
-			mesh.addVertex(x + 1, hMap[i + 1][k] * d, z);
-			
-			if (isOutOfBounds(i + 1, 0, k)) {
-				if (world->containsKey(key))
-					hMap = world->getChunk(key).getHeightMap();
-			}
-			mesh.addVertex(x, hMap[i][k + 1] * d, z + 1);
-			mesh.addVertex(x + 1, hMap[i + 1][k + 1] * d, z + 1);
+			addMeshOutOfBounds(x, z, i, k, 1, 0);
+			addMeshOutOfBounds(x, z, i, k, 0, 1);
+			addMeshOutOfBounds(x, z, i, k, 1, 1);
+
+			//hMap = addMeshOutOfBounds(&heightMap, i, k, 1, 0);
+			//mesh.addVertex(x + 1, (*hMap)[i + 1][k] * d, z);
+
+			//hMap = addMeshOutOfBounds(&heightMap, i, k, 0, 1);
+			//mesh.addVertex(x, (*hMap)[i][k + 1] * d, z + 1);
+
+			//hMap = addMeshOutOfBounds(&heightMap, i, k, 1, 1);
+			//mesh.addVertex(x + 1, (*hMap)[i + 1][k + 1] * d, z + 1);
 		}
 	}
+
+
+
 }
 
 void Chunk::renderMesh() {
@@ -259,9 +346,9 @@ std::vector<unsigned int> Chunk::generateTriangles(int i) {
 
 
 bool Chunk::isOutOfBounds(int x, int y, int z) const {
-	if (x >= CHUNK_SIZE || x < 0) return true;
+	if (x >= CHUNK_SIZE   || x < 0) return true;
 	if (y >= CHUNK_HEIGHT || y < 0) return true;
-	if (z >= CHUNK_SIZE || z < 0) return true;
+	if (z >= CHUNK_SIZE   || z < 0) return true;
 
 	return false;
 }
@@ -305,7 +392,7 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 	int count = 0;
 	for (int ii = 0; ii < 2; ii++) {
 		for (int kk = 0; kk < 2; kk++) {
-			int jj = heightMap[ii][kk];
+			int jj = heightMap[ii+i][kk+k];
 			if (min.y > jj) {
 				min.x = ii;
 				min.y = jj;
@@ -319,7 +406,7 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 }
 
 Chunk & Chunk::getNeighbor(int x, int z) {
-	std::string key = world->toKey(position.x + x, position.z + z);
+	std::string key = world->toKey(mapPosition.x + x, mapPosition.z + z);
 	if (world->containsKey(key)) {
 
 	}
@@ -337,7 +424,7 @@ void Chunk::clear() {
 	}
 }
 
-bool Chunk::isInvalid() {
+bool Chunk::isInvalid() const {
 	return empty;
 }
 
@@ -347,10 +434,9 @@ Array<Array<int>> & Chunk::getHeightMap() {
 
 
 Chunk & Chunk::setPosition(Vector3f const & val) {
-	position = val;
+	mapPosition = val;
 	return *this;
 }
-
 
 
 

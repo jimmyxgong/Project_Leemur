@@ -31,7 +31,8 @@ private:
 	World * world;
 
 	// Position in chunk map
-	Vector3f position;
+	Vector3f mapPosition;
+
 
 
 public: /* Lifecycle */
@@ -64,15 +65,16 @@ public: /* Info functions */
 	Vector4f getLeast(int i, int j, int k);
 	
 	Chunk & getNeighbor(int x, int z);
+	void addMeshOutOfBounds(int x, int z, int fi, int fk, int i, int k);
 
 	void clear();
 
 public:
-	bool isInvalid();
+	bool isInvalid() const;
 	Array<Array<int>> & getHeightMap();
 	Chunk & setPosition(Vector3f const &);
 
 public:
-	Chunk(bool empty);
+	Chunk(bool empty = false);
 	Chunk(World * world = nullptr);
 };

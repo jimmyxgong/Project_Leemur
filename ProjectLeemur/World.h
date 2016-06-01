@@ -10,7 +10,7 @@
 #include <boost/unordered_map.hpp>
 #endif
 
-#define RENDER_DISTANCE 4
+#define RENDER_DISTANCE 2
 
 class World : public BaseEntity {
 private:

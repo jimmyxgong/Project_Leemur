@@ -7,14 +7,6 @@
 #include "World.h"
 #include "GameObject.h"
 
-/* 
-	See the centrifuge for an example as to how to use
-	the scene graph. NOTE: Animations are not implemented in
-	the scene graph yet.
-*/
-SharedPointer<Centrifuge> centrifuge;
-UniquePointer<GameObject> pod;
-//Chunk chunk;
 
 // TODO LOGGER
 void print(std::string const & val) {
@@ -24,26 +16,21 @@ void print(std::string const & val) {
 void Environment::onCreate() {
 	print("Creating Environment...");
 
-	//world = unique<World>();
-
-	centrifuge = unique<Centrifuge>();
 	skybox = unique<Skybox>(window);
 	player = share<Player>();
 	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
-
-
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
 	SharedPointer<World> world = unique<World>();
 	world->setPlayer(player);
-	//addEntity((SharedPointer<Entity> &) world);
+	addEntity((SharedPointer<Entity> &) world);
 
 	// Create pod and add a reference to what it should render.
-	SharedPointer<GameObject> pod =
-		share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
-	addEntity((SharedPointer<Entity> &) pod);
+	//SharedPointer<GameObject> pod =
+	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
+	//addEntity((SharedPointer<Entity> &) pod);
 
 	for (auto & entity : entities) {
 		entity->onCreate();

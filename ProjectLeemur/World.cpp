@@ -5,7 +5,7 @@
 //}
 
 void World::onStart() {
-	//generateChunks();
+	generateChunks();
 	startChunks();
 }
 
