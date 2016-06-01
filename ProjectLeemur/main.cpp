@@ -1,6 +1,10 @@
 #include "Window.h"
 #include "Time.h"
 
+#ifdef _WIN32
+#include "vld.h"
+#endif
+
 #define WIDTH 2160
 #define HEIGHT (WIDTH / 16 * 9)
 #define TITLE "Leemur"
