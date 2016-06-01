@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Chunk.h"
 #include "World.h"
+#include "GameObject.h"
 
 /* 
 	See the centrifuge for an example as to how to use
@@ -12,6 +13,7 @@
 	the scene graph yet.
 */
 SharedPointer<Centrifuge> centrifuge;
+UniquePointer<GameObject> pod;
 //Chunk chunk;
 
 // TODO LOGGER
@@ -22,69 +24,68 @@ void print(std::string const & val) {
 void Environment::onCreate() {
 	print("Creating Environment...");
 
-	//centrifuge = unique<Centrifuge>();
+	centrifuge = unique<Centrifuge>();
 	skybox = unique<Skybox>(window);
 	player = share<Player>();
 	Resources::addEntity(SKYBOX, skybox.get());
 	Resources::addEntity(PLAYER, player.get());
 
+	//GameObject obj = GameObject()
+	pod = unique<GameObject>((Component*) &Resources::getEntity(POD_OBJ));
+	//GameObject obj
+
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
-	
-	//World * world = new World();
+
+	//UniquePointer<World> world = unique<World>();
 	//world->setPlayer(player);
-	//delete world;
-	//addEntity(world);
 
-	UniquePointer<World> world = unique<World>();
-	addEntity((UniquePointer<Entity> &) skybox);
-	addEntity((UniquePointer<Entity> &) world);
+	// Skybox needs to be added first.
+	//addEntity((UniquePointer<Entity> &) skybox);
+	//addEntity((UniquePointer<Entity> &) world);
+	//addEntity((UniquePointer<Entity> &) pod);
 
-
-	//chunk.onCreate();
 	for (auto & entity : entities) {
 		entity->onCreate();
 	}
+	//pod->onCreate();
+	centrifuge->onCreate();
 }
 
 void Environment::onStart() {
 	print("Environment starting...");
-	//skybox->onStart();
-
+	skybox->onStart();
 	for (auto & entity : entities) {
 		entity->onStart();
 	}
+	centrifuge->onStart();
+	//pod->onStart();
 
 	player->onStart();
-
-	//chunk.onStart();
-	//centrifuge->onStart();
 	//world.addChild(player->transform);
 }
 
 void Environment::onRender() {
-	//skybox->onRender();
-	//chunk.onRender();
-
+	skybox->onRender();
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
 	player->onRender();
-	//centrifuge->onRender();
+	//pod->onRender();
+	centrifuge->onRender();
 }
 
 void Environment::onUpdate() {
+	
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
 	player->onUpdate();
-	//chunk.onUpdate();
-	//centrifuge->onUpdate();
+	centrifuge->onUpdate();
 }
 
 void Environment::onDestroy() {
 	delete (&Resources::getShader(SHADER_LIGHT));
-
-	//skybox->onDestroy();
+	skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
 	Mesh& cyl = (Mesh&) Resources::getEntity(CYL_OBJ);
@@ -97,8 +98,8 @@ void Environment::onDestroy() {
 	for (int i = 0; i < entities.size(); i++) {
 		std::cout << "deleteing" << std::endl;
 		entities[i]->onDestroy();
-		entities[i] = nullptr;
 	}
+	entities.clear();
 }
 
 void Environment::addEntity(UniquePointer<Entity> & entity) {

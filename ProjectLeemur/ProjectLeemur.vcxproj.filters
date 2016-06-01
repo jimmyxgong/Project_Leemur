@@ -120,9 +120,6 @@
     <ClInclude Include="Trackball.h">
       <Filter>Header Files\Game\Mechanics</Filter>
     </ClInclude>
-    <ClInclude Include="ObjObject.h">
-      <Filter>Header Files\Game\Entity</Filter>
-    </ClInclude>
     <ClInclude Include="BaseEntity.h">
       <Filter>Header Files\Game\Entity\Template</Filter>
     </ClInclude>
@@ -177,6 +174,9 @@
     <ClInclude Include="World.h">
       <Filter>Header Files\Game\Entity\Terrain</Filter>
     </ClInclude>
+    <ClInclude Include="ObjObject.h">
+      <Filter>Header Files\Game\Graphics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -217,9 +217,6 @@
     </ClCompile>
     <ClCompile Include="Trackball.cpp">
       <Filter>Source Files\Game\Mechanics</Filter>
-    </ClCompile>
-    <ClCompile Include="ObjObject.cpp">
-      <Filter>Source Files\Game\Entity</Filter>
     </ClCompile>
     <ClCompile Include="BaseEntity.cpp">
       <Filter>Source Files\Game\Entity\Template</Filter>
@@ -268,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="World.cpp">
       <Filter>Source Files\Game\Entity\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjObject.cpp">
+      <Filter>Source Files\Game\Graphics</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

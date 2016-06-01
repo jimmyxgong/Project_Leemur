@@ -6,6 +6,10 @@
 #include "Transform.h"
 #include "Player.h"
 
+#ifdef _WIN32
+#include <boost/unordered_map.hpp>
+#endif
+
 #define RENDER_DISTANCE 4
 
 class World : public BaseEntity {
@@ -24,9 +28,9 @@ public:
 	void startChunks();
 	void renderChunks();
 	void updateChunks();
+	void deleteChunks();
 	
 	void setNewChunk(int x, int z);
-	//void setNewChunk()
 	void addNewChunk(int x, int z);
 	void addNewChunk(Vector3f const & chunkPos, int x, int z);
 	std::string toKey(int x, int z);
@@ -42,7 +46,12 @@ public:
 	Vector3f getPlayerPosInChunkMap();
 	Vector3f getPlayerPos();
 
+	/**
+	* pos = a position in the chunk map.
+	*/
+	Chunk & findChunk(Vector3f pos, int x, int z);
+
 
 	void setPlayer(WeakPointer<Player> player);
-
+	~World();
 };

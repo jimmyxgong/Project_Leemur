@@ -4,18 +4,16 @@
 
 
 ObjObject::ObjObject(GLint drawType) : Mesh(drawType) {
-
 }
 
 ObjObject& ObjObject::addIndex(unsigned int i) {
-	return (ObjObject&) Mesh::addIndex(i - 1);
+	indices.push_back(i - 1);
+	return *this;
 }
 
-
-
-
-
-
+//ObjObject& ObjObject::addFace(unsigned int i, unsigned int j, unsigned int k) {
+//	return addIndex(i).addIndex(j).addIndex(k);
+//}
 
 
 std::vector<std::string> stringSplit(const std::string& input, const char delim = ' ') {
@@ -123,6 +121,7 @@ ObjObject* ObjObject::load(const std::string & filepath) {
 			v = toMin + ((v - min) / spanFrom) * spanTo;
 		}
 	}
+	object->init();
 
 	return object;
 }

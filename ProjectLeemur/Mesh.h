@@ -5,7 +5,7 @@
 
 class Mesh : public Component {
 
-private:
+protected:
 	bool changed = false;
 	GLint glDrawType;
 
@@ -29,12 +29,13 @@ public:
 	Mesh& setNormals(std::vector<Vector3f> const & normals);
 	Mesh& setTriangles(std::vector<unsigned int> const & indices);
 
+	virtual Mesh& addIndex(unsigned int);
 	/* 
 	* addFace is different from addTriangle(s) since it 
 	* does not take into account the vertex size when adding
 	* to indices.
 	*/
-	Mesh& addFace(unsigned int x, unsigned int y, unsigned z);
+	virtual Mesh& addFace(unsigned int x, unsigned int y, unsigned z);
 	Mesh& addTriangle(unsigned int i, unsigned int j, unsigned int k);
 	Mesh& addTriangles(std::vector<unsigned int> const & triangles);
 
@@ -43,7 +44,6 @@ public:
 	Mesh& addNormal(float x, float y, float z);
 	Mesh& addNormal(Vector3f const &);
 
-	virtual Mesh& addIndex(unsigned int);
 
 	std::vector<Vector3f>& getVertices();
 	std::vector<unsigned int>& getIndices();

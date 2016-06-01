@@ -20,17 +20,22 @@ public:
 	Transform transform;
 
 private:
+	bool empty = false;
 	Mesh mesh;
 
-	Array<Array<int>> interpolatedHeightMap;
+	//Array<Array<int>> interpolatedHeightMap;
 	Array<Array<int>> heightMap;
 	Array<Array<Array<Cell>>> cells;
 	bool changed = false;
 
 	World * world;
+
+	// Position in chunk map
 	Vector3f position;
 
+
 public: /* Lifecycle */
+	void onCreate() override;
 	void onStart() override;
 	void onRender() override;
 	void onUpdate() override;
@@ -46,23 +51,28 @@ public: /* terrain generations */
 	void printHeightMap();
 
 public: /* Info functions */
+	std::vector<unsigned int> generateTriangles(int i);
+
 	bool isOutOfBounds(int x, int y, int z) const;
 	bool isCell(int x, int y, int z) const;
-	
+	bool isTransparentAt(int x, int y, int z);
 	
 	
 	void setCell(int x, int y, int z, Cell const & cell);
 	Cell & removeCell(int x, int y, int z);
-
-
 	Cell& getCell(int x, int y, int z);
 	Vector4f getLeast(int i, int j, int k);
 	
-	std::vector<unsigned int> generateTriangles(int i);
-	
-	bool isTransparentAt(int x, int y, int z);
+	Chunk & getNeighbor(int x, int z);
 
 	void clear();
 
+public:
+	bool isInvalid();
+	Array<Array<int>> & getHeightMap();
+	Chunk & setPosition(Vector3f const &);
+
+public:
+	Chunk(bool empty);
 	Chunk(World * world = nullptr);
 };

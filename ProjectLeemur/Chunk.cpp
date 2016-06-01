@@ -33,19 +33,23 @@ Terrain terrain = {
 Keyboard::Layout bindings;
 
 
-UniquePointer<Chunk> Chunk::EMPTY = unique<Chunk>();
+UniquePointer<Chunk> Chunk::EMPTY = unique<Chunk>(true);
 
 
 void print(double val) {
 	std::cout << (std::to_string(val)) << std::endl;
 }
 
-void Chunk::onStart() {
-	resizeStructure();
-	//testBindings();
 
+
+void Chunk::onCreate() {
+	resizeStructure();
 	generateChunk();
+	//testBindings();
 	//printHeightMap();
+}
+
+void Chunk::onStart() {
 	buildMeshData();
 
 	mesh.recalculateNormals();
@@ -68,6 +72,11 @@ void Chunk::onUpdate() {
 		renderMesh();
 		changed = false;
 	}
+}
+
+void Chunk::onDestroy() {
+	BaseEntity::onDestroy();
+	mesh.destroy();
 }
 
 void Chunk::allowKeyBindings() {
@@ -129,11 +138,9 @@ void Chunk::allowKeyBindings() {
 void Chunk::resizeStructure() {
 	cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
-	//interpolatedHeightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
-		//interpolatedHeightMap.resize(CHUNK_SIZE);
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			cells[i][j].resize(CHUNK_SIZE);
 		}
@@ -168,9 +175,6 @@ void Chunk::generateChunk() {
 				double x = i + round(pos.x);
 				double y = j;
 				double z = k + round(pos.z);
-				//x /= 10.0;
-				//y /= 10.0;
-				//z /= 10.0;
 
 
 				double height = terrain.perlinNoise(x, y, z, _parts, _div);
@@ -194,8 +198,9 @@ void Chunk::buildMeshData() {
 	const Vector3f pos = transform.getPosition();
 	const double d = HEIGHT_UNIT;
 
-	for (int i = 0; i < CHUNK_SIZE - 1; i++) {
-		for (int k = 0; k < CHUNK_SIZE - 1; k++) {
+	std::vector<std::vector<int>> hMap = heightMap;
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+		for (int k = 0; k < CHUNK_SIZE; k++) {
 			int j = heightMap[i][k];
 			Vector4f min = getLeast(i, j, k);
 
@@ -203,10 +208,23 @@ void Chunk::buildMeshData() {
 			double x = i + pos.x;
 			double z = k + pos.z;
 
+
+
 			mesh.addVertex(x, j * d, z);
-			mesh.addVertex(x + 1, heightMap[i + 1][k] * d, z);
-			mesh.addVertex(x, heightMap[i][k + 1] * d, z + 1);
-			mesh.addVertex(x + 1, heightMap[i + 1][k + 1] * d, z + 1);
+			std::string key;
+			if (isOutOfBounds(i + 1, 0, k)) {
+				key = world->toKey(position.x + i + 1, position.z + k);
+				if (world->containsKey(key))
+					hMap = world->getChunk(key).getHeightMap();
+			}
+			mesh.addVertex(x + 1, hMap[i + 1][k] * d, z);
+			
+			if (isOutOfBounds(i + 1, 0, k)) {
+				if (world->containsKey(key))
+					hMap = world->getChunk(key).getHeightMap();
+			}
+			mesh.addVertex(x, hMap[i][k + 1] * d, z + 1);
+			mesh.addVertex(x + 1, hMap[i + 1][k + 1] * d, z + 1);
 		}
 	}
 }
@@ -232,20 +250,13 @@ void Chunk::printHeightMap() {
 	}
 }
 
+std::vector<unsigned int> Chunk::generateTriangles(int i) {
+	//const static std::vector<unsigned int> TYPE0 = { 0, 2, 1, 3, 1, 2 };
+	if (i == 0 || i == 1) return{ 0, 2, 1, 3, 1, 2 };
 
-void Chunk::setCell(int x, int y, int z, Cell const & cell) {
-	if (isOutOfBounds(x, y, z)) return;
-
-	cells[x][y][z] = cell;
+	return{ 0, 1, 2, 3, 2, 1 };
 }
 
-Cell & Chunk::removeCell(int x, int y, int z) {
-	if (isOutOfBounds(x, y, z)) return Cell::Air;
-
-	Cell & cell = cells[x][y][z];
-	cells[x][y][z] = Cell::Air;
-	return cell;
-}
 
 bool Chunk::isOutOfBounds(int x, int y, int z) const {
 	if (x >= CHUNK_SIZE || x < 0) return true;
@@ -263,7 +274,27 @@ bool Chunk::isCell(int x, int y, int z) const {
 	return true;
 }
 
-Cell& Chunk::getCell(int x, int y, int z) {
+bool Chunk::isTransparentAt(int x, int y, int z) {
+	return getCell(x, y, z).isTransparent();
+}
+
+
+
+void Chunk::setCell(int x, int y, int z, Cell const & cell) {
+	if (isOutOfBounds(x, y, z)) return;
+
+	cells[x][y][z] = cell;
+}
+
+Cell & Chunk::removeCell(int x, int y, int z) {
+	if (isOutOfBounds(x, y, z)) return Cell::Air;
+
+	Cell & cell = cells[x][y][z];
+	cells[x][y][z] = Cell::Air;
+	return cell;
+}
+
+Cell & Chunk::getCell(int x, int y, int z) {
 	if (isOutOfBounds(x, y, z)) return Cell::Air;
 
 	return cells[x][y][z];
@@ -287,17 +318,13 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 	return min;
 }
 
-std::vector<unsigned int> Chunk::generateTriangles(int i) {
-	//const static std::vector<unsigned int> TYPE0 = { 0, 2, 1, 3, 1, 2 };
-	if (i == 0 || i == 1) return{ 0, 2, 1, 3, 1, 2 };
-	
-	return{ 0, 1, 2, 3, 2, 1 };
-}
+Chunk & Chunk::getNeighbor(int x, int z) {
+	std::string key = world->toKey(position.x + x, position.z + z);
+	if (world->containsKey(key)) {
 
-bool Chunk::isTransparentAt(int x, int y, int z) {
-	return getCell(x, y, z).isTransparent();
+	}
+	return *Chunk::EMPTY;
 }
-
 
 void Chunk::clear() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
@@ -310,10 +337,22 @@ void Chunk::clear() {
 	}
 }
 
-void Chunk::onDestroy() {
-	BaseEntity::onDestroy();
-	mesh.destroy();
+bool Chunk::isInvalid() {
+	return empty;
+}
+
+Array<Array<int>> & Chunk::getHeightMap() {
+	return heightMap;
 }
 
 
+Chunk & Chunk::setPosition(Vector3f const & val) {
+	position = val;
+	return *this;
+}
+
+
+
+
+Chunk::Chunk(bool _empty) : empty(_empty) {}
 Chunk::Chunk(World * _world) : world(_world) {}

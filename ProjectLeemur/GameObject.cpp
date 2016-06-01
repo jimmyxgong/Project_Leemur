@@ -24,8 +24,8 @@ void GameObject::onCreate() {
 }
 
 void GameObject::onStart() {
-	Mesh * mesh = new Mesh();
-	addComponent<Mesh>(*mesh);
+	//Mesh * mesh = new Mesh();
+	//addComponent<Mesh>(*mesh);
 }
 
 void GameObject::onRender() {
@@ -79,7 +79,7 @@ void GameObject::loadToShader() {
 }
 
 GameObject::GameObject(Component * component)
+	: component(component)
 {
-
 	onCreate();
 }
