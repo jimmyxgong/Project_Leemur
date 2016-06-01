@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Commons.h"
+#include "BaseEntity.h"
 #include "Chunk.h"
 #include "Transform.h"
 #include "Player.h"

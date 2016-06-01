@@ -70,7 +70,6 @@ void Chunk::onUpdate() {
 	}
 }
 
-
 void Chunk::allowKeyBindings() {
 	// Testing values
 	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
@@ -130,11 +129,11 @@ void Chunk::allowKeyBindings() {
 void Chunk::resizeStructure() {
 	cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
-	interpolatedHeightMap.resize(CHUNK_SIZE);
+	//interpolatedHeightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
-		interpolatedHeightMap.resize(CHUNK_SIZE);
+		//interpolatedHeightMap.resize(CHUNK_SIZE);
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			cells[i][j].resize(CHUNK_SIZE);
 		}

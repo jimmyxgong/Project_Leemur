@@ -35,16 +35,6 @@ public:
 
 
 
-
-
-	Environment& addEntity(UniquePointer<Entity> & entity);
-
-	Chunk & getChunk(int x, int z);
-	Vector3f getChunk(Transform const & transform);
-	Chunk * getChunkRelativeToPlayer();
-	Vector3f getPlayerPosInChunkMap();
-	
-
-
+	void addEntity(UniquePointer<Entity> & entity);
 	static UniquePointer<Environment> create(Window * ref);
 };

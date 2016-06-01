@@ -29,12 +29,17 @@ void Environment::onCreate() {
 	Resources::addEntity(PLAYER, player.get());
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
+	
+	//World * world = new World();
+	//world->setPlayer(player);
+	//delete world;
+	//addEntity(world);
 
 	UniquePointer<World> world = unique<World>();
-	world->setPlayer(player);
+	addEntity((UniquePointer<Entity> &) skybox);
+	addEntity((UniquePointer<Entity> &) world);
 
 
-	addEntity((UniquePointer<Entity>&) world);
 	//chunk.onCreate();
 	for (auto & entity : entities) {
 		entity->onCreate();
@@ -43,13 +48,13 @@ void Environment::onCreate() {
 
 void Environment::onStart() {
 	print("Environment starting...");
-	skybox->onStart();
-	player->onStart();
+	//skybox->onStart();
 
 	for (auto & entity : entities) {
 		entity->onStart();
 	}
 
+	player->onStart();
 
 	//chunk.onStart();
 	//centrifuge->onStart();
@@ -57,21 +62,21 @@ void Environment::onStart() {
 }
 
 void Environment::onRender() {
-	skybox->onRender();
-	player->onRender();
+	//skybox->onRender();
 	//chunk.onRender();
 
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
+	player->onRender();
 	//centrifuge->onRender();
 }
 
 void Environment::onUpdate() {
-	player->onUpdate();
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
+	player->onUpdate();
 	//chunk.onUpdate();
 	//centrifuge->onUpdate();
 }
@@ -79,7 +84,7 @@ void Environment::onUpdate() {
 void Environment::onDestroy() {
 	delete (&Resources::getShader(SHADER_LIGHT));
 
-	skybox->onDestroy();
+	//skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
 	Mesh& cyl = (Mesh&) Resources::getEntity(CYL_OBJ);
@@ -89,14 +94,15 @@ void Environment::onDestroy() {
 	delete &pod;
 	delete &cyl;
 
-	for (auto & entity : entities) {
-		entity->onDestroy();
+	for (int i = 0; i < entities.size(); i++) {
+		std::cout << "deleteing" << std::endl;
+		entities[i]->onDestroy();
+		entities[i] = nullptr;
 	}
 }
 
-Environment& Environment::addEntity(UniquePointer<Entity> & entity) {
-	entities.push_back(UniquePointer<Entity>(std::move(entity)));
-	return *this;
+void Environment::addEntity(UniquePointer<Entity> & entity) {
+	entities.push_back(std::move(entity));
 }
 
 
