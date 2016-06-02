@@ -136,8 +136,8 @@ ObjObject* ObjObject::load(const std::string & filepath) {
 		}
 
 		// Start mapping to the follow toMax/toMin range
-		const float toMax = 0.2f;
-		const float toMin = -0.2f;
+		const float toMax = 1;
+		const float toMin = -1;
 		vec3 spanFrom(max - min);
 		vec3 spanTo(toMax - toMin);
 

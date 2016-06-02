@@ -32,13 +32,13 @@ void Environment::onCreate() {
 //	SharedPointer<GameObject> pod =
 //		share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
 //	addEntity((SharedPointer<Entity> &) pod);
-    // Create centrifuge and add a reference to what it should render.
-    SharedPointer<Centrifuge> pod =
-    share<Centrifuge>();
-    addEntity((SharedPointer<Entity> &) pod);
-//    SharedPointer<Building> pod =
-//    share<Building>();
+//    // Create centrifuge and add a reference to what it should render.
+//    SharedPointer<Centrifuge> pod =
+//    share<Centrifuge>();
 //    addEntity((SharedPointer<Entity> &) pod);
+    SharedPointer<Building> pod =
+    share<Building>();
+    addEntity((SharedPointer<Entity> &) pod);
 
 	for (auto & entity : entities) {
 		entity->onCreate();
