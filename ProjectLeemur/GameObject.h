@@ -3,6 +3,7 @@
 #include "Component.h"
 #include "TransformEntity.h"
 #include "Mesh.h"
+#include "Material.h"
 
 /* Used for type_id mapping */
 using TypeRef = std::reference_wrapper<const std::type_info>;
@@ -33,6 +34,7 @@ private:
 
 	//template <class T>
 	//void addComponent(T c);
+    Material * material = NULL;
 
 
 public:
@@ -46,7 +48,10 @@ public:
 	T & getComponent();
 
 	virtual void loadToShader();
-
+    
 	GameObject(Component * component);
 	~GameObject();
+    
+    void setMaterial(Material *);
+    Material * getMaterial();
 };
