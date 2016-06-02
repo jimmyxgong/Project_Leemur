@@ -23,7 +23,7 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	SharedPointer<World> world = unique<World>();
+	SharedPointer<World> world = share<World>();
 	world->setPlayer(player);
 	addEntity((SharedPointer<Entity> &) world);
 
@@ -62,7 +62,7 @@ void Environment::onRender() {
 
 void Environment::onUpdate() {
 	for (auto & entity : entities) {
-		entity->onRender();
+		entity->onUpdate();
 	}
 	player->onUpdate();
 }

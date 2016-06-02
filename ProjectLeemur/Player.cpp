@@ -6,6 +6,7 @@ void Player::onStart() {
 	trackball = Trackball(&Window::getFocusedWindow());
 
 	camera = unique<Camera>(Vector3f(0.0f, 16.0f, 0.1f));
+	//camera->setLookAt(Vector3f(0.0f, 16.0f, 0.2f));
 	queue = unique<std::queue<Movement>>();
 	
 	keybind.onKeyPressed(GLFW_KEY_W, [this](bool isShifted) {

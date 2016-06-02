@@ -5,9 +5,9 @@
 #include "Component.h"
 #include "Mesh.h"
 
-#define CHUNK_SIZE 8
-#define CHUNK_HEIGHT 24
-#define HEIGHT_UNIT 0.2
+#define CHUNK_SIZE 16
+#define CHUNK_HEIGHT 32
+#define HEIGHT_UNIT 0.25
 
 template <class T>
 using Array = std::vector<T>;

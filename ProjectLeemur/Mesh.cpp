@@ -112,25 +112,25 @@ Mesh& Mesh::clear() {
 
 Mesh& Mesh::recalculateNormals() {
 	for (int i = 0; i < indices.size(); i += 3) {
-		Vector3f A = vertices.at(indices.at(i + 0));
+		Vector3f A = vertices.at(indices.at(i));
 		Vector3f B = vertices.at(indices.at(i + 1));
 		Vector3f C = vertices.at(indices.at(i + 2));
 
 		Vector3f BA = B - A;
 		Vector3f CA = C - A;
 
-		Vector3f N = normalize(cross(BA, CA));
+		Vector3f N = (cross(BA, CA));	// normalize(cross...)
 
-		//if (normals.size() > i + 2) {
-		//	Vector3f NA = normals.at(indices.at(i + 0));
-		//	Vector3f NB = normals.at(indices.at(i + 1));
-		//	Vector3f NC = normals.at(indices.at(i + 2));
+		if (normals.size() > i + 2) {
+			Vector3f NA = normals.at(indices.at(i));
+			Vector3f NB = normals.at(indices.at(i + 1));
+			Vector3f NC = normals.at(indices.at(i + 2));
 
-		//	addNormal(N + NA);
-		//	addNormal(N + NB);
-		//	addNormal(N + NC);
-		//	continue;
-		//}
+			addNormal(N + NA);
+			addNormal(N + NB);
+			addNormal(N + NC);
+			continue;
+		}
 		addNormal(N);
 		addNormal(N);
 		addNormal(N);

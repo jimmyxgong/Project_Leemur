@@ -1,4 +1,6 @@
 #include "World.h"
+#include "Resources.h"
+#include "Light.h"
 
 //void println(std::string const & v) {
 //	std::cout << v << std::endl;
@@ -10,6 +12,8 @@ void World::onStart() {
 }
 
 void World::onRender() {
+	Resources::getShader(SHADER_LIGHT).use();
+	Light::Directional.loadToShader();
 	renderChunks();
 }
 
@@ -110,7 +114,7 @@ void World::setNewChunk(int x, int z) {
 }
 
 void World::addNewChunk(int x, int z) {
-	Vector3f position(x << 3, 0, z << 3);
+	Vector3f position(x << 4, 0, z << 4);
 	addNewChunk(position, x, z);
 }
 
