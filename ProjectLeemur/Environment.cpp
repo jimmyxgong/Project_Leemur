@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "ObjObject.h"
 #include "Centrifuge.h"
+#include "Building.h"
 #include "Light.h"
 #include "Chunk.h"
 #include "World.h"
@@ -27,11 +28,17 @@ void Environment::onCreate() {
 	//world->setPlayer(player);
 	//addEntity((SharedPointer<Entity> &) world);
 
-	// Create pod and add a reference to what it should render.
-	//SharedPointer<GameObject> pod =
-	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
-	//addEntity((SharedPointer<Entity> &) pod);
-	addEntity((SharedPointer<Entity> &) share<Centrifuge>());
+//	// Create pod and add a reference to what it should render.
+//	SharedPointer<GameObject> pod =
+//		share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
+//	addEntity((SharedPointer<Entity> &) pod);
+    // Create centrifuge and add a reference to what it should render.
+    SharedPointer<Centrifuge> pod =
+    share<Centrifuge>();
+    addEntity((SharedPointer<Entity> &) pod);
+//    SharedPointer<Building> pod =
+//    share<Building>();
+//    addEntity((SharedPointer<Entity> &) pod);
 
 	for (auto & entity : entities) {
 		entity->onCreate();
