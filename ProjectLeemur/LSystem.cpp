@@ -42,7 +42,7 @@ void LSystem::parse_file(std::string const & infile) {
 
 	settings.close();
 
-	/** debugging statements **/
+	/** DEBUGGING STATEMENTS **/
 	//std::cout << "vars: " << vars << std::endl;
 	//std::cout << "axiom: " << axiom << std::endl;
 	//std::cout << "iter: " << iter << std::endl;
@@ -51,7 +51,7 @@ void LSystem::parse_file(std::string const & infile) {
 	//std::cout << "r2: " << r2 << std::endl;
 	//std::cout << "r3: " << r3 << std::endl;
 
-
+	//now create the grammar used to draw the L-system
 	create_grammar();
 
 }
@@ -63,7 +63,7 @@ void LSystem::create_grammar() {
 	//increasing iterations increate complexity of the grammar
 	for (int i = 0; i < iterations; i++) {
 		for (int j = 0; j < grammar.size(); j++) {
-			if (grammar[j] == this->r1[0]) {	//rule 1
+			if (grammar[j] == this->r1[0]) {		//rule 1
 				//utilize rule_1's grammar instructions and apply them to our grammar 
 				j = set_replace_grammar(j, RULE_1);
 			}
@@ -97,23 +97,27 @@ int LSystem::set_replace_grammar(int grammar_loop_pos, int r) {
 	}
 
 	//start from index 3 because of the "F->" syntax at start of the string
+	//RULE_START_POS == 3
 	for (int i = RULE_START_POS; i < rule.length(); i++) {
 		std::vector<char>::iterator it = grammar.begin();
 		//replace the variable with the start of its own rule
 		if (i == RULE_START_POS) {
-			grammar[grammar_loop_pos] = rule[RULE_START_POS];	//3 because of F-> string
+			grammar[grammar_loop_pos] = rule[RULE_START_POS];
 			continue;
 		}
 		else {
-			if (iter_pos == grammar.size() - 1) {	//last variable of the grammar, put rules to end of grammar
+			//last variable of the grammar, put rules to end of grammar
+			if (iter_pos == grammar.size() - 1) {	
 				grammar.insert(grammar.end(), rule[i]);
 				iter_pos++;
 			}
-			else {	//insert in middle of vector
+			//insert in middle of vector
+			else {	
 				iter_pos++;
 				grammar.insert(it + iter_pos, rule[i]);
 			}
 		}
 	}
+	//now that we have added more items to our grammar, update the position to go the next original variable to evaluate
 	return iter_pos;
 }

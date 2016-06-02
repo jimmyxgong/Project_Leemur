@@ -25,7 +25,6 @@ public:
 	std::vector<char> grammar;
 
 	std::vector<std::string> var_list;
-	void setVariables();
 	void setIterations(int iteration);
 	void setAngle(float angle);
 	void parse_file(std::string const & infile);
