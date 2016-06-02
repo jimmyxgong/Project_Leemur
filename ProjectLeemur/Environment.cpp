@@ -1,4 +1,4 @@
-#include "Environment.h"
+﻿#include "Environment.h"
 #include "Resources.h"
 #include "ObjObject.h"
 #include "Centrifuge.h"
@@ -7,11 +7,11 @@
 #include "World.h"
 #include "GameObject.h"
 
-
 // TODO LOGGER
 void print(std::string const & val) {
 	std::cout << val << std::endl;
 }
+
 
 void Environment::onCreate() {
 	print("Creating Environment...");
@@ -23,14 +23,15 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	SharedPointer<World> world = share<World>();
-	world->setPlayer(player);
-	addEntity((SharedPointer<Entity> &) world);
+	//SharedPointer<World> world = share<World>();
+	//world->setPlayer(player);
+	//addEntity((SharedPointer<Entity> &) world);
 
 	// Create pod and add a reference to what it should render.
 	//SharedPointer<GameObject> pod =
 	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
 	//addEntity((SharedPointer<Entity> &) pod);
+	addEntity((SharedPointer<Entity> &) share<Centrifuge>());
 
 	for (auto & entity : entities) {
 		entity->onCreate();
@@ -52,12 +53,10 @@ void Environment::onRender() {
 
 	// call lighting:
 	Light::Directional.loadToShader();
-
 	
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
-	player->onRender();
 }
 
 void Environment::onUpdate() {
@@ -80,7 +79,8 @@ void Environment::onDestroy() {
 	delete &cyl;
 	delete &pod;
 
-	for (int i = 0; i < entities.size(); i++) {
+	int size = entities.size();
+	for (int i = 0; i < size; i++) {
 		std::cout << "deleteing" << std::endl;
 		entities[i]->onDestroy();
 		entities[i] = nullptr;

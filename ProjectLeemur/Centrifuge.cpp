@@ -21,9 +21,10 @@ std::uniform_real_distribution<float> float_distribution(0.0f, 0.05f);
 
 void Centrifuge::onCreate() {
 	world = unique<Transform>();
+	world->scaleLocal(0.2f, 0.2f, 0.2f);
 
 	// Origin of the the centrifuge
-	transform.scaleLocal(0.2f, 0.2f, 0.2f);
+	//transform.scaleLocal(0.2f, 0.2f, 0.2f);
 }
 
 transform_group Centrifuge::CreatePod() {
@@ -176,7 +177,7 @@ void Centrifuge::onStart() {
 	top->rotateLocal(1.0f, 0.0f, 0.0f, 90.0f)
 		.rotateLocal(0.0f, 0.0f, 1.0f, 195.0f);
 	center_pillar_top->addChild(top);
-	world->locallyUpdate(transform.asMatrix());
+	world->locallyUpdate();
 }
 
 void Centrifuge::onRender() {

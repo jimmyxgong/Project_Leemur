@@ -38,7 +38,6 @@ private:
 public:
 	SharedPointer<Transform> transform;
 
-	void onCreate() override;
 	void onStart() override;
 	void onRender() override;
 	void onUpdate() override;

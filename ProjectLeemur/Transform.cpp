@@ -159,8 +159,6 @@ Transform::~Transform() {}
 
 
 
-
-
 Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	localToWorldMatrix = (localRotation * Translate(localPosition) * Scale(localScale));
 	localToWorldMatrix = val * localToWorldMatrix;
@@ -202,7 +200,7 @@ Transform& Transform::reset() {
 }
 
 
-Transform& Transform::addChild(SharedPointer<Transform> const & transform) {
+Transform& Transform::addChild(SharedPointer<Transform> & transform) {
 	transform->parent = this;
 	transform->locallyUpdate(localToWorldMatrix);
 	children.push_back(transform);
@@ -210,8 +208,8 @@ Transform& Transform::addChild(SharedPointer<Transform> const & transform) {
 	return *this;
 }
 
-Transform& Transform::addChild(SharedPointer<GameObject> const & gameObject) {
-	this->gameObject = gameObject;
+Transform& Transform::addChild(SharedPointer<GameObject> & gameObject) {
+	childGameObjects.push_back(gameObject);
 	return addChild(gameObject->transform);
 }
 
@@ -230,8 +228,8 @@ Transform& Transform::detachTree() {
 }
 
 void Transform::renderAll() {
-	if (gameObject) {
-		gameObject->onRender();
+	for (WeakPointer<GameObject> child : childGameObjects) {
+		child.lock()->onRender();
 	}
 
 	// DFS rendering
@@ -255,9 +253,6 @@ void Transform::updateAll() {
 bool Transform::hasChanged() {
 	return changed;
 }
-
-
-
 
 
 

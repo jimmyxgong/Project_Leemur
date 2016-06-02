@@ -16,16 +16,10 @@ bool Comparator::operator()(TypeRef lhs, TypeRef rhs) const {
 
 
 
-
-
-
-void GameObject::onCreate() {
-	transform = share<Transform>();
-}
-
 void GameObject::onStart() {
 	//Mesh * mesh = new Mesh();
 	//addComponent<Mesh>(*mesh);
+	transform = share<Transform>();
 }
 
 void GameObject::onRender() {
@@ -33,11 +27,12 @@ void GameObject::onRender() {
 	//getComponent<ObjObject>();
 	//if (m != *Component::EMPTY)
 	if (component) {
-		if (component->attachedShader)
+		if (component->attachedShader) {
+			component->attachedShader->use();
 			loadToShader();
+		}
 		((Mesh*)component)->render();
 	}
-	
 }
 
 void GameObject::onUpdate() {
@@ -84,7 +79,7 @@ void GameObject::loadToShader() {
 GameObject::GameObject(Component * component)
 	: component(component)
 {
-	onCreate();
+	onStart();
 }
 
 GameObject::~GameObject() {}

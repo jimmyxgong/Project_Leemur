@@ -29,11 +29,10 @@ private:
 
 	/* Children used in Scene Graph */
 	std::list<SharedPointer<Transform>> children;
-	Transform * parent;
 
-	// Needs to be shared so that gameObject does not get
-	// deleted if it is just a locally bound variable
-	SharedPointer<GameObject> gameObject;
+	/* Need to maintain a list of gameObjects to keep them alive */
+	std::list<SharedPointer<GameObject>> childGameObjects;
+	Transform * parent = nullptr;
 
 public:	/* Getters and Setters */
 
@@ -82,7 +81,7 @@ public: /* Transformations on current orientation */
 
 public: /* Constructors */
 	/* Copy Constructor */
-	Transform(const Transform &);	
+	Transform(const Transform &);
 	Transform();
 	~Transform();
 
@@ -101,9 +100,8 @@ public: /* Scene Graph */
 	Transform& reset();
 
 	// Add a child to the Transform's children.
-	Transform& addChild(SharedPointer<Transform> const & transform);
-
-	Transform& addChild(SharedPointer<GameObject> const & transform);
+	Transform& addChild(SharedPointer<Transform> & transform);
+	Transform& addChild(SharedPointer<GameObject> & transform);
 	Transform& detachChildren();
 	Transform& detachTree();
 
@@ -118,25 +116,11 @@ public:
 
 
 
-
-
-
-
-	
-
-
-
-
-
-
 	void updateWorldMatrix();
 	void updateLocalWorldMatrix();
 	Matrix4f asMatrix();
 
-
-
 public:
-
 
 
 
