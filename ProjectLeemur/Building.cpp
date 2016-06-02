@@ -48,7 +48,7 @@ transform_group Building::CreateBox(float height, Material* mat) {
     
     game_object box = share<GameObject>(&cube);
     box->setMaterial(mat);
-    box->transform->scaleLocal(x_dim,height/2,x_dim).translateLocal(0, height/2, 0);
+    box->transform->scaleLocal(x_dim,height/2,z_dim).translateLocal(0, height/2, 0);
     parent->addChild(box);
     
     // translate this to the top of the most recent piece
@@ -67,7 +67,7 @@ transform_group Building::CreateCyl(float height, Material* mat) {
     
     game_object cylender = share<GameObject>(&cyl);
     cylender->setMaterial(mat);
-    cylender->transform->scaleLocal(x_dim,height/2,x_dim).translateLocal(0, height/2, 0);
+    cylender->transform->scaleLocal(x_dim,height/2,z_dim).translateLocal(0, height/2, 0);
     parent->addChild(cylender);
     
     // translate this to the top of the most recent piece
@@ -86,22 +86,27 @@ transform_group Building::CreatePillars(float height, Material* mat) {
     
     game_object pillar = share<GameObject>(&cyl);
     pillar->setMaterial(mat);
-    pillar->transform->scaleLocal(x_dim/4,height/2,x_dim/4).translateLocal(x_dim/2, height/2, z_dim/2);
+    float pillar_radius = std::min(x_dim, z_dim)/4;
+    pillar->transform->scaleLocal(pillar_radius, height/2, pillar_radius)
+    .translateLocal(x_dim/2, height/2, z_dim/2);
     parent->addChild(pillar);
     
     game_object pillar1 = share<GameObject>(&cyl);
     pillar1->setMaterial(mat);
-    pillar1->transform->scaleLocal(x_dim/4,height/2,x_dim/4).translateLocal(-x_dim/2, height/2, z_dim/2);
+    pillar1->transform->scaleLocal(pillar_radius, height/2, pillar_radius)
+    .translateLocal(-x_dim/2, height/2, z_dim/2);
     parent->addChild(pillar1);
     
     game_object pillar2 = share<GameObject>(&cyl);
     pillar2->setMaterial(mat);
-    pillar2->transform->scaleLocal(x_dim/4,height/2,x_dim/4).translateLocal(-x_dim/2, height/2, -z_dim/2);
+    pillar2->transform->scaleLocal(pillar_radius, height/2, pillar_radius)
+    .translateLocal(-x_dim/2, height/2, -z_dim/2);
     parent->addChild(pillar2);
     
     game_object pillar3 = share<GameObject>(&cyl);
     pillar3->setMaterial(mat);
-    pillar3->transform->scaleLocal(x_dim/4,height/2,x_dim/4).translateLocal(x_dim/2, height/2, -z_dim/2);
+    pillar3->transform->scaleLocal(pillar_radius,height/2,pillar_radius)
+    .translateLocal(x_dim/2, height/2, -z_dim/2);
     parent->addChild(pillar3);
     
     // translate this to the top of the most recent piece
@@ -132,8 +137,8 @@ void Building::onStart() {
     srand ((int)time(NULL));
     for ( int i = -5; i<5; i++) {
         for ( int j = -5; j<5; j++) {
-            transform_group building = CreateRandomBuilding(1, 1);
-            building->translateLocal(5*i, 0, 5*j);
+            transform_group building = CreateRandomBuilding(rand()%4+1, rand()%4+1);
+            building->translateLocal(8*i, 0, 8*j);
             world->addChild(building);
         }
     }
