@@ -29,6 +29,11 @@ void Resources::init() {
     Resources::newObjEntity(CYL_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/cylinder.obj")
     .attachShader(&Resources::getShader(TOON_LIGHT))
     .setMaterial(&Material::Gold);
+    
+    // Create cube object and add it to resources.
+    Resources::newObjEntity(CUB_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/cube.obj")
+    .attachShader(&Resources::getShader(TOON_LIGHT))
+    .setMaterial(&Material::Gold);
 #endif
 
 

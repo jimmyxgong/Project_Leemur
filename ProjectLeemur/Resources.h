@@ -12,6 +12,8 @@
 #define PLAYER 1
 #define POD_OBJ 2
 #define CYL_OBJ 3
+#define CUB_OBJ 4
+
 
 /* Shader keys */
 #define SHADER_LIGHT 0
