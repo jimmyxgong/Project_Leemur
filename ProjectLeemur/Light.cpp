@@ -34,6 +34,15 @@ void Light::loadToShader() {
 
 
 void Light::init() {
+#ifdef _WIN32
 	Resources::addShader(SHADER_LIGHT, "light.vert.shader", "light.frag.shader");
-	Light::Directional.shader = &Resources::getShader(SHADER_LIGHT);
+    Resources::addShader(TOON_LIGHT, "light.vert.shader", "toon.frag.shader");
+
+#else
+    Resources::addShader(SHADER_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.frag.shader");
+    Resources::addShader(TOON_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/toon.frag.shader");
+#endif
+//	Light::Directional.shader = &Resources::getShader(SHADER_LIGHT);
+    Light::Directional.shader = &Resources::getShader(TOON_LIGHT);
+
 }

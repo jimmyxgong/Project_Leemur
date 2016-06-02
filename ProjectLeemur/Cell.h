@@ -3,8 +3,14 @@
 #include "Commons.h"
 #include "BaseEntity.h"
 #include "Material.h"
+#include "Mesh.h"
+
+class Chunk;
 
 class Cell : BaseEntity {
+public:
+
+
 public:
 	struct Data {
 	public:
@@ -13,15 +19,20 @@ public:
 		bool voidable = false;
 	} data;
 
+	Chunk * chunk;
+
 public:
 	void onRender() override;
+	void draw(Mesh &, Chunk &, Vector3f const &);
 
-public:
-
+	bool operator==(Cell const &) const;
 	unsigned int getType() const;
 	bool isTransparent() const;
 	
 	/* Only one type of cell can be negligible: voidables */
 	bool isNegligible() const;
+
+public:
+	static Cell Air;
 
 };

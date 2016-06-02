@@ -27,7 +27,7 @@ Camera& Camera::setUpVector(const Vector3f & val) {
 
 void Camera::update() {
 	view = glm::lookAt(transform.getLocalPosition(), lookAt, upVector) 
-		* transform.getLocalRotation().toMatrix();
+		* transform.getLocalRotation().asMatrix();
 }
 
 

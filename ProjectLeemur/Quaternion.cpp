@@ -28,20 +28,24 @@ void Quaternion::print() {
 
 
 
+Quaternion Quaternion::operator*(const Quaternion & q) const {
+	float xx = (w * q.x) + (x * q.w) + (y * q.z) - (z * q.y);
+	float yy = (w * q.y) - (x * q.z) + (y * q.w) + (z * q.x);
+	float zz = (w * q.z) + (x * q.y) - (y * q.x) + (z * q.w);
+	float ww = (w * q.w) - (x * q.x) - (y * q.y) - (z * q.z);
+	return Quaternion(xx, yy, zz, ww);
+}
 
-
-Quaternion Quaternion::operator*(const Quaternion & q1) {
-	Quaternion quat;
-	quat.x = (w * q1.x) + (x * q1.w) + (y * q1.z) - (z * q1.y);
-	quat.y = (w * q1.y) - (x * q1.z) + (y * q1.w) + (z * q1.x);
-	quat.z = (w * q1.z) + (x * q1.y) - (y * q1.x) + (z * q1.w);
-	quat.w = (w * q1.w) - (x * q1.x) - (y * q1.y) - (z * q1.z);
-
-	return quat;
+Quaternion Quaternion::operator*(const Quaternion & q) {
+	float xx = (w * q.x) + (x * q.w) + (y * q.z) - (z * q.y);
+	float yy = (w * q.y) - (x * q.z) + (y * q.w) + (z * q.x);
+	float zz = (w * q.z) + (x * q.y) - (y * q.x) + (z * q.w);
+	float ww = (w * q.w) - (x * q.x) - (y * q.y) - (z * q.z);
+	return Quaternion(xx, yy, zz, ww);
 }
 
 Matrix4f Quaternion::operator*(Matrix4f const & m) {
-	return toMatrix() * m;
+	return asMatrix() * m;
 }
 
 Vector4f Quaternion::operator*(Vector4f& in) {
@@ -52,7 +56,7 @@ Quaternion Quaternion::operator+(Quaternion& q) {
 	Quaternion quat;
 	Vector3f v1(x, y, z);
 	Vector3f v2(q.x, q.y, q.z);
-	Vector3f v3 = cross(v1, v2);
+	Vector3f v3(cross(v1, v2));
 	
 	Vector3f final = (v1 * q.w) + (v2 * w) + v3;
 	quat.x = final.x;
@@ -68,7 +72,7 @@ Vector4f Quaternion::asVector() {
 	return{ x, y, z, w };
 }
 
-Matrix4f Quaternion::toMatrix() {
+Matrix4f Quaternion::asMatrix() {
 	Matrix4f output;
 	toMatrix(*this, output);
 	return output;
@@ -76,14 +80,14 @@ Matrix4f Quaternion::toMatrix() {
 
 
 
-void Quaternion::Conjugate(Quaternion& quat, Vector4f& out) {
+void Quaternion::Conjugate(const Quaternion & quat, Vector4f& out) {
 	out.x = -quat.x;
 	out.y = -quat.y;
 	out.z = -quat.z;
 	out.w = quat.w;
 }
 
-void Quaternion::toMatrix(Quaternion& quat, Matrix4f& matrix) {
+void Quaternion::toMatrix(const Quaternion & quat, Matrix4f& matrix) {
 	float x = quat.x;
 	float y = quat.y;
 	float z = quat.z;
@@ -118,10 +122,20 @@ Quaternion Quaternion::FromAxis(float x, float y, float z, float angle) {
 }
 
 void Quaternion::FromToRotation(Vector3f& from, Vector3f& to, Quaternion& out) {
-	
-
-
-
 }
 
+Quaternion Quaternion::FromMatrix(Matrix4f const & in, Quaternion & out) {
+	out.w = sqrt(1.0f + in[0][0] + in[1][1] + in[2][2]);
+	float w4 = 4.0f * out.w;
 
+	out.x = (in[2][1] - in[1][2]) / w4;
+	out.y = (in[0][2] - in[2][0]) / w4;
+	out.z = (in[1][0] - in[0][1]) / w4;
+
+	return out;
+}
+
+Quaternion Quaternion::FromMatrix(Matrix4f const & in) {
+	Quaternion quat;
+	return FromMatrix(in, quat);
+}

@@ -29,11 +29,10 @@ private:
 
 	/* Children used in Scene Graph */
 	std::list<SharedPointer<Transform>> children;
-	Transform * parent;
 
-	// Needs to be shared so that gameObject does not get
-	// deleted if it is just a locally bound variable
-	SharedPointer<GameObject> gameObject;
+	/* Need to maintain a list of gameObjects to keep them alive */
+	std::list<SharedPointer<GameObject>> childGameObjects;
+	Transform * parent = nullptr;
 
 public:	/* Getters and Setters */
 
@@ -70,10 +69,19 @@ public: /* Transformations on current orientation */
 	Transform& translateLocal(float x, float y, float z);
 	Transform& translateLocal(const Vector3f & val);
 
+	Transform& translate(float x, float y, float z);
+	Transform& translate(const Vector3f &);
+
+	Transform& rotate(const Quaternion &);
+	Transform& rotate(float x, float y, float z, float deg);
+	Transform& rotateX(float deg);
+	Transform& rotateY(float deg);
+	Transform& rotateZ(float deg);
+
 
 public: /* Constructors */
 	/* Copy Constructor */
-	Transform(const Transform &);	
+	Transform(const Transform &);
 	Transform();
 	~Transform();
 
@@ -92,9 +100,8 @@ public: /* Scene Graph */
 	Transform& reset();
 
 	// Add a child to the Transform's children.
-	Transform& addChild(SharedPointer<Transform> const & transform);
-
-	Transform& addChild(SharedPointer<GameObject> const & transform);
+	Transform& addChild(SharedPointer<Transform> & transform);
+	Transform& addChild(SharedPointer<GameObject> & transform);
 	Transform& detachChildren();
 	Transform& detachTree();
 
@@ -109,43 +116,11 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-	void rotate(float x, float y, float z);
-	void rotate(Quaternion& quat);
-	void rotate(Vector3f& vec);
-
-	void translate(float x, float y, float z);
-	void translate(Vector3f& vec);
-
-	void scale(float x);
-	
-
-
-
-
-
-
 	void updateWorldMatrix();
 	void updateLocalWorldMatrix();
 	Matrix4f asMatrix();
 
-
-
 public:
-
-
-
-
-
-	void destroy();
-
 
 
 
@@ -166,12 +141,15 @@ public:
 	static Matrix4f Translate(Matrix4f&, float x, float y, float z);
 
 
-	const static Matrix4f Translate(float x, float y, float z);
-	const static Matrix4f Translate(Vector3f&);
+	static Matrix4f Translate(float x, float y, float z);
+	static Matrix4f Translate(Vector3f&);
 
-	const static Matrix4f Scale(float x, float y, float z);
-	const static Matrix4f Scale(Vector3f&);
+	static Matrix4f Scale(float x, float y, float z);
+	static Matrix4f Scale(Vector3f&);
 
-	const static Matrix4f StripTranslation(Matrix4f const &);
-	const static Matrix4f StripTranslation(Matrix4f const &, float val);
+	static Matrix4f StripTranslation(Matrix4f const &);
+	static Matrix4f ReplaceTranslation(Matrix4f const &, float val);
+
+	static Vector4f GetTranslation(Matrix4f const &);
+	static Vector3f GetPosition(Matrix4f const &);
 };

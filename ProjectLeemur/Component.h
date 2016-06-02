@@ -6,23 +6,23 @@
 #include "Material.h"
 
 /* Components are like Graphical Resources that one loads from files */
-class Component : public BaseEntity {
+class Component : BaseEntity {
+private:
+	void onCreate() override;
+	void onStart() override;
+	void onRender() override;
+	void onUpdate() override;
+	void onDestroy() override;
+
 protected:
-	GLuint VBO, NBO, VAO, EBO;
-
-	std::vector<Vector3f> vertices;
-	std::vector<Vector3f> normals;
-	std::vector<unsigned int> indices;
-
 	Material * material;
-
-protected:
-	virtual void renderVaoWithIndices();
 
 public:
 	Shader * attachedShader;
 
-	virtual void onDestroy() override;
+
+	//virtual void render();
+	//virtual void destroy();
 
 	Component& setMaterial(Material * mat);
 	Component& attachShader(Shader * shader);
@@ -30,8 +30,8 @@ public:
 	Shader& getShader();
 	Material& getMaterial();
 
-	std::vector<Vector3f>& getVertices();
-	std::vector<Vector3f>& getNormals();
-
 	~Component();
+
+
+	static SharedPointer<Component> EMPTY;
 };

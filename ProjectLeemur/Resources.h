@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "Commons.h"
 #include "Shader.h"
 #include "Entity.h"
@@ -16,6 +15,7 @@
 
 /* Shader keys */
 #define SHADER_LIGHT 0
+#define TOON_LIGHT 1
 
 
 /* 
@@ -32,7 +32,6 @@ private: /* Pool of resources */
 
 
 public: /* Singleton */
-	
 	Resources(Resources const &) = delete;
 	void operator=(Resources const &) = delete;
 
@@ -40,6 +39,7 @@ public: /* Singleton */
 public: /* Singleton methods */
 
 	static Resources & getInstance();
+	static void init();
 	
 	static Shader & getShader(int key);
 	static Resources & addShader(

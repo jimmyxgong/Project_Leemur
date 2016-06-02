@@ -1,27 +1,21 @@
 #include "Component.h"
 
+SharedPointer<Component> Component::EMPTY = share<Component>();
+/* don't use the lifecycles. */
+void Component::onCreate() {}
+void Component::onStart() {}
+void Component::onRender() {}
+void Component::onUpdate() {}
+void Component::onDestroy() {}
+
+
+
 
 Component::~Component() {
-	BaseEntity::~BaseEntity();
 }
 
-void Component::onDestroy() {
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
-	glDeleteBuffers(1, &NBO);
-}
 
-void Component::renderVaoWithIndices() {
-	glBindVertexArray(VAO);
-	glDrawElements(
-		GL_TRIANGLES,
-		indices.size(),
-		GL_UNSIGNED_INT,
-		0
-	);
-	glBindVertexArray(0);
-}
+
 
 Component& Component::setMaterial(Material * mat) {
 	material = mat;
@@ -39,12 +33,4 @@ Shader& Component::getShader() {
 
 Material& Component::getMaterial() {
 	return *material;
-}
-
-std::vector<Vector3f>& Component::getVertices() {
-	return vertices;
-}
-
-std::vector<Vector3f>& Component::getNormals() {
-	return normals;
 }

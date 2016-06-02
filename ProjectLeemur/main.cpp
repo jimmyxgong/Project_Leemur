@@ -1,6 +1,8 @@
 #include "Window.h"
 #include "Time.h"
 //#include "vld.h"
+#ifdef _WIN32
+#endif
 
 #define WIDTH 2160
 #define HEIGHT (WIDTH / 16 * 9)
@@ -10,8 +12,8 @@
 #define FAR 1000.0f
 #define FPS 60.0f
 
-
 int main(void) {
+
 	Window & window =
 		Window::of(TITLE)
 			.setSize(WIDTH, HEIGHT)
@@ -19,10 +21,10 @@ int main(void) {
 			.setNear(NEAR)
 			.setFar(FAR)
 			.start();
-		
 	Window::PrintVersion();
 	GLFWwindow * glWindow = window.getGlfwWindow();
 	Time timer(FPS);
+
 
 	while (!glfwWindowShouldClose(glWindow)) {
 		if (timer.ready()) {
@@ -36,3 +38,4 @@ int main(void) {
 	glfwTerminate();
 	exit(EXIT_SUCCESS);
 }
+

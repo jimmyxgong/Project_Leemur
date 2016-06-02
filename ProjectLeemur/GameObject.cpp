@@ -1,24 +1,63 @@
 #include "GameObject.h"
 #include "Window.h"
 #include "Camera.h"
+#include "ObjObject.h"
 
-void GameObject::onCreate() {
+/* Used for type_id mapping */
+std::size_t Hasher::operator()(TypeRef code) const {
+	return code.get().hash_code();
+}
+
+bool Comparator::operator()(TypeRef lhs, TypeRef rhs) const {
+	return lhs.get() == rhs.get();
+}
+
+
+
+
+
+void GameObject::onStart() {
+	//Mesh * mesh = new Mesh();
+	//addComponent<Mesh>(*mesh);
 	transform = share<Transform>();
 }
 
-void GameObject::onStart() {
-
-}
-
 void GameObject::onRender() {
-	if (component->attachedShader) 
-		loadToShader();
-	component->onRender();
+	//getComponent<Mesh>().render();
+	//getComponent<ObjObject>();
+	//if (m != *Component::EMPTY)
+	if (component) {
+		if (component->attachedShader) {
+			component->attachedShader->use();
+			loadToShader();
+		}
+		((Mesh*)component)->render();
+	}
 }
 
 void GameObject::onUpdate() {
 
 }
+
+template <class T>
+T & GameObject::getComponent() {
+    const std::type_info & id = typeid(T);
+	const auto & val = components.find(id);
+	if (val != components.end()) {
+		return (T &) *val->second;
+	}
+
+	std::cout << "Empty component returned" << std::endl;
+	return (T&) (T());
+}
+
+template <class T>
+void GameObject::addComponent(T const & val) {
+	components.emplace(typeid(T), (Component*) &val);
+}
+
+
+
 
 void GameObject::loadToShader() {
 	component->getShader().use();
@@ -33,14 +72,14 @@ void GameObject::loadToShader() {
 	Shader::loadMatrix("model", model);
 	Shader::loadMatrix("NormalMatrix", Matrix3f(transpose(inverse(model))));
 
-	// TODO: there might be some side-effects of using CAMERA_POSITION
-	// instead of using the actual Window active camera. Too lazy to
-	// write another method to get the active camera.
-	Shader::loadVector("CameraPosition", CAMERA_POSITION);
+	Camera & cam = Window::getFocusedWindow().getActiveCamera();
+	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
 
-GameObject::GameObject(Component * component) :
-	component(component)
+GameObject::GameObject(Component * component)
+	: component(component)
 {
-	onCreate();
+	onStart();
 }
+
+GameObject::~GameObject() {}
