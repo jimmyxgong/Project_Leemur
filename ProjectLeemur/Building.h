@@ -4,6 +4,7 @@
 #include "BaseEntity.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Material.h"
 
 class Building : public BaseEntity {
 private:
@@ -16,11 +17,11 @@ private:
     float x_dim;
     float z_dim;
     
-    SharedPointer<Transform> CreateStep();
-    SharedPointer<Transform> CreatePyramid(int);
-    SharedPointer<Transform> CreatePillars(float);
-    SharedPointer<Transform> CreateBox(float);
-    SharedPointer<Transform> CreateCyl(float);
+    SharedPointer<Transform> CreateStep(Material*);
+    SharedPointer<Transform> CreatePyramid(int, Material*);
+    SharedPointer<Transform> CreatePillars(float, Material*);
+    SharedPointer<Transform> CreateBox(float, Material*);
+    SharedPointer<Transform> CreateCyl(float, Material*);
     SharedPointer<Transform> CreateRandomBuilding(float, float);
 
     SharedPointer<Transform> CreateMiddle();
