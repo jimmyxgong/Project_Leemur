@@ -15,6 +15,7 @@
 
 /* Shader keys */
 #define SHADER_LIGHT 0
+#define TOON_LIGHT 1
 
 
 /* 

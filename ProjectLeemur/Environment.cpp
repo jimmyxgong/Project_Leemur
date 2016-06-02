@@ -68,7 +68,8 @@ void Environment::onUpdate() {
 }
 
 void Environment::onDestroy() {
-	delete (&Resources::getShader(SHADER_LIGHT));
+    delete (&Resources::getShader(SHADER_LIGHT));
+    delete (&Resources::getShader(TOON_LIGHT));
 	skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
