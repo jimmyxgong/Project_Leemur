@@ -32,8 +32,8 @@ double Terrain::noise(double x, double z) const {
 double Terrain::valueAt(double x, double z) const {
 	int xFloor = (int) x;
 	int zFloor = (int) z;
-	double xremain = x - xFloor;
-	double zremain = z - zFloor;
+	double xremain = x - float(xFloor);
+	double zremain = z - float(zFloor);
 
 	double n00 = noise(xFloor - 1, zFloor - 1);
 	double n01 = noise(xFloor + 1, zFloor - 1);
@@ -61,16 +61,31 @@ double Terrain::valueAt(double x, double z) const {
 	double corner01 = l*(n04 + n05 + n20 + n21) + r*(n02 + n03 + n08 + n22) + p*(n07);
 	double corner11 = l*(n08 + n12 + n22 + n30) + r*(n07 + n11 + n05 + n21) + p*(n03);
 
+	//xremain = fade(xremain);
+	//zremain = fade(zremain);
+
 	double lerpc0 = lerp(corner00, corner10, xremain);
 	double lerpc1 = lerp(corner01, corner11, xremain);
 
 	return lerp(lerpc0, lerpc1, zremain);
 }
 
+double Terrain::valueAtS(double x, double z) const {
+	return valueAt(x + seed, z + seed);
+}
+
 double Terrain::height(double x, double z) const {
+	return height(x, z, frequency);
+}
+
+double Terrain::height(double x, double z, double freq) const {
+	//x += 544;
+	//z += 544;
+	x += 512;
+	z += 512;
+
 	double value = 0;
-	double amp = 1;
-	double freq = frequency;
+	double amp = 1.0;
 
 	for (int i = 0; i < octaves; i++) {
 		double xFreq = x * freq;
@@ -80,7 +95,43 @@ double Terrain::height(double x, double z) const {
 		amp *= persistence;
 		freq *= 2;
 	}
-	return amplitude * value;
+
+	return (amplitude * value);
+}
+
+double Terrain::heightO(double x, double z) const {
+	double value = 0;
+	double amp = 1.0;
+	double freq = frequency;
+	for (int i = 0; i < octaves; i++) {
+		double xFreq = x * freq;
+		double zFreq = z * freq;
+
+		value += perlinNoise(zFreq + seed, xFreq + seed) * amp;
+		amp *= persistence;
+		freq *= 1.8715;
+	}
+	return value / octaves;
+}
+
+double Terrain::perlinNoise(double x, double z) const {
+	return perlinNoise(x, z, o1, o2, o3, o4, o5, o6);
+}
+
+double Terrain::perlinNoise(double x, double z, double o1, double o2, double o3, double o4, double o5, double o6) const {
+	x *= frequency;
+	z *= frequency;
+
+	double e = o1 > 0 ? (o1 * valueAt(x, z)) : 1;
+	double sum = o1 + o2 + o3 + o4 + o5 + o6;
+	if (o2 > 0) e *= (o2 * valueAt(z * 2, x * 2));
+	if (o3 > 0) e *= (o3 * valueAt(z * 4, x * 4));
+	if (o4 > 0) e *= (o4 * valueAt(z * 8, x * 8));
+	if (o5 > 0) e *= (o5 * valueAt(z * 16, x * 16));
+	if (o6 > 0) e *= (o6 * valueAt(z * 32, x * 32));
+	if (sum > 0) e = e / sum;
+
+	return e;// pow(e, exp);
 }
 
 double Terrain::perlinNoise(double x, double y, double z, double parts, double div) const {
@@ -96,8 +147,77 @@ double Terrain::perlinNoise(double x, double y, double z, double parts, double d
 	return (int) round(p0 + p1 + p2 + p3 + y / 2);
 }
 
+int Terrain::gen(int rangeFrom, int rangeTo) const {
+	const std::uniform_int_distribution<int> dis(rangeFrom, rangeTo);
+	std::minstd_rand generator(std::chrono::system_clock::now().time_since_epoch().count());
+	return dis(generator);
+}
+
+double Terrain::fade(double x) const {
+	return (x*x*x*(x*(6 * x - 15) + 10));
+}
 
 
+
+Terrain & Terrain::setSeed(long long _seed) {
+	seed = _seed;
+	return *this;
+}
+
+Terrain & Terrain::setPersistence(double _persist) {
+	persistence = _persist;
+	return *this;
+}
+
+Terrain & Terrain::setFrequency(double _freq) {
+	frequency = _freq;
+	return *this;
+}
+
+Terrain & Terrain::setAmplitude(double _amp) {
+	amplitude = _amp;
+	return *this;
+}
+
+Terrain & Terrain::setOctaves(int _oct) {
+	octaves = _oct;
+	return *this;
+}
+
+Terrain & Terrain::setOct1(double o) {
+	o1 = o;
+	return *this;
+}
+
+Terrain & Terrain::setOct2(double o) {
+	o2 = o;
+	return *this;
+}
+
+Terrain & Terrain::setOct3(double o) {
+	o3 = o;
+	return *this;
+}
+
+Terrain & Terrain::setOct4(double o) {
+	o4 = o;
+	return *this;
+}
+
+Terrain & Terrain::setOct5(double o) {
+	o5 = o;
+	return *this;
+}
+
+Terrain & Terrain::setOct6(double o) {
+	o6 = o;
+	return *this;
+}
+
+Terrain & Terrain::setElevationExp(double e) {
+	exp = e;
+	return *this;
+}
 
 Terrain::Terrain(long long seed) : seed(seed) {}
 
@@ -114,3 +234,13 @@ Terrain::Terrain(
 	octaves(oct), 
 	seed(seed)
 { }
+
+
+
+
+Terrain::Biome Terrain::biome(double e) {
+	if (e == 3) return Biome::DESERT;
+	if (e > 4) return Biome::MOUNTAINS;
+
+	return Biome::PLAINS;
+}

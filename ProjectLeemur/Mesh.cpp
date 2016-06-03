@@ -1,5 +1,35 @@
 #include "Mesh.h"
 
+using VecRef = std::reference_wrapper<const Vector3f>;
+
+static int hashCode(const char * bytes, int numBytes)
+{
+	unsigned long h = 0, g;
+	for (int i = 0; i<numBytes; i++)
+	{
+		h = (h << 4) + bytes[i];
+		if (g = h & 0xF0000000L) { h ^= g >> 24; }
+		h &= ~g;
+	}
+	return h;
+}
+
+struct Hasher {
+	std::size_t operator()(VecRef code) const {
+		return hashCode((const char *) &code, sizeof(code));
+	}
+};
+
+struct Comparator {
+	bool operator()(VecRef lhs, VecRef rhs) const {
+		bool x = lhs.get().x == rhs.get().x;
+		bool y = lhs.get().y == rhs.get().y;
+		bool z = lhs.get().z == rhs.get().z;
+
+		return x && y && z;
+	}
+};
+
 
 void Mesh::init() {
 	glGenVertexArrays(1, &VAO);
@@ -103,14 +133,16 @@ void Mesh::destroy() {
 	glDeleteBuffers(1, &NBO);
 }
 
-Mesh& Mesh::clear() {
+void Mesh::clear() {
 	vertices.clear();
 	indices.clear();
 	normals.clear();
-	return *this;
 }
 
-Mesh& Mesh::recalculateNormals() {
+void Mesh::recalculateNormals() {
+	// needs to optimize to be able to calculate the normals correctlys
+	//optimize();
+
 	for (int i = 0; i < indices.size(); i += 3) {
 		Vector3f A = vertices.at(indices.at(i));
 		Vector3f B = vertices.at(indices.at(i + 1));
@@ -126,17 +158,39 @@ Mesh& Mesh::recalculateNormals() {
 			Vector3f NB = normals.at(indices.at(i + 1));
 			Vector3f NC = normals.at(indices.at(i + 2));
 
-			addNormal(N + NA);
-			addNormal(N + NB);
-			addNormal(N + NC);
-			continue;
+			NA = normalize(N + NA);
+			NB = normalize(N + NB);
+			NC = normalize(N + NC);
+
+			addNormal(NA);
+			addNormal(NB);
+			addNormal(NC);
+			
+			//normals[indices.at(i)] = NA;
+			//normals[indices.at(i + 1)] = NB;
+			//normals[indices.at(i + 2)] = NC;
 		}
 		addNormal(N);
 		addNormal(N);
 		addNormal(N);
 	}
+}
 
-	return *this;
+void Mesh::optimize() {
+	int i = 0;
+	std::unordered_map<VecRef, unsigned int, Hasher, Comparator> mapped;
+	for (Vector3f & vertex : getVertices()) {
+
+		// map does not contain vertices, add them.
+		auto & pair = mapped.find(vertex);
+		if (pair == mapped.end()) {
+			mapped.emplace(vertex, indices[i++]);
+			continue;
+		}
+
+		// map contains the vertex:
+		indices[i++] = pair->second;
+	}
 }
 
 Mesh& Mesh::setVertices(std::vector<Vector3f> const & vertices) {
@@ -212,6 +266,14 @@ Mesh& Mesh::addIndex(unsigned int i) {
 	return *this;
 }
 
+Mesh& Mesh::addColor(float x, float y, float z) {
+	return addColor(Vector3f(x, y, z));
+}
+
+Mesh& Mesh::addColor(Vector3f const & val) {
+	colors.push_back(val);
+	return *this;
+}
 
 
 std::vector<Vector3f>& Mesh::getVertices() {

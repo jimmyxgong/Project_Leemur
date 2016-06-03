@@ -4,10 +4,12 @@
 #include "Cell.h"
 #include "Component.h"
 #include "Mesh.h"
+#include "Terrain.h"
 
 #define CHUNK_SIZE 16
 #define CHUNK_HEIGHT 32
 #define HEIGHT_UNIT 0.25
+#define HEIGHT_CONSTANT CHUNK_HEIGHT / 2
 
 template <class T>
 using Array = std::vector<T>;
@@ -25,12 +27,14 @@ private:
 
 	//Array<Array<int>> interpolatedHeightMap;
 	Array<Array<int>> heightMap;
+	Array<Array<double>> dheightMap;
 	Array<Array<Array<Cell>>> cells;
 	bool changed = false;
 
+	/* Parent of chunk */
 	World * world;
 
-	// Position in chunk map
+	/* Position in chunk map */
 	Vector3f mapPosition;
 
 
@@ -47,6 +51,7 @@ public: /* terrain generations */
 	void resizeStructure();
 	void loadToShader();
 	void generateChunk();
+	void generateChunk(Terrain & terrain);
 	void buildMeshData();
 	void renderMesh();
 	void printHeightMap();
@@ -72,7 +77,7 @@ public: /* Info functions */
 public:
 	bool isInvalid() const;
 	Array<Array<int>> & getHeightMap();
-	Chunk & setPosition(Vector3f const &);
+	Chunk & setMapPosition(Vector3f const &);
 
 public:
 	Chunk(bool empty = false);

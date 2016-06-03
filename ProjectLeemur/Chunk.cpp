@@ -18,10 +18,9 @@
 //double _div = 0.7;
 //double _cutoff = 5.3;
 
-double _parts = 9.8;
-double _div = 1.5;
-double _cutoff = 10.7;
-
+//double _parts = 9.8;
+//double _div = 1.5;
+//double _cutoff = 10.7;
 
 //double _parts = 10.2;
 //double _div = 20.7;
@@ -30,12 +29,12 @@ double _cutoff = 10.7;
 // cutoff div = -33 parts 1.2
 
 // persist 7.2
-Terrain terrain = {
-	0.25, 1, 1, 6, 100	//6.7, 0.6, 1.0, 8, 1 
-}; //0.05, 1, 1, 6, 100
-// parts 10.2 div 20.7 cutoff 9.8
-
-Keyboard::Layout bindings;
+//Terrain terrain = {
+//	0.25, 1, 1, 6, 100	//6.7, 0.6, 1.0, 8, 1 
+//}; //0.05, 1, 1, 6, 100
+//// parts 10.2 div 20.7 cutoff 9.8
+//
+//Keyboard::Layout bindings;
 
 
 UniquePointer<Chunk> Chunk::EMPTY = unique<Chunk>(true);
@@ -50,7 +49,6 @@ void print(double val) {
 void Chunk::onCreate() {
 	resizeStructure();
 	generateChunk();
-	allowKeyBindings();
 	//printHeightMap();
 }
 
@@ -62,7 +60,7 @@ void Chunk::onStart() {
 }
 
 void Chunk::onRender() {
-	Material::Parismarine.loadToShader();
+	//Material::Sand.loadToShader();
 	loadToShader();
 	mesh.render();
 }
@@ -82,72 +80,14 @@ void Chunk::onDestroy() {
 	mesh.destroy();
 }
 
-void Chunk::allowKeyBindings() {
-	static bool once = false;
-	if (once) return;
-	once = true;
-
-	// Testing values
-	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
-		this->changed = true;
-		_parts += shifted ? -0.2 : 0.2;
-		printf("parts");
-		print(_parts);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
-		this->changed = true;
-		_div += shifted ? -0.2 : 0.2;
-		printf("div");
-		print(_div);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
-		changed = true;
-		_cutoff += shifted ? -0.2 : 0.2;
-		printf("cutoff");
-		print(_cutoff);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_J, [this](bool shifted) {
-		changed = true;
-		terrain.persistence += shifted ? -0.02 : 0.02;
-		printf("persist");
-		print(terrain.persistence);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
-		changed = true;
-		terrain.frequency += shifted ? -0.2 : 0.2;
-
-		printf("freq");
-		print(terrain.frequency);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_L, [this](bool shifted) {
-		changed = true;
-		terrain.amplitude += shifted ? -0.2 : 0.2;
-
-		printf("amp");
-		print(terrain.amplitude);
-	});
-
-	bindings.onKeyPressed(GLFW_KEY_H, [this](bool shifted) {
-		changed = true;
-		terrain.octaves += shifted ? -1 : 1;
-		printf("Oct");
-		print(terrain.octaves);
-	});
-
-	Keyboard::addLayout(&bindings);
-}
-
 void Chunk::resizeStructure() {
 	cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
+	dheightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
+		dheightMap[i].resize(CHUNK_SIZE);
 		for (int j = 0; j < CHUNK_HEIGHT; j++) {
 			cells[i][j].resize(CHUNK_SIZE);
 		}
@@ -172,6 +112,23 @@ void Chunk::loadToShader() {
 	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
 
+void Chunk::generateChunk(Terrain & terrain) {
+	clear();
+	const Vector3f pos = transform.getPosition();
+	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
+	const double roundedZ = round(pos.z);// +pos.z < 0 ? 1000 : 999;
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+		double x = i + roundedX;
+		for (int k = 0; k < CHUNK_SIZE; k++) {
+			double z = k + roundedZ;
+
+			double g = terrain.height(x, z);
+			dheightMap[i][k] = g;
+			heightMap[i][k] = (int)round(g);
+		}
+	}
+}
+
 void Chunk::generateChunk() {
 	clear();
 	for (int i = 0; i < CHUNK_SIZE; i++) {
@@ -180,10 +137,7 @@ void Chunk::generateChunk() {
 
 				Vector3f pos = transform.getPosition();
 				double x = i + round(pos.x);
-				//x *= 0.25;
-				//double y = j;
 				double z = k + round(pos.z);
-				//z *= 0.25;
 				
 				//int j = CHUNK_HEIGHT;
 				//double height = terrain.perlinNoise(x, j, z, _parts, _div);
@@ -201,8 +155,8 @@ void Chunk::generateChunk() {
 					//heightMap[i][k] = j;
 
 				//cells[i][j][k] = SolidCell();
-				double g = terrain.height(x, z);
-				heightMap[i][k] = (int) round(g); // (int)((g - (int)g) * 10);
+				//double g = terrain.height(x, z);
+				//heightMap[i][k] = (int) round(g); // (int)((g - (int)g) * 10);
 			}
 		//}
 	}
@@ -265,28 +219,6 @@ void Chunk::buildMeshData() {
 	bool key01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
 	bool key11 = !world->containsKey(mapPosition.x + 1, mapPosition.z + 1);
 
-	// A lot of Debugging:
-	//std::string key = world->toKey(mapPosition.x + 1, mapPosition.z);
-	//if (world->getChunk(key).isInvalid()) {
-	//	printf("INVALID chunk found in out of bounds\n");
-	//}
-
-	//key = world->toKey(mapPosition.x, mapPosition.z + 1);
-	//if (world->getChunk(key).isInvalid()) {
-	//	printf("INVALID chunk found in out of bounds\n");
-	//}
-
-	//key = world->toKey(mapPosition.x + 1, mapPosition.z + 1);
-	//if (world->getChunk(key).isInvalid()) {
-	//	printf("INVALID chunk found in out of bounds\n");
-	//}
-
-	//std::string log = key10 ? "\ntrue," : "\nfalse,";
-	//log.append(key01 ? "true," : "false,");
-	//log.append(key11 ? "true," : "false:  ");
-	//log.append(to_string(mapPosition));
-	//printf(log.c_str());
-
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			if (i == CHUNK_SIZE - 1) {
@@ -296,19 +228,14 @@ void Chunk::buildMeshData() {
 			}
 			if (k == CHUNK_SIZE - 1) {
 				if (key01) break;
-				//if (i == CHUNK_SIZE - 1) break;
 			}
 
 
 			int j = heightMap[i][k];
 			double x = i + pos.x;
 			double z = k + pos.z;
-			double zz = z + (i % 2 == 0 ? 0 : 0.5);
-			double val = i % 2 == 0 ? 0.5 : 0;
-			
-			/* Do not include vertices if chunk does not exist*/
-
-			//if (key01 || key10 || key11) continue;
+			double zz = z;// +(i % 2 == 0 ? 0 : 0.5);
+			double val = 0;// i % 2 == 0 ? 0.5 : 0;
 
 			//Vector4f min = getLeast(i, j, k);
 			mesh.addTriangles(generateTriangles(0));
@@ -317,15 +244,6 @@ void Chunk::buildMeshData() {
 			addMeshOutOfBounds(x, z + val, i, k, 1, 0);
 			addMeshOutOfBounds(x, zz, i, k, 0, 1);
 			addMeshOutOfBounds(x, z + val, i, k, 1, 1);
-
-			//hMap = addMeshOutOfBounds(&heightMap, i, k, 1, 0);
-			//mesh.addVertex(x + 1, (*hMap)[i + 1][k] * d, z);
-
-			//hMap = addMeshOutOfBounds(&heightMap, i, k, 0, 1);
-			//mesh.addVertex(x, (*hMap)[i][k + 1] * d, z + 1);
-
-			//hMap = addMeshOutOfBounds(&heightMap, i, k, 1, 1);
-			//mesh.addVertex(x + 1, (*hMap)[i + 1][k + 1] * d, z + 1);
 		}
 	}
 }
@@ -342,7 +260,7 @@ void Chunk::printHeightMap() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		std::string sb = "\n";
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			sb.append(std::to_string(heightMap[i][k]));
+			sb.append(std::to_string(dheightMap[i][k]));
 			sb.append(",\t");
 		}
 		sb.append("\t");
@@ -447,7 +365,7 @@ Array<Array<int>> & Chunk::getHeightMap() {
 }
 
 
-Chunk & Chunk::setPosition(Vector3f const & val) {
+Chunk & Chunk::setMapPosition(Vector3f const & val) {
 	mapPosition = val;
 	return *this;
 }

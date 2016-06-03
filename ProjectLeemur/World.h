@@ -5,17 +5,24 @@
 #include "Chunk.h"
 #include "Transform.h"
 #include "Player.h"
+#include "Terrain.h"
 
 #ifdef _WIN32
 #include <boost/unordered_map.hpp>
 #endif
 
-#define RENDER_DISTANCE 0
+#define RENDER_DISTANCE 2
 
 class World : public BaseEntity {
 private:
 	WeakPointer<Player> player;
 	std::unordered_map<std::string, UniquePointer<Chunk>> chunks;
+
+	/* Noise profile */
+	Terrain terrain;
+	bool changed = true;
+
+	void allowKeyBindings();
 
 public:
 	void onStart() override;
@@ -23,8 +30,9 @@ public:
 	void onUpdate() override;
 	void onDestroy() override;
 
-	
 	void generateChunks();
+	void evaluateChunks();
+	
 	void startChunks();
 	void renderChunks();
 	void updateChunks();
@@ -32,7 +40,7 @@ public:
 	
 	void setNewChunk(int x, int z);
 	void addNewChunk(int x, int z);
-	void addNewChunk(Vector3f const & chunkPos, int x, int z);
+	void addNewChunk(Vector3f & chunkPos, int x, int z);
 	std::string toKey(int x, int z);
 
 	bool containsKey(int x, int z);
@@ -53,5 +61,7 @@ public:
 
 
 	void setPlayer(WeakPointer<Player> player);
+	World();
 	~World() = default;
+
 };

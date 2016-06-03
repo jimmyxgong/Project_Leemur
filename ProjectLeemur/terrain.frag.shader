@@ -22,27 +22,31 @@ uniform struct Material {
 	vec4 specular;
 
 	float shiny;
-} material;
+} grass, sand, snow;
 
-in vec3 FragmentPosition;
-in vec3 FragmentNormal;
-
-uniform samplerCube Skybox;
 uniform vec3 CameraPosition;
 uniform mat3 NormalMatrix;
 uniform mat4 model;
 
+in vec3 FragmentPosition;
+in vec3 FragmentNormal;
+
 out vec4 color;
 
 void main() {
+	Material material = grass;
+	if (FragmentPosition.y > 7) material = snow;
+	else if (FragmentPosition.y < 2.5 && FragmentPosition.y >= 2.2) material = sand;
+	
+
 	vec3 normal = normalize(NormalMatrix * FragmentNormal);
 	vec3 surface = (model * vec4(FragmentPosition, 1.0f)).xyz;
 	vec3 surfaceToCamera = normalize(CameraPosition - surface);
-
+	
 	vec3 intensity = licht.intensity.rgb;
 	vec3 surfaceToLight;
 	float attenuation;
-
+	
 	if (licht.type == 0) {
 		// directional light
 		surfaceToLight = normalize(licht.position.xyz);
@@ -73,7 +77,7 @@ void main() {
 			intensity *= clamp((angle - outerCutoff) / epsilon, 0.0, 1.0);
 		}
 	}
-
+	
 	float brightness = max(0.0, dot(normal, surfaceToLight));
 	float specularity = 0.0;
 	if (brightness > 0.0) {

@@ -31,7 +31,7 @@ void Resources::init() {
     .setMaterial(&Material::Gold);
 #endif
 
-
+	//mapBiome
 
 }
 
@@ -78,6 +78,12 @@ ObjObject & Resources::newObjEntity(int key, const std::string & obj) {
 	addEntity(key, (Entity*) ob);
 	return *ob;
 }
+
+Resources & Resources::mapBiomeToMaterial(Terrain::Biome b, Material * m) {
+	getInstance().biomes.emplace(b, m);
+	return getInstance();
+}
+
 
 void Resources::destroy() {
 	for (auto shader : getInstance().shaders) {
