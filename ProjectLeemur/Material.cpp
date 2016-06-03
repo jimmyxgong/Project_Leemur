@@ -19,6 +19,18 @@ Material Material::Gold = {
 	{ 0.628281f, 0.555802f, 0.366065f, 1.0f }
 };
 
+Material Material::Silver = {
+    {0.19225, 0.19225 ,0.19225, 0.4},
+    {0.50754, 0.50754 ,0.50754, 0.4},
+    {0.508273, 0.508273, 0.508273, 0.4}
+};
+
+Material Material::Bronze = {
+    {0.2125, 0.1275, 0.054, 0.2},
+    {0.714, 0.4284, 0.18144, 0.2},
+    {0.393548, 0.271906, 0.166721, 0.2}
+};
+
 void Material::loadToShader() {
 	Shader::loadVector("material.ambient", ambient)
 			.loadVector("material.diffuse", diffuse)

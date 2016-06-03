@@ -24,5 +24,7 @@ struct Material {
 
 	static Material RedPlastic;
 	static Material Parismarine;
-	static Material Gold;
+    static Material Gold;
+    static Material Silver;
+    static Material Bronze;
 };

@@ -152,12 +152,15 @@ void Building::onStart() {
 
 Material * randomMaterial() {
     Material * toReturn;
-    int random = rand() % 3;
+    int random = rand() % 4;
     if (random == 0) toReturn =  &Material::RedPlastic;
-    else if (random == 1) toReturn = &Material::Parismarine;
+    else if (random == 1) toReturn = &Material::Bronze;
     else if (random == 2) toReturn = &Material::Gold;
+    else if (random == 3) toReturn = &Material::Silver;
+    
     return toReturn;
 }
+
 
 /* creates a building with a base, center and a top */
 transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
