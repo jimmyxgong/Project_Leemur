@@ -22,8 +22,11 @@ void Building::onCreate() {
     z_dim = 2.5;
 }
 /* adds a x_dim by z_dim by .1 box to building */
-transform_group Building::CreateStep(Material* mat) {
-    static Component& cube = (ObjObject&) Resources::getEntity(CUB_OBJ);
+transform_group Building::CreateStep(Material* mat, int shape) {
+    // if shape is 0 use cube cylenders else
+    Component& cube = (shape ?
+                             (ObjObject&) Resources::getEntity(CYL_OBJ) :
+                             (ObjObject&) Resources::getEntity(CUB_OBJ));
     transform_group parent = share<Transform>();
     game_object step = share<GameObject>(&cube);
     step->setMaterial(mat);
@@ -43,7 +46,7 @@ transform_group Building::CreateStep(Material* mat) {
 
 /* adds a box to building with a specified height */
 transform_group Building::CreateBox(float height, Material* mat) {
-    static Component& cube = (ObjObject&) Resources::getEntity(CUB_OBJ);
+    Component& cube = (ObjObject&) Resources::getEntity(CUB_OBJ);
     transform_group parent = share<Transform>();
     
     game_object box = share<GameObject>(&cube);
@@ -62,7 +65,7 @@ transform_group Building::CreateBox(float height, Material* mat) {
 
 /* adds a box to building with a specified height */
 transform_group Building::CreateCyl(float height, Material* mat) {
-    static Component& cyl = (ObjObject&) Resources::getEntity(CYL_OBJ);
+    Component& cyl = (ObjObject&) Resources::getEntity(CYL_OBJ);
     transform_group parent = share<Transform>();
     
     game_object cylender = share<GameObject>(&cyl);
@@ -80,8 +83,11 @@ transform_group Building::CreateCyl(float height, Material* mat) {
 }
 
 /* adds four pillars to building with a specified height */
-transform_group Building::CreatePillars(float height, Material* mat) {
-    static Component& cyl = (ObjObject&) Resources::getEntity(CYL_OBJ);
+transform_group Building::CreatePillars(float height, Material* mat, int shape) {
+    // if shape is 0 use cube cylenders else
+    Component& cyl = (shape ?
+                             (ObjObject&) Resources::getEntity(CYL_OBJ) :
+                             (ObjObject&) Resources::getEntity(CUB_OBJ));
     transform_group parent = share<Transform>();
     
     game_object pillar = share<GameObject>(&cyl);
@@ -118,14 +124,14 @@ transform_group Building::CreatePillars(float height, Material* mat) {
     return parent;
 }
 
-transform_group Building::CreatePyramid(int steps, Material* mat) {
+transform_group Building::CreatePyramid(int steps, Material* mat, int shape) {
     transform_group parent = share<Transform>();
 
     for (int i = 0; i<steps; i++){
         // chck if there is enough space for another step
         if (x_dim < .1 && z_dim < .1)
             break;
-        transform_group step = CreateStep(mat);
+        transform_group step = CreateStep(mat, shape);
         parent->addChild(step);
     }
     
@@ -171,7 +177,7 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
     int random;
     if (base == 0) {
         random = rand() % 3 + 3;
-        transform_group pyramid = CreatePyramid(random, randomMaterial());
+        transform_group pyramid = CreatePyramid(random, randomMaterial(), random%2);
         building->addChild(pyramid);
         std::cout << "Base is pyramid with " << random << " steps" << std::endl;
     }
@@ -183,7 +189,7 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
     }
     else if (base == 2){
         random = rand() % 100 + 1;
-        transform_group pillars = CreatePillars(.5+2./random, randomMaterial());
+        transform_group pillars = CreatePillars(.5+2./random, randomMaterial(), random%2);
         building->addChild(pillars);
         std::cout << "Base is pillars with " << .5+2./random << " height" << std::endl;
     }
@@ -210,7 +216,7 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
                 continue;
             }
             random = rand() % 100 + 1;
-            transform_group pillars = CreatePillars(1+5./random, randomMaterial());
+            transform_group pillars = CreatePillars(1+5./random, randomMaterial(), random%2);
             building->addChild(pillars);
             std::cout << "Middle is pillars with " << 1+5./random << " height" << std::endl;
         }
@@ -232,7 +238,7 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
     int top = rand() % 2;
     if (top == 0) {
         random = rand() % 8 + 3;
-        transform_group pyramid = CreatePyramid(random, randomMaterial());
+        transform_group pyramid = CreatePyramid(random, randomMaterial(), random%2);
         building->addChild(pyramid);
         std::cout << "Top is pyramid with " << random << " steps" << std::endl;
     }

@@ -17,9 +17,9 @@ private:
     float x_dim;
     float z_dim;
     
-    SharedPointer<Transform> CreateStep(Material*);
-    SharedPointer<Transform> CreatePyramid(int, Material*);
-    SharedPointer<Transform> CreatePillars(float, Material*);
+    SharedPointer<Transform> CreateStep(Material*, int shape);
+    SharedPointer<Transform> CreatePyramid(int, Material*, int shape);
+    SharedPointer<Transform> CreatePillars(float, Material*, int shape);
     SharedPointer<Transform> CreateBox(float, Material*);
     SharedPointer<Transform> CreateCyl(float, Material*);
     SharedPointer<Transform> CreateRandomBuilding(float, float);
