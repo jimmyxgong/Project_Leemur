@@ -141,13 +141,51 @@ transform_group Building::CreatePyramid(int steps, Material* mat, int shape) {
 
 void Building::onStart() {
     srand ((int)time(NULL));
-    for ( int i = -5; i<5; i++) {
-        for ( int j = -5; j<5; j++) {
-            transform_group building = CreateRandomBuilding(rand()%4+1, rand()%4+1);
-            building->translateLocal(8*i, 0, 8*j);
-            world->addChild(building);
-        }
+//    flat layer of buildings
+//    for ( int i = -5; i<5; i++) {
+//        for ( int j = -5; j<5; j++) {
+//            transform_group building = CreateRandomBuilding(rand()%4+1, rand()%4+1);
+//            building->translateLocal(8*i, 0, 8*j);
+//            world->addChild(building);
+//        }
+//    }
+    
+    // sphere of buildings
+    int building_radius = 4;
+    int spacing = 2*building_radius;
+    int per_sphere = 10;
+    float sphere_radius = 40;
+    
+    for ( double i = 0; i<2*M_PI; i+=2*M_PI/per_sphere) {
+        for (double j = M_PI/per_sphere; j<M_PI; j+=M_PI/per_sphere){
+//            if (rand() % 4)
+//                continue;
+            
+            transform_group building = CreateRandomBuilding(rand()%building_radius+1,
+                                                            rand()%building_radius+1);
+            Vector3f location = Vector3f(sphere_radius*cos(i)*sin(j),
+                                         sphere_radius*sin(i)*sin(j),
+                                         sphere_radius*cos(j));
+            
+            Vector3f up = Vector3f(0,1,0);
+            Vector3f new_up = normalize(location);
+            Vector3f rotation_axis = cross(new_up, up);
+            float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
+            building->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
+            transform_group rotated_building = share<Transform>();
+            rotated_building->addChild(building);
+            rotated_building->translateLocal(location);
+            world->addChild(rotated_building);
+            }
     }
+    
+    
+    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
+    game_object planet = share<GameObject>(&sph);
+    planet->transform->scaleLocal(sphere_radius);
+    world->addChild(planet);
+
+    
 }
 
 Material * randomMaterial() {

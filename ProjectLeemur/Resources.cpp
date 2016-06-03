@@ -20,10 +20,16 @@ void Resources::init() {
 		.attachShader(&Resources::getShader(TOON_LIGHT))
 		.setMaterial(&Material::Gold);
     
-    // Create Cylinder object and add it to resources.
+    // Create Cube object and add it to resources.
     Resources::newObjEntity(CUB_OBJ, "cube.obj")
     .attachShader(&Resources::getShader(TOON_LIGHT))
     .setMaterial(&Material::Gold);
+    
+    // Create Sphere object and add it to resources.
+    Resources::newObjEntity(SPH_OBJ, "sphere.obj")
+    .attachShader(&Resources::getShader(TOON_LIGHT))
+    .setMaterial(&Material::Gold);
+    
 #else
     // Create Pod object and add it to resources.
     Resources::newObjEntity(POD_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/pod.obj")
@@ -39,6 +45,11 @@ void Resources::init() {
     Resources::newObjEntity(CUB_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/cube.obj")
     .attachShader(&Resources::getShader(TOON_LIGHT))
     .setMaterial(&Material::Gold);
+    
+    // Create cube object and add it to resources.
+    Resources::newObjEntity(SPH_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/sphere.obj")
+    .attachShader(&Resources::getShader(TOON_LIGHT))
+    .setMaterial(&Material::Parismarine);
 #endif
 
 
