@@ -10,6 +10,8 @@
 	the scene graph yet.
 */
 SharedPointer<Centrifuge> centrifuge;
+std::shared_ptr<LSystem> test1;
+
 #include "Chunk.h"
 #include "World.h"
 #include "GameObject.h"
@@ -18,7 +20,6 @@ SharedPointer<Centrifuge> centrifuge;
 void print(std::string const & val) {
 	std::cout << val << std::endl;
 }
-
 
 void Environment::onCreate() {
 	print("Creating Environment...");
@@ -30,22 +31,19 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	SharedPointer<World> world = share<World>();
-	world->setPlayer(player);
-	addEntity((SharedPointer<Entity> &) world);
-	std::shared_ptr<LSystem> test1 = std::make_shared<LSystem>("lsystemtest1.txt");
-	test1->turtle->setPosition(glm::vec3(0,0,0));
+	//SharedPointer<World> world = share<World>();
+	//world->setPlayer(player);
+	//addEntity((SharedPointer<Entity> &) world);
+
+	test1 = std::make_shared<LSystem>("lsystemtest1.txt");
+	test1->turtle->setPosition(glm::vec3(0, 0, 0));
+	test1->drawRules();
+	test1->turtle->setIndices();
 	test1->turtle->initialize_mesh();
 	addEntity((SharedPointer<Entity> &) test1->turtle->obj);
-	//centrifuge = unique<Centrifuge>();
 
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());
-	// Create pod and add a reference to what it should render.
-	//SharedPointer<GameObject> pod =
-	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
-	//addEntity((SharedPointer<Entity> &) pod);
-	//addEntity((SharedPointer<Entity> &) share<Centrifuge>());
 
 	for (auto & entity : entities) {
 		entity->onCreate();

@@ -16,10 +16,11 @@ public:
 	glm::vec3 position;
 	glm::vec3 direction;
 	glm::vec3 right;
-	std::vector<Turtle*> stack;
+	std::vector<Turtle> stack;
 	float distance;
 
 	void initialize_mesh();
+	void setIndices();
 	void drawForward(float amt);
 	void moveForward(float amt);
 	void rotateRight(float angle);

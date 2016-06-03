@@ -6,7 +6,7 @@ void Mesh::init() {
 	glGenBuffers(1, &VBO);
 	//glGenBuffers(1, &NBO);
 
-	//glGenBuffers(1, &EBO);
+	glGenBuffers(1, &EBO);
 	glBindVertexArray(VAO);
 
 	// Bind vertices
@@ -18,22 +18,22 @@ void Mesh::init() {
 		glDrawType
 	);
 
-	//// Bind indices
-	//glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	//glBufferData(
-	//	GL_ELEMENT_ARRAY_BUFFER,
-	//	indices.size() * sizeof(unsigned int),
-	//	&indices[0],
-	//	glDrawType
-	//);
+	// Bind indices
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(
+		GL_ELEMENT_ARRAY_BUFFER,
+		indices.size() * sizeof(unsigned int),
+		&indices[0],
+		glDrawType
+	);
+
+	// you need this:
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(
+		0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
 
 
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(
-	//	0, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
-
-
-	//// Bind normals
+	// Bind normals
 	//glBindBuffer(GL_ARRAY_BUFFER, NBO);
 	//glBufferData(
 	//	GL_ARRAY_BUFFER,
@@ -42,12 +42,12 @@ void Mesh::init() {
 	//	glDrawType
 	//);
 
-	//glEnableVertexAttribArray(1);
-	//glVertexAttribPointer(
-	//	1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
+	/*glEnableVertexAttribArray(1);
+	glVertexAttribPointer(
+		1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);*/
 
-	//glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//glBindVertexArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	changed = false;
 }
@@ -87,8 +87,9 @@ void Mesh::updateMeshData() {
 
 void Mesh::render() {
 	glBindVertexArray(VAO);
+	glPointSize(5.0f);
 	glDrawElements(
-		GL_TRIANGLES,
+		GL_POINTS,
 		indices.size(),
 		GL_UNSIGNED_INT,
 		0

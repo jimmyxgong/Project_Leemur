@@ -60,8 +60,15 @@ void GameObject::addComponent(T const & val) {
 
 
 void GameObject::loadToShader() {
-	component->getShader().use();
-	component->getMaterial().loadToShader();
+
+
+	// welp... yeah this is where my architecture fails...
+
+	// if you don't attach a material, it will crash...
+
+	//component->getShader().use();
+	if (component->material)
+		component->getMaterial().loadToShader();
 
 	Matrix4f model = transform->getLocalToWorldMatrix();
 	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
