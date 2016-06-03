@@ -137,14 +137,13 @@ void World::allowKeyBindings() {
 }
 
 void World::onStart() {
-	terrain = {
-		0.5, 0.025, 10, 6, 100
+	terrain = { // 0.5, 0.025, 10, 6, 100
+		0.5, 0.002, 1, 6, 100	// 0.85freq
 	};
 	terrain.setOct1(1.0)
-		.setOct2(0.67)
-		.setOct3(0.22)
-		.setOct6(0.2)
-		.setElevationExp(4.01);
+		//.setOct2(0.67)
+		//.setOct3(0.22)
+		.setElevationExp(1.71);
 
 	allowKeyBindings();
 	generateChunks();

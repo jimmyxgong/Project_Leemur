@@ -109,7 +109,7 @@ double Terrain::heightO(double x, double z) const {
 
 		value += perlinNoise(zFreq + seed, xFreq + seed) * amp;
 		amp *= persistence;
-		freq *= 1.8715;
+		freq *= 2;
 	}
 	return value / octaves;
 }
@@ -118,20 +118,32 @@ double Terrain::perlinNoise(double x, double z) const {
 	return perlinNoise(x, z, o1, o2, o3, o4, o5, o6);
 }
 
+double Terrain::snoise(double x, double z) const {
+	return height(x, z) / 2 + 0.5;
+}
+
 double Terrain::perlinNoise(double x, double z, double o1, double o2, double o3, double o4, double o5, double o6) const {
-	x *= frequency;
-	z *= frequency;
+	const double EPSILON = 0.0001;
 
-	double e = o1 > 0 ? (o1 * valueAt(x, z)) : 1;
+	x = x / frequency - 0.5;
+	z = z / frequency - 0.5;
+
+	double e = o1 > EPSILON ? (o1 * snoise(x, z)) : 1;
 	double sum = o1 + o2 + o3 + o4 + o5 + o6;
-	if (o2 > 0) e *= (o2 * valueAt(z * 2, x * 2));
-	if (o3 > 0) e *= (o3 * valueAt(z * 4, x * 4));
-	if (o4 > 0) e *= (o4 * valueAt(z * 8, x * 8));
-	if (o5 > 0) e *= (o5 * valueAt(z * 16, x * 16));
-	if (o6 > 0) e *= (o6 * valueAt(z * 32, x * 32));
-	if (sum > 0) e = e / sum;
+	if (o2 > EPSILON) e += (o2 * snoise(z * 2, x * 2));
+	if (o3 > EPSILON) e += (o3 * snoise(z * 4, x * 4));
+	if (o4 > EPSILON) e += (o4 * snoise(z * 8, x * 8));
+	if (o5 > EPSILON) e += (o5 * snoise(z * 16, x * 16));
+	if (o6 > EPSILON) e += (o6 * snoise(z * 32, x * 32));
+	if (sum > EPSILON) e /= sum;
 
-	return e;// pow(e, exp);
+	e = abs(e);
+	if (e > 1) return 0;
+	//e = abs(e);
+	//if (e < 0) e = 0;
+
+	//printf("e is: %.2f", e);
+	return e;// pow(e, ex);
 }
 
 double Terrain::perlinNoise(double x, double y, double z, double parts, double div) const {
@@ -215,7 +227,7 @@ Terrain & Terrain::setOct6(double o) {
 }
 
 Terrain & Terrain::setElevationExp(double e) {
-	exp = e;
+	ex = e;
 	return *this;
 }
 

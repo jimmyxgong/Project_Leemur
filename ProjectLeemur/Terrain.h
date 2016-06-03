@@ -24,7 +24,7 @@ public:
 	double o4 = 0;
 	double o5 = 0;
 	double o6 = 0;
-	double exp = 1;
+	double ex = 1;
 
 	const static double randomness;
 
@@ -39,6 +39,7 @@ public:
 	double fade(double x) const;
 
 	double perlinNoise(double x, double z) const;
+	double snoise(double x, double z) const;
 	double perlinNoise(double x, double z, double o1, double o2, double o3, double o4, double o5, double o6) const;
 
 	int gen(int rangeFrom, int rangeTo) const;

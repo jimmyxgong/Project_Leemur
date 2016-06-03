@@ -122,11 +122,12 @@ void Chunk::generateChunk(Terrain & terrain) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			double z = k + roundedZ;
 
-			double g = terrain.height(x, z);
+			double g = terrain.perlinNoise(x, z);
 			dheightMap[i][k] = g;
-			heightMap[i][k] = (int)round(g);
+			heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
 		}
 	}
+	//printHeightMap();
 }
 
 void Chunk::generateChunk() {
@@ -234,11 +235,11 @@ void Chunk::buildMeshData() {
 			int j = heightMap[i][k];
 			double x = i + pos.x;
 			double z = k + pos.z;
-			double zz = z;// +(i % 2 == 0 ? 0 : 0.5);
-			double val = 0;// i % 2 == 0 ? 0.5 : 0;
+			double zz = z +(i % 2 == 0 ? 0 : 0.5);
+			double val = i % 2 == 0 ? 0.5 : 0;
 
-			//Vector4f min = getLeast(i, j, k);
-			mesh.addTriangles(generateTriangles(0));
+			Vector4f min = getLeast(i, j, k);
+			mesh.addTriangles(generateTriangles(min.w));
 
 			mesh.addVertex(x, j * d, zz);
 			addMeshOutOfBounds(x, z + val, i, k, 1, 0);
@@ -260,7 +261,7 @@ void Chunk::printHeightMap() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		std::string sb = "\n";
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			sb.append(std::to_string(dheightMap[i][k]));
+			sb.append(std::to_string(heightMap[i][k]));
 			sb.append(",\t");
 		}
 		sb.append("\t");
@@ -270,10 +271,12 @@ void Chunk::printHeightMap() {
 }
 
 std::vector<unsigned int> Chunk::generateTriangles(int i) {
-	//const static std::vector<unsigned int> TYPE0 = { 0, 2, 1, 3, 1, 2 };
-	if (i == 0 || i == 1) return{ 0, 2, 1, 3, 1, 2 };
+	const static std::vector<unsigned int> _0 = { 0, 2, 1, 3, 1, 2 };
+	const static std::vector<unsigned int> _1 = { 2, 3, 0, 1, 0, 3 };
 
-	return{ 0, 1, 2, 3, 2, 1 };
+	if (i == 1 || i == 2) 
+		return _0;
+	return _1;
 }
 
 
@@ -320,11 +323,44 @@ Cell & Chunk::getCell(int x, int y, int z) {
 }
 
 Vector4f Chunk::getLeast(int i, int j, int k) {
-	Vector4f min(0.0f);
+	// crashes for some reason
+
+	Vector4f min;
+	min.y = heightMap[i][k];
+	min.w = 0;
+
 	int count = 0;
 	for (int ii = 0; ii < 2; ii++) {
 		for (int kk = 0; kk < 2; kk++) {
-			int jj = heightMap[ii+i][kk+k];
+			int oi = 0;
+			int ok = 0;
+			int _ii = 0;
+			int _kk = 0;
+			bool outOfBounds = false;
+
+			// out of bounds in x coordinate
+			if (isOutOfBounds(i + ii, 0, kk)) {
+				outOfBounds = true;
+				_kk = kk + k;
+				oi = 1;
+			}
+
+			// out of bounds in z coordinate
+			if (isOutOfBounds(i, 0, k + kk)) {
+				_ii = ii + i;
+				ok = 1;
+				if (outOfBounds) {
+					_ii = 0;
+					_kk = 0;
+				}
+
+				outOfBounds = true;
+			}
+
+			int jj = outOfBounds 
+				? world->getChunk(mapPosition.x + oi, mapPosition.z + ok)
+						.getHeightMap()[_ii][_kk]
+				: heightMap[ii+i][kk+k];
 			if (min.y > jj) {
 				min.x = ii;
 				min.y = jj;
