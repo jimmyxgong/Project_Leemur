@@ -142,7 +142,7 @@ void Mesh::clear() {
 void Mesh::recalculateNormals() {
 	// needs to optimize to be able to calculate the normals correctlys
 	//optimize();
-
+	normals.resize(vertices.size());
 	for (int i = 0; i < indices.size(); i += 3) {
 		Vector3f A = vertices.at(indices.at(i));
 		Vector3f B = vertices.at(indices.at(i + 1));
@@ -153,26 +153,30 @@ void Mesh::recalculateNormals() {
 
 		Vector3f N = (cross(BA, CA));	// normalize(cross...)
 
-		if (normals.size() > i + 2) {
-			Vector3f NA = normals.at(indices.at(i));
-			Vector3f NB = normals.at(indices.at(i + 1));
-			Vector3f NC = normals.at(indices.at(i + 2));
+		//if (normals.size() > i + 2) {
+		Vector3f NA = normals.at(indices.at(i));
+		Vector3f NB = normals.at(indices.at(i + 1));
+		Vector3f NC = normals.at(indices.at(i + 2));
 
-			NA = normalize(N + NA);
-			NB = normalize(N + NB);
-			NC = normalize(N + NC);
+		NA = normalize(N + NA);
+		NB = normalize(N + NB);
+		NC = normalize(N + NC);
 
-			addNormal(NA);
-			addNormal(NB);
-			addNormal(NC);
+		normals[indices.at(i)] = NA;
+		normals[indices.at(i + 1)] = NB;
+		normals[indices.at(i + 2)] = NC;
+
+			//addNormal(NA);
+			//addNormal(NB);
+			//addNormal(NC);
 			
 			//normals[indices.at(i)] = NA;
 			//normals[indices.at(i + 1)] = NB;
 			//normals[indices.at(i + 2)] = NC;
-		}
-		addNormal(N);
-		addNormal(N);
-		addNormal(N);
+		//}
+		//addNormal(N);
+		//addNormal(N);
+		//addNormal(N);
 	}
 }
 
