@@ -2,6 +2,9 @@
 
 LSystem::LSystem(std::string const & infile) {
 	parse_file(infile);
+	//now create the grammar used to draw the L-system
+	create_grammar();
+	
 }
 
 void LSystem::setIterations(int iteration) {
@@ -10,6 +13,12 @@ void LSystem::setIterations(int iteration) {
 
 void LSystem::setAngle(float angle) {
 	this->angle = angle;
+}
+
+void LSystem::setPosition(float x, float y, float z) {
+	this->posX = x;
+	this->posY = y;
+	this->posZ = z;
 }
 
 void LSystem::parse_file(std::string const & infile) {
@@ -50,10 +59,6 @@ void LSystem::parse_file(std::string const & infile) {
 	//std::cout << "r1: " << r1 << std::endl;
 	//std::cout << "r2: " << r2 << std::endl;
 	//std::cout << "r3: " << r3 << std::endl;
-
-	//now create the grammar used to draw the L-system
-	create_grammar();
-
 }
 
 void LSystem::create_grammar() {
@@ -120,4 +125,63 @@ int LSystem::set_replace_grammar(int grammar_loop_pos, int r) {
 	}
 	//now that we have added more items to our grammar, update the position to go the next original variable to evaluate
 	return iter_pos;
+}
+
+void LSystem::drawRules() {
+	for (int i = 0; i < grammar.size(); i++) {
+		char rule = grammar[i];
+		switch (rule) {
+		case 'F': {
+			//draw forward
+			turtle->drawForward(2.0f);
+			break;
+		}
+		case 'X': {
+			//move turtle
+			turtle->moveForward(2.0f);
+			break;
+		}
+		case '+': {
+			//turn right angle
+			turtle->rotateRight(this->angle);
+			break;
+		}
+		case '-': {
+			//turn left angle
+			turtle->rotateLeft(this->angle);
+			break;
+		}
+		case '&': {
+			//pitch down
+			break;
+		}
+		case '^': {
+			//pitch up
+			break;
+		}
+	   case '\\' : {
+		   //roll left
+		   break;
+		}
+	   case '/': {
+		   //roll right
+		   break;
+	   }
+	   case '|': {
+		   //turn 180
+		   break;
+	   }
+	   case '[': {
+			//save matrix state
+		   turtle->saveState();
+			break;
+		}
+	    case ']': {
+			//restore matrix state
+			turtle->restoreState();
+			break;
+		}
+
+		}
+	}
 }

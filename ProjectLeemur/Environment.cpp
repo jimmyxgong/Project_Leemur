@@ -30,11 +30,13 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	//SharedPointer<World> world = share<World>();
-	//world->setPlayer(player);
-	//addEntity((SharedPointer<Entity> &) world);
+	SharedPointer<World> world = share<World>();
+	world->setPlayer(player);
+	addEntity((SharedPointer<Entity> &) world);
 	std::shared_ptr<LSystem> test1 = std::make_shared<LSystem>("lsystemtest1.txt");
-
+	test1->turtle->setPosition(glm::vec3(0,0,0));
+	test1->turtle->initialize_mesh();
+	addEntity((SharedPointer<Entity> &) test1->turtle->obj);
 	//centrifuge = unique<Centrifuge>();
 
 	Window::getFocusedWindow()
