@@ -60,7 +60,6 @@ void Chunk::onStart() {
 }
 
 void Chunk::onRender() {
-	//Material::Sand.loadToShader();
 	loadToShader();
 	mesh.render();
 }
@@ -261,7 +260,7 @@ void Chunk::printHeightMap() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		std::string sb = "\n";
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			sb.append(std::to_string(heightMap[i][k]));
+			sb.append(std::to_string(dheightMap[i][k]));
 			sb.append(",\t");
 		}
 		sb.append("\t");

@@ -125,20 +125,20 @@ double Terrain::snoise(double x, double z) const {
 double Terrain::perlinNoise(double x, double z, double o1, double o2, double o3, double o4, double o5, double o6) const {
 	const double EPSILON = 0.0001;
 
-	x = x / frequency - 0.5;
-	z = z / frequency - 0.5;
+	x = x * frequency;
+	z = z * frequency;
 
 	double e = o1 > EPSILON ? (o1 * snoise(x, z)) : 1;
 	double sum = o1 + o2 + o3 + o4 + o5 + o6;
-	if (o2 > EPSILON) e += (o2 * snoise(z * 2, x * 2));
-	if (o3 > EPSILON) e += (o3 * snoise(z * 4, x * 4));
-	if (o4 > EPSILON) e += (o4 * snoise(z * 8, x * 8));
-	if (o5 > EPSILON) e += (o5 * snoise(z * 16, x * 16));
-	if (o6 > EPSILON) e += (o6 * snoise(z * 32, x * 32));
+	if (o2 > EPSILON) e += (o2 * snoise(x * 2, z * 2));
+	if (o3 > EPSILON) e += (o3 * snoise(x * 4, z * 4));
+	if (o4 > EPSILON) e += (o4 * snoise(x * 8, z * 8));
+	if (o5 > EPSILON) e += (o5 * snoise(x * 16, z * 16));
+	if (o6 > EPSILON) e += (o6 * snoise(x * 32, z * 32));
 	if (sum > EPSILON) e /= sum;
 
-	e = abs(e);
-	if (e > 1) return 0;
+	//e = abs(e);
+	//if (e > 1) return 0;
 	//e = abs(e);
 	//if (e < 0) e = 0;
 
