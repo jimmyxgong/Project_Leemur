@@ -22,7 +22,9 @@ private:
     SharedPointer<Transform> CreatePillars(float, Material*, int shape);
     SharedPointer<Transform> CreateBox(float, Material*);
     SharedPointer<Transform> CreateCyl(float, Material*);
+    SharedPointer<Transform> CreateDome(float, Material*);
     SharedPointer<Transform> CreateRandomBuilding(float, float);
+    void CreateTower();
 
     SharedPointer<Transform> CreateMiddle();
     SharedPointer<Transform> CreateTop();

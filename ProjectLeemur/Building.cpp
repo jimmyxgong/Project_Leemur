@@ -13,6 +13,7 @@
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
+Material * randomMaterial();
 
 void Building::onCreate() {
 	world = unique<Transform>();
@@ -138,67 +139,116 @@ transform_group Building::CreatePyramid(int steps, Material* mat, int shape) {
     return parent;
 }
 
+transform_group Building::CreateDome(float height, Material* mat){
+    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
+    transform_group parent = share<Transform>();
+    
+    game_object cylender = share<GameObject>(&sph);
+    cylender->setMaterial(mat);
+    cylender->transform->scaleLocal(x_dim,height/2,z_dim);
+    //.translateLocal(0, height/2, 0); no translate because we want half the sphere hidden
+    // in the previous object
+    parent->addChild(cylender);
+    
+    // translate this to the top of the most recent piece
+    parent->translateLocal(0, top_height, 0);
+    
+    // the box increase the building the height by the prarmeter height
+    top_height  += height;
+    return parent;
+}
+
 
 void Building::onStart() {
     srand ((int)time(NULL));
-//    flat layer of buildings
-//    for ( int i = -5; i<5; i++) {
-//        for ( int j = -5; j<5; j++) {
-//            transform_group building = CreateRandomBuilding(rand()%4+1, rand()%4+1);
-//            building->translateLocal(8*i, 0, 8*j);
-//            world->addChild(building);
-//        }
-//    }
-    
-    // sphere of buildings
-    int building_radius = 4;
-    int spacing = 2*building_radius;
-    int per_sphere = 10;
-    float sphere_radius = 40;
-    
-    for ( double i = 0; i<2*M_PI; i+=2*M_PI/per_sphere) {
-        for (double j = M_PI/per_sphere; j<M_PI; j+=M_PI/per_sphere){
-//            if (rand() % 4)
-//                continue;
-            
-            transform_group building = CreateRandomBuilding(rand()%building_radius+1,
-                                                            rand()%building_radius+1);
-            Vector3f location = Vector3f(sphere_radius*cos(i)*sin(j),
-                                         sphere_radius*sin(i)*sin(j),
-                                         sphere_radius*cos(j));
-            
-            Vector3f up = Vector3f(0,1,0);
-            Vector3f new_up = normalize(location);
-            Vector3f rotation_axis = cross(new_up, up);
-            float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
-            building->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
-            transform_group rotated_building = share<Transform>();
-            rotated_building->addChild(building);
-            rotated_building->translateLocal(location);
-            world->addChild(rotated_building);
-            }
+    /* flat layer of buildings */
+    for ( int i = -5; i<5; i++) {
+        for ( int j = -5; j<5; j++) {
+            transform_group building = CreateRandomBuilding(rand()%4+1, rand()%4+1);
+            building->translateLocal(8*i, 0, 8*j);
+            world->addChild(building);
+        }
     }
-    
-    
-    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
-    game_object planet = share<GameObject>(&sph);
-    planet->transform->scaleLocal(sphere_radius);
-    world->addChild(planet);
 
     
+//    // sphere of buildings
+//    int building_radius = 2;
+//    int spacing = 2*building_radius;
+//    int per_sphere = 10;
+//    float sphere_radius = 40;
+//    
+//    for ( double i = 0; i<2*M_PI; i+=2*M_PI/per_sphere) {
+//        for (double j = M_PI/per_sphere; j<M_PI; j+=M_PI/per_sphere){
+////            if (rand() % 4)
+////                continue;
+//            
+//            transform_group building = CreateRandomBuilding(rand()%building_radius+1,
+//                                                            rand()%building_radius+1);
+//            Vector3f location = Vector3f(sphere_radius*cos(i)*sin(j),
+//                                         sphere_radius*sin(i)*sin(j),
+//                                         sphere_radius*cos(j));
+//            
+//            Vector3f up = Vector3f(0,1,0);
+//            Vector3f new_up = normalize(location);
+//            Vector3f rotation_axis = cross(new_up, up);
+//            float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
+//            building->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
+//            transform_group rotated_building = share<Transform>();
+//            rotated_building->addChild(building);
+//            rotated_building->translateLocal(location);
+//            world->addChild(rotated_building);
+//            }
+//    }
+//    
+//    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
+//    game_object planet = share<GameObject>(&sph);
+//    planet->transform->scaleLocal(sphere_radius);
+//    world->addChild(planet);
+ 
+    
+    CreateTower();
 }
 
-Material * randomMaterial() {
-    Material * toReturn;
-    int random = rand() % 4;
-    if (random == 0) toReturn =  &Material::RedPlastic;
-    else if (random == 1) toReturn = &Material::Bronze;
-    else if (random == 2) toReturn = &Material::Gold;
-    else if (random == 3) toReturn = &Material::Silver;
-    
-    return toReturn;
-}
+void Building::CreateTower() {
+    x_dim = 10;
+    z_dim = 8;
+    top_height = 0;
 
+    transform_group tower = share<Transform>();
+    for (int z = 0; z <2; z++){
+        transform_group a = CreatePyramid(10, randomMaterial(), 0);
+        tower->addChild(a);
+
+        transform_group b = CreatePillars(5, randomMaterial(), 0);
+        tower->addChild(b);
+
+        transform_group c = CreatePyramid(8, randomMaterial(), 1);
+        tower->addChild(c);
+
+        transform_group d = CreateCyl(7, randomMaterial());
+        tower->addChild(d);
+
+        transform_group e = CreatePillars(3, randomMaterial(), 1);
+        tower->addChild(e);
+
+        transform_group f = CreatePyramid(6, randomMaterial(), 0);
+        tower->addChild(f);
+
+        transform_group g = CreateBox(3, randomMaterial());
+        tower->addChild(g);
+
+        transform_group h = CreatePyramid(4, randomMaterial(), 1);
+        tower->addChild(h);
+
+        transform_group i = CreateCyl(2, randomMaterial());
+        tower->addChild(i);
+    }
+
+    transform_group j = CreateDome(2, randomMaterial());
+    tower->addChild(j);
+    tower->translateLocal(0, 0, -50);
+    world->addChild(tower);
+}
 
 /* creates a building with a base, center and a top */
 transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
@@ -239,17 +289,19 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
     z_dim -= .1;
     
     /* a middle can be a
-     * a box with height greater than 1 less than 6
-     * pillars with height greater than 1 less than 6, and if base is not pillars
-     * a cylender with height greater than 1 less than 6
+     * a box with height greater than 3 less than 8
+     * pillars with height greater than 3 less than 8, and if base is not pillars
+     * a cylender with height greater than 3 less than 8
      */
+    int middle, middle_height = 0;
     for (int i = 0, loop = rand()%3+1; i < loop; i++) {  // up to three middle pieces
-        int middle = rand() % 3;
+        middle = rand() % 3;
+        random = rand() % 100 + 1;
+        middle_height = 3+5./random;
         if (middle == 0){
-            random = rand() % 100 + 1;
-            transform_group box = CreateBox(1+5./random, randomMaterial());
+            transform_group box = CreateBox(middle_height, randomMaterial());
             building->addChild(box);
-            std::cout << "Middle is box with " << 1+5./random << " height" << std::endl;
+            std::cout << "Middle is box with " << middle_height << " height" << std::endl;
         }
         else if (middle == 1){
             if (base == 2) {
@@ -257,26 +309,27 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
                 continue;
             }
             random = rand() % 100 + 1;
-            transform_group pillars = CreatePillars(1+5./random, randomMaterial(), random%2);
+            transform_group pillars = CreatePillars(middle_height, randomMaterial(), random%2);
             building->addChild(pillars);
-            std::cout << "Middle is pillars with " << 1+5./random << " height" << std::endl;
+            std::cout << "Middle is pillars with " << middle_height << " height" << std::endl;
         }
         else if (middle == 2){
             random = rand() % 100 + 1;
-            transform_group cyl = CreateCyl(1+5./random, randomMaterial());
+            transform_group cyl = CreateCyl(middle_height, randomMaterial());
             building->addChild(cyl);
-            std::cout << "Middle is cylender with " << 1+5./random << " height" << std::endl;
+            std::cout << "Middle is cylender with " << middle_height << " height" << std::endl;
         }
     }
     
     /* a top can be a
      * pyramid with more than 2 less than 10 steps
      * a box with a height greater than .5 and less than 1
+     * a dome with a height of 1/2 the hieght of the last middle piece
      */
     // increase the dimensions so top goes beyond middle boundaries
     x_dim += .1;
     z_dim += .1;
-    int top = rand() % 2;
+    int top = rand() % 3;
     if (top == 0) {
         random = rand() % 8 + 3;
         transform_group pyramid = CreatePyramid(random, randomMaterial(), random%2);
@@ -288,8 +341,15 @@ transform_group Building::CreateRandomBuilding(float x_radius, float z_radius) {
         transform_group box = CreateBox(.5+.5/random, randomMaterial());
         building->addChild(box);
         std::cout << "Top is box with " << .5+.5/random << " height" << std::endl;
-
     }
+    else if (top == 2){
+        x_dim -= .1; // dont want it to petrude
+        z_dim -= .1;
+        transform_group dome = CreateDome(middle_height, randomMaterial());
+        building->addChild(dome);
+        std::cout << "Top is dome with " << middle_height << " height" << std::endl;
+    }
+
     
     return building;
 }
@@ -310,4 +370,16 @@ void Building::onDestroy() {
 
 Building::Building() {
 	onCreate();
+}
+
+
+Material * randomMaterial() {
+    Material * toReturn;
+    int random = rand() % 4;
+    if (random == 0) toReturn =  &Material::RedPlastic;
+    else if (random == 1) toReturn = &Material::Bronze;
+    else if (random == 2) toReturn = &Material::Gold;
+    else if (random == 3) toReturn = &Material::Silver;
+    
+    return toReturn;
 }
