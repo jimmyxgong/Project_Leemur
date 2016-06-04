@@ -143,7 +143,7 @@ void World::allowKeyBindings() {
 
 void World::onStart() {
 	terrain = { // 0.5, 0.025, 10, 6, 100
-		0.5, 0.0625, 1, 6, 0	// 0.85freq
+		0.5, 0.0625, 1, 6, 3685	// 0.85freq
 	};
 	terrain.setOct1(1.0)
 		//.setOct2(0.67)
@@ -153,7 +153,6 @@ void World::onStart() {
 	allowKeyBindings();
 	generateChunks();
 	startChunks();
-	//chunks[toKey(0, 0)]->printHeightMap();
 }
 
 void World::onRender() {
@@ -162,6 +161,7 @@ void World::onRender() {
 	Material::Grass.loadToShader();
 	Material::Snow.loadToShader();
 	Material::Sand.loadToShader();
+	Material::Water.loadToShader();
 	renderChunks();
 }
 

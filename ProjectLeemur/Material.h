@@ -33,4 +33,5 @@ struct Material {
 	static Material Grass;
 	static Material Snow;
 	static Material Sand;
+	static Material Water;
 };

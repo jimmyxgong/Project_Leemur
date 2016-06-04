@@ -8,7 +8,7 @@
 
 #define CHUNK_SIZE 16
 #define CHUNK_HEIGHT 64
-#define HEIGHT_UNIT 0.25
+#define HEIGHT_UNIT 0.35
 #define HEIGHT_CONSTANT CHUNK_HEIGHT
 
 template <class T>
@@ -28,6 +28,8 @@ private:
 	//Array<Array<int>> interpolatedHeightMap;
 	Array<Array<int>> heightMap;
 	Array<Array<double>> dheightMap;
+
+	/* Unused for this project */
 	Array<Array<Array<Cell>>> cells;
 	bool changed = false;
 
@@ -76,7 +78,7 @@ public: /* Info functions */
 
 public:
 	bool isInvalid() const;
-	Array<Array<int>> & getHeightMap();
+	Array<Array<double>> & getHeightMap();
 	Chunk & setMapPosition(Vector3f const &);
 
 public:

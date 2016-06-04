@@ -9,6 +9,7 @@
 #include "Keyboard.h"
 #include "Environment.h"
 #include "World.h"
+#include "Random.h"
 
 #define PARTS 1.2 // 3.2
 #define DIV 4.3	// 0.7
@@ -80,16 +81,16 @@ void Chunk::onDestroy() {
 }
 
 void Chunk::resizeStructure() {
-	cells.resize(CHUNK_SIZE);
+	//cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
 	dheightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		cells[i].resize(CHUNK_HEIGHT);
+		//cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
 		dheightMap[i].resize(CHUNK_SIZE);
-		for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			cells[i][j].resize(CHUNK_SIZE);
-		}
+		//for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			//cells[i][j].resize(CHUNK_SIZE);
+		//}
 	}
 }
 
@@ -131,6 +132,8 @@ void Chunk::generateChunk(Terrain & terrain) {
 	//double val = terrain.fbm(0, 0, 0);
 	//printf("val: %.4f", val);
 
+	Random::setSeedToCurrentTime();
+
 	clear();
 	const Vector3f pos = transform.getPosition();
 	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
@@ -141,11 +144,17 @@ void Chunk::generateChunk(Terrain & terrain) {
 			double z = k + roundedZ;
 
 			double g = terrain.height(x, z);
-			dheightMap[i][k] = g;
-			heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
+			double h = ((int) round(g * HEIGHT_CONSTANT)) * HEIGHT_UNIT;
+			if (h < 2.22) {
+				h = 2.199;
+				h -= Random::Range(0.0, 0.3);
+			}
+			dheightMap[i][k] = h;
+
+			//dheightMap[i][k] = g;
+			//heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
 		}
 	}
-	//printHeightMap();
 }
 
 
@@ -231,6 +240,7 @@ void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k)
 		outOfBounds = true;
 	}
 
+	double y = 0;
 	if (outOfBounds) {
 		// Get neighboring chunk
 		
@@ -241,45 +251,48 @@ void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k)
 			printf("at %d, %d", i, k);
 			return;
 		}
-		Array<Array<int>> const & map = world->getChunk(key).getHeightMap();
-		mesh.addVertex(x + i, map[ii][kk] * d, z + k);
-		return;
+		//Array<Array<double> const & map = world->getChunk(key).getHeightMap();
+		//mesh.addVertex(x + i, map[ii][kk] * d, z + k);
+		//return;
+		y = world->getChunk(key).getHeightMap()[ii][kk];
 	}
+	else y = getHeightMap()[fi + i][fk + k];
 
-	mesh.addVertex(x + i, heightMap[fi + i][fk + k] * d, z + k);
+	mesh.addVertex(x + i, y, z + k);
 }
 
 void Chunk::buildMeshData() {
+	Random::setSeedToCurrentTime();
 
 	const Vector3f pos = transform.getPosition();
 	const double d = HEIGHT_UNIT;
 
-	bool key10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
-	bool key01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
-	bool key11 = !world->containsKey(mapPosition.x + 1, mapPosition.z + 1);
+	bool chunk10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
+	bool chunk01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
+	bool chunk11 = !world->containsKey(mapPosition.x + 1, mapPosition.z + 1);
 
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			if (i == CHUNK_SIZE - 1) {
-				if (key10) break;
-				if (k == CHUNK_SIZE - 1 && key11 && key01)
+				if (chunk10) break;
+				if (k == CHUNK_SIZE - 1 && chunk11 && chunk01)
 					break;
 			}
 			if (k == CHUNK_SIZE - 1) {
-				if (key01) break;
+				if (chunk01) break;
 			}
 
 
-			int j = heightMap[i][k];
+			double y = getHeightMap()[i][k];
 			double x = i + pos.x;
 			double z = k + pos.z;
 			double zz = z +(i % 2 == 0 ? 0 : 0.5);
 			double val = i % 2 == 0 ? 0.5 : 0;
 
-			Vector4f min = getLeast(i, j, k);
+			Vector4f min = getLeast(i, y, k);
 			mesh.addTriangles(generateTriangles(min.w));
 
-			mesh.addVertex(x, j * d, zz);
+			mesh.addVertex(x, y, zz);
 			addMeshOutOfBounds(x, z + val, i, k, 1, 0);
 			addMeshOutOfBounds(x, zz, i, k, 0, 1);
 			addMeshOutOfBounds(x, z + val, i, k, 1, 1);
@@ -364,7 +377,7 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 	// crashes for some reason
 
 	Vector4f min;
-	min.y = heightMap[i][k];
+	min.y = getHeightMap()[i][k];
 	min.w = 0;
 
 	int count = 0;
@@ -398,7 +411,7 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 			int jj = outOfBounds 
 				? world->getChunk(mapPosition.x + oi, mapPosition.z + ok)
 						.getHeightMap()[_ii][_kk]
-				: heightMap[ii+i][kk+k];
+				: getHeightMap()[ii+i][kk+k];
 			if (min.y > jj) {
 				min.x = ii;
 				min.y = jj;
@@ -422,10 +435,10 @@ Chunk & Chunk::getNeighbor(int x, int z) {
 void Chunk::clear() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			heightMap[i][k] = 0;
-			for (int j = 0; j < CHUNK_HEIGHT; j++) {
-				cells[i][j][k] = Cell::Air;
-			}
+			getHeightMap()[i][k] = 0;
+			//for (int j = 0; j < CHUNK_HEIGHT; j++) {
+			//	cells[i][j][k] = Cell::Air;
+			//}
 		}
 	}
 }
@@ -434,8 +447,8 @@ bool Chunk::isInvalid() const {
 	return empty;
 }
 
-Array<Array<int>> & Chunk::getHeightMap() {
-	return heightMap;
+Array<Array<double>> & Chunk::getHeightMap() {
+	return dheightMap;
 }
 
 

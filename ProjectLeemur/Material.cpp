@@ -12,7 +12,7 @@ Material Material::RedPlastic = {
 Material Material::Parismarine{
 	{ 0.1f, 0.1f, 0.31f, 1.0f }, 
 	{ 1.0f, 0.5f, 0.31f, 1.0f },
-	{ 0.1f, 0.1f, 0.1f, 1.0f },
+	{ 0.0f, 0.0f, 0.0f, 1.0f },
 	{ 0.f, 0.f, 0.f, 1.f },
 	3.0f
 };
@@ -23,6 +23,15 @@ Material Material::Gold = {
 	{ 0.628281f, 0.555802f, 0.366065f, 1.0f },
 	{ 0.f, 0.f, 0.f, 1.f },
 	3.0f
+};
+
+Material Material::Water = {
+	{ 0.f, 0.f, 0.f, 1.f },
+	{ 0.251f, 0.6431f, 0.87451f, 1.f },
+	{ 0.2f, 0.6f, 0.8f, 1.f },
+	{ 0.f, 0.f, 0.f, 1.f },
+	1.0f,
+	"water"
 };
 
 Material Material::Grass = {
