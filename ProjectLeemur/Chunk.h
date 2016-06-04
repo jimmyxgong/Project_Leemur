@@ -7,9 +7,9 @@
 #include "Terrain.h"
 
 #define CHUNK_SIZE 16
-#define CHUNK_HEIGHT 32
+#define CHUNK_HEIGHT 64
 #define HEIGHT_UNIT 0.25
-#define HEIGHT_CONSTANT CHUNK_HEIGHT / 2
+#define HEIGHT_CONSTANT CHUNK_HEIGHT
 
 template <class T>
 using Array = std::vector<T>;

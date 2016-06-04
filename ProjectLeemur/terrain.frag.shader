@@ -35,8 +35,8 @@ out vec4 color;
 
 void main() {
 	Material material = grass;
-	if (FragmentPosition.y > 7) material = snow;
-	else if (FragmentPosition.y >= 2.2) material = sand;
+	if (FragmentPosition.y > 7.6) material = snow;
+	else if (FragmentPosition.y < 4 && FragmentPosition.y >= 2.2) material = sand;
 	
 
 	vec3 normal = normalize(NormalMatrix * FragmentNormal);

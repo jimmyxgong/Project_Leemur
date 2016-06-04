@@ -63,7 +63,7 @@ void World::allowKeyBindings() {
 
 	bindings.onKeyPressed(GLFW_KEY_J, [this](bool shifted) {
 		changed = true;
-		terrain.persistence += shifted ? -0.02 : 0.02;
+		terrain.persistence += shifted ? -0.25 : 0.25;
 
 		std::string out = "persist = ";
 		out.append(std::to_string(terrain.persistence));
@@ -79,7 +79,7 @@ void World::allowKeyBindings() {
 
 	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
 		changed = true;
-		terrain.frequency += shifted ? -0.00001 : 0.00001;
+		terrain.frequency *= shifted ? 0.5 : 2.0;
 
 		std::string out = "persist = ";
 		out.append(std::to_string(terrain.persistence));
@@ -133,15 +133,20 @@ void World::allowKeyBindings() {
 		printf(out.c_str());
 	});
 
+	bindings.onKeyPressed(GLFW_KEY_T, [this](bool shifted) {
+		const static std::string key = toKey(0, 0);
+		chunks[key]->printHeightMap();
+	});
+
 	Keyboard::addLayout(&bindings);
 }
 
 void World::onStart() {
 	terrain = { // 0.5, 0.025, 10, 6, 100
-		0.5, 0.125, 1, 6, 100	// 0.85freq
+		0.5, 0.0625, 1, 6, 0	// 0.85freq
 	};
 	terrain.setOct1(1.0)
-		.setOct2(1.0)
+		//.setOct2(0.67)
 		//.setOct3(0.22)
 		.setElevationExp(1.71);
 

@@ -111,7 +111,26 @@ void Chunk::loadToShader() {
 	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void Chunk::generateChunk(Terrain & terrain) {
+	//double val = terrain.fbm(0, 0, 0);
+	//printf("val: %.4f", val);
+
 	clear();
 	const Vector3f pos = transform.getPosition();
 	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
@@ -121,13 +140,33 @@ void Chunk::generateChunk(Terrain & terrain) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			double z = k + roundedZ;
 
-			double g = terrain.perlinNoise(x, z);
+			double g = terrain.height(x, z);
 			dheightMap[i][k] = g;
 			heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
 		}
 	}
 	//printHeightMap();
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 void Chunk::generateChunk() {
 	clear();
