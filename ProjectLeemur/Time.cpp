@@ -33,3 +33,7 @@ bool Time::ready() {
 double Time::getDelta() const {
 	return delta;
 }
+
+long Time::getTime() {
+	return steady_clock::now().time_since_epoch().count();
+}

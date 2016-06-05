@@ -27,8 +27,8 @@ Material Material::Gold = {
 
 Material Material::Water = {
 	{ 0.f, 0.f, 0.f, 1.f },
-	{ 0.251f, 0.6431f, 0.87451f, 1.f },
-	{ 0.2f, 0.6f, 0.8f, 1.f },
+	{ 0, 0.15, 0.115, 0.5f },
+	{ 0.2f, 0.3f, 0.4f, 1.f },
 	{ 0.f, 0.f, 0.f, 1.f },
 	1.0f,
 	"water"

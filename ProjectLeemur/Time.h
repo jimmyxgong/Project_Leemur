@@ -22,6 +22,7 @@ public:
 	bool ready();
 
 	double getDelta() const;
+	static long getTime();
 };
 
 #endif // !GAME_TIMER_H

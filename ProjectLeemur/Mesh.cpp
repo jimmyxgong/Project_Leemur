@@ -1,4 +1,7 @@
 #include "Mesh.h"
+#include "Shader.h"
+#include "Resources.h"
+#include "Light.h"
 
 using VecRef = std::reference_wrapper<const Vector3f>;
 
@@ -131,6 +134,7 @@ void Mesh::destroy() {
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
 	glDeleteBuffers(1, &NBO);
+	glDeleteBuffers(1, &FBO);
 }
 
 void Mesh::clear() {
@@ -151,9 +155,8 @@ void Mesh::recalculateNormals() {
 		Vector3f BA = B - A;
 		Vector3f CA = C - A;
 
-		Vector3f N = (cross(BA, CA));	// normalize(cross...)
+		Vector3f N = (cross(BA, CA));	// normalize(cross(...))
 
-		//if (normals.size() > i + 2) {
 		Vector3f NA = normals.at(indices.at(i));
 		Vector3f NB = normals.at(indices.at(i + 1));
 		Vector3f NC = normals.at(indices.at(i + 2));
@@ -165,18 +168,6 @@ void Mesh::recalculateNormals() {
 		normals[indices.at(i)] = NA;
 		normals[indices.at(i + 1)] = NB;
 		normals[indices.at(i + 2)] = NC;
-
-			//addNormal(NA);
-			//addNormal(NB);
-			//addNormal(NC);
-			
-			//normals[indices.at(i)] = NA;
-			//normals[indices.at(i + 1)] = NB;
-			//normals[indices.at(i + 2)] = NC;
-		//}
-		//addNormal(N);
-		//addNormal(N);
-		//addNormal(N);
 	}
 }
 
@@ -300,7 +291,77 @@ bool Mesh::hasChanged() const {
 
 Mesh::Mesh(GLint drawType) : glDrawType(drawType) {}
 
-//void Mesh::onCreate() {}
-//void Mesh::onDestroy() {
-//	Component::onDestroy();
-//}
+
+void loadToShader() {
+	const static Vector3f CP = Vector3f(0.f, 128.f, 0.f);
+	const static Matrix4f projection = ortho(0.0f, 1024.0f, 768.0f, 0.0f, 0.3f, 1000.0f);
+	const Matrix4f view = glm::lookAt(
+		CP,
+		Vector3f(0.f, 0.f, 0.f),
+		Vector3f(0.f, 1.f, 0.f)
+	);
+	const static Matrix4f model(1.0f);
+	const static Matrix4f MVP = projection * view * model;
+	const static Matrix3f NM = Matrix3f(transpose(inverse(model)));
+
+	Resources::getShader(TERRAIN_LIGHT).use();
+	Light::Directional.loadToShaderi();
+	
+	Material::Grass.loadToShader();
+	Material::Snow.loadToShader();
+	Material::Sand.loadToShader();
+	Material::Water.loadToShader();
+
+	Shader::loadMatrix("MVP", MVP);
+	Shader::loadMatrix("model", model);
+	Shader::loadMatrix("NormalMatrix", NM);
+	Shader::loadVector("CameraPosition", CP);
+	
+	//GLuint id = Shader::getLocation("renderedTexture");
+}
+
+void Mesh::capture() {
+	//loadToShader();
+	//render();
+
+	//return;
+	glDeleteBuffers(1, &FBO);
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	glGenTextures(1, &capturedTexture);
+	glBindTexture(GL_TEXTURE_2D, capturedTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 1024, 768, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	// Set "renderedTexture" as our colour attachement #0
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, capturedTexture, 0);
+	GLenum DrawBuffers[1] = { GL_COLOR_ATTACHMENT0 };
+	glDrawBuffers(1, DrawBuffers);
+
+	glBindBuffer(GL_ARRAY_BUFFER, capturedTexture);
+	glBufferData(
+		GL_ARRAY_BUFFER, 
+		vertices.size() * sizeof(Vector3f), 
+		&vertices[0], 
+		GL_STATIC_DRAW
+	);
+	
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	glViewport(0, 0, 1024, 768);
+	loadToShader();
+	glBindTexture(GL_TEXTURE_2D, capturedTexture);
+	render();
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void Mesh::renderCaptured() {
+
+}
+
+GLuint Mesh::getCapturedTexture() {
+	return capturedTexture;
+}

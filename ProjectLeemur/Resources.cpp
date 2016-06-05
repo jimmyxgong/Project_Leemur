@@ -31,8 +31,6 @@ void Resources::init() {
     .setMaterial(&Material::Gold);
 #endif
 
-	//mapBiome
-
 }
 
 

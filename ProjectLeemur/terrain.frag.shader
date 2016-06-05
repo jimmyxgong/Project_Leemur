@@ -31,15 +31,23 @@ uniform mat4 model;
 uniform samplerCube skybox;
 uniform float ratio = 1.0 / 1.52;
 
+uniform sampler2D renderedTexture;
+
 in vec3 FragmentPosition;
 in vec3 FragmentNormal;
 
 out vec4 color;
 
+float Fresnel(float NdotL, float fresnelBias, float fresnelPow) {
+  float facing = (1.0 - NdotL);
+  return max(fresnelBias + (1.0 - fresnelBias) * pow(facing, fresnelPow), 0.0);
+}
+
+
 void main() {
 	vec3 position = FragmentPosition;
 	Material material = grass;
-	if (position.y > 7.6) material = snow;
+	if (position.y > 6.7) material = snow;
 	else if (position.y < 4 && position.y >= 2.2) material = sand;
 	else if (position.y < 2.2) material = water;
 	
@@ -98,5 +106,22 @@ void main() {
 
 	vec3 linearColor = ambient + attenuation * (diffuse + specular);
 	vec3 gamma = vec3(1.0 / 2.2);
-    color = vec4(pow(linearColor, gamma), 1.0);
+    
+	if (position.y < 2.2) {
+		float fresnel = Fresnel(brightness, 0.2, 5.0);
+		vec3 upNormal = vec3(0.f, 1.f, 0.f);
+	
+		vec3 I = normalize(surface - CameraPosition);
+		vec3 R = reflect(I, upNormal);
+		vec3 mRefract = refract(I, normal, ratio);
+		color = texture(skybox, R);
+		color = color + texture(skybox, mRefract);
+		//color = texture(renderedTexture, R);
+		
+		color = vec4(pow(linearColor, vec3(0.98 / 1.52)), 1.0f) + fresnel * color;
+		return;
+	}
+	
+	color = vec4(pow(linearColor, gamma), 1.0);
+	//color = texture( renderedTexture, 0.005*vec2( sin(1024.0),cos(768.0)) ).xyz;
 }

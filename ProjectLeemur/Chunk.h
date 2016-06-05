@@ -5,12 +5,20 @@
 #include "Component.h"
 #include "Mesh.h"
 #include "Terrain.h"
+#include "Time.h"
+
+#ifdef _WIN32
+#include <experimental/generator>
+#include <future>
+#endif
 
 #define CHUNK_SIZE 16
 #define CHUNK_HEIGHT 64
 #define HEIGHT_UNIT 0.35
 #define HEIGHT_CONSTANT CHUNK_HEIGHT
 
+
+using namespace std::experimental;
 template <class T>
 using Array = std::vector<T>;
 
@@ -24,6 +32,8 @@ public:
 private:
 	bool empty = false;
 	Mesh mesh;
+	Mesh waveMesh;
+	std::future<void> future;
 
 	//Array<Array<int>> interpolatedHeightMap;
 	Array<Array<int>> heightMap;
@@ -39,6 +49,8 @@ private:
 	/* Position in chunk map */
 	Vector3f mapPosition;
 
+	Array<unsigned int> waves;
+	Time timer;
 
 
 public: /* Lifecycle */
@@ -47,6 +59,8 @@ public: /* Lifecycle */
 	void onRender() override;
 	void onUpdate() override;
 	void onDestroy() override;
+
+	generator<int> coUpdate();
 
 public: /* terrain generations */
 	void allowKeyBindings();
@@ -57,6 +71,9 @@ public: /* terrain generations */
 	void buildMeshData();
 	void renderMesh();
 	void printHeightMap();
+
+    generator<int> updateWaves();
+	//future<void> startRoutine();
 
 public: /* Info functions */
 	std::vector<unsigned int> generateTriangles(int i);

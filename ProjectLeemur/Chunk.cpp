@@ -10,6 +10,12 @@
 #include "Environment.h"
 #include "World.h"
 #include "Random.h"
+#include "Time.h"
+
+#ifdef _WIN32
+#include <future>
+#include <pplawait.h>
+#endif
 
 #define PARTS 1.2 // 3.2
 #define DIV 4.3	// 0.7
@@ -37,6 +43,8 @@
 //
 //Keyboard::Layout bindings;
 
+//template <typename T>
+//using await = __await T;
 
 UniquePointer<Chunk> Chunk::EMPTY = unique<Chunk>(true);
 
@@ -54,21 +62,49 @@ void Chunk::onCreate() {
 }
 
 void Chunk::onStart() {
-	buildMeshData();
+	// Happens after all chunks are created.
 
+	buildMeshData();
+	//mesh.capture();
 	mesh.recalculateNormals();
 	mesh.init();
 }
 
 void Chunk::onRender() {
 	loadToShader();
+	glBindTexture(GL_TEXTURE_2D, mesh.getCapturedTexture());
 	mesh.render();
+	//mesh.capture();
 }
 
 void Chunk::onUpdate() {
+	/*for (auto c : updateWaves()) {
+		printf("val %d", c.count());
+	}*/
+	if (!future.valid()) {
+		future = async(
+			std::launch::async,
+			[this] {});
+	}
+	else {
+		auto status = future.wait_for(0ms);
+		if (status == std::future_status::ready) {
+			future = async(
+				std::launch::async,
+				[this] {
+				for (auto c : updateWaves()) {
+					//printf("running at: %d", c);
+					this_thread::sleep_for(1ms);
+				}
+			});
+		}
+	}
+	
+
+
 	if (changed) {
-		printf("Updating");
-		generateChunk();
+		printf("Updating\n");
+		//generateChunk();
 		//printHeightMap();
 		renderMesh();
 		changed = false;
@@ -76,9 +112,20 @@ void Chunk::onUpdate() {
 }
 
 void Chunk::onDestroy() {
+	auto status = future.wait_for(0ms);
+	if (status != std::future_status::ready) {
+		
+	}
+
 	BaseEntity::onDestroy();
 	mesh.destroy();
 }
+
+//generator<int> Chunk::coUpdate() {
+//	
+//}
+
+
 
 void Chunk::resizeStructure() {
 	//cells.resize(CHUNK_SIZE);
@@ -123,15 +170,10 @@ void Chunk::loadToShader() {
 
 
 
-
-
-
-
-
 void Chunk::generateChunk(Terrain & terrain) {
 	//double val = terrain.fbm(0, 0, 0);
 	//printf("val: %.4f", val);
-
+	
 	Random::setSeedToCurrentTime();
 
 	clear();
@@ -321,6 +363,84 @@ void Chunk::printHeightMap() {
 	}
 }
 
+
+//auto operator wait(std::chrono::system_clock::duration duratio);
+
+//auto operator await(std::chrono::system_clock::duration duration) {
+//	class awaiter {
+//		static void CALLBACK TimerCallback(PTP_CALLBACK_INSTANCE, void *Context, PTP_TIMER) {
+//			std::experimental::coroutine_handle<>::from_address(Context)();
+//		}
+//		PTP_TIMER timer = nullptr;
+//		std::chrono::system_clock::duration duration;
+//	public:
+//		explicit awaiter(std::chrono::system_clock::duration d) : duration(d) {}
+//		bool await_ready() const { return duration.count() <= 0; }
+//		bool await_suspend(std::experimental::coroutine_handle<> resume_cb) {
+//			int64_t relative_count = -duration.count();
+//			timer = CreateThreadpoolTimer(TimerCallback, resume_cb.to_address(), nullptr);
+//			SetThreadpoolTimer(timer, (PFILETIME)&relative_count, 0, 0);
+//			return timer != 0;
+//		}
+//		void await_resume() {}
+//		~awaiter() { if (timer) CloseThreadpoolTimer(timer); }
+//	};
+//	return awaiter { duration };
+//}
+
+
+
+
+
+
+
+
+
+
+generator<int> Chunk::updateWaves() {
+	using namespace std;
+	using namespace std::chrono;
+
+	//if (!timer.ready()) return;
+	const float time = 0;
+	const float speed = 1.0f;
+
+
+
+	for (int i = 0; i < mesh.getIndices().size(); i++) {
+
+		//Vector3f & vertex = mesh.getVertices()[mesh.getIndices()[i]];
+		//if (vertex.y >= 2.2) continue;
+
+
+
+		//int seed = (int)(vertex.x*vertex.x + vertex.z*vertex.z);
+		//Random::setSeed(seed);
+
+		//double val0 = Random::Range(0.0, 0.3);
+		//double val1 = Random::Range(0.0, 0.3);
+		//vertex.y += sin(Time::getTime() * speed + vertex.x + vertex.y) / 100.f;
+		//vertex.y += sin(cos(val0) * cos(Time::getTime() * sin(val1))) / 100.f;
+
+		yield i;
+	}
+	printf("reached build");
+	//changed = true;
+	buildMeshData();
+	//mesh.recalculateNormals();
+	mesh.updateMeshData();
+}
+
+
+
+//future<void> Chunk::startRoutine() {
+//	//updateWaves();
+//}
+
+
+
+
+
 std::vector<unsigned int> Chunk::generateTriangles(int i) {
 	const static std::vector<unsigned int> _0 = { 0, 2, 1, 3, 1, 2 };
 	const static std::vector<unsigned int> _1 = { 2, 3, 0, 1, 0, 3 };
@@ -443,6 +563,9 @@ void Chunk::clear() {
 	}
 }
 
+
+
+
 bool Chunk::isInvalid() const {
 	return empty;
 }
@@ -459,5 +582,5 @@ Chunk & Chunk::setMapPosition(Vector3f const & val) {
 
 
 
-Chunk::Chunk(bool _empty) : empty(_empty) {}
-Chunk::Chunk(World * _world) : world(_world) {}
+Chunk::Chunk(bool _empty) : empty(_empty), timer(1.0f) {}
+Chunk::Chunk(World * _world) : world(_world), timer(1.0f) {}

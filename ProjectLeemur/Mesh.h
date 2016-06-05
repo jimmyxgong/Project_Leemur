@@ -9,7 +9,8 @@ protected:
 	bool changed = false;
 	GLint glDrawType;
 
-	GLuint VBO, NBO, VAO, EBO;
+	GLuint VBO, NBO, VAO, EBO, FBO;
+	GLuint capturedTexture;
 
 	std::vector<Vector3f> vertices;
 	std::vector<Vector3f> normals;
@@ -58,6 +59,11 @@ public:
 	bool hasChanged() const;
 
 	Mesh(GLint drawType = GL_STATIC_DRAW);
+
+	void capture();
+	void renderCaptured();
+	GLuint getCapturedTexture();
+
 
 	//void onDestroy() override;
 private:

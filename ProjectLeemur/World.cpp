@@ -2,6 +2,8 @@
 #include "Resources.h"
 #include "Light.h"
 #include "Keyboard.h"
+#include "Skybox.h"
+
 #include <chrono>
 
 //void println(std::string const & v) {
@@ -156,20 +158,23 @@ void World::onStart() {
 }
 
 void World::onRender() {
+	static Skybox & skybox = (Skybox &) Resources::getEntity(SKYBOX);
+
 	Resources::getShader(TERRAIN_LIGHT).use();
 	Light::Directional.loadToShaderi();
 	Material::Grass.loadToShader();
 	Material::Snow.loadToShader();
 	Material::Sand.loadToShader();
 	Material::Water.loadToShader();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTexture());
+
 	renderChunks();
 }
 
 void World::onUpdate() {
-	//updateChunks();
+	updateChunks();
 	if (changed) {
 		evaluateChunks();
-		//chunks[toKey(0, 0)]->printHeightMap();
 		changed = false;
 	}
 }
