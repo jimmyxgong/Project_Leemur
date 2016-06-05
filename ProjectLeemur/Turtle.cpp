@@ -25,10 +25,10 @@ Turtle::Turtle(){
 
 	////obj = share<GameObject>((Component *)mesh.get());
 
-	////default up direction
-	//this->direction = glm::vec3(0, 1, 0);
-	////default right direction
-	//this->right = glm::vec3(1, 0, 0);
+	//default up direction
+	this->direction = glm::vec3(0, 1, 0);
+	//default right direction
+	this->right = glm::vec3(1, 0, 0);
 }
 
 void Turtle::initialize_mesh() {
@@ -36,17 +36,15 @@ void Turtle::initialize_mesh() {
 }
 
 void Turtle::onCreate() {
-	
-
 	world->addChild(branches)
 		.addChild(leaves);
 
 	//obj = share<GameObject>((Component *)mesh.get());
 
 	//default up direction
-	this->direction = glm::vec3(0, 1, 0);
+	//this->direction = glm::vec3(0, 1, 0);
 	//default right direction
-	this->right = glm::vec3(1, 0, 0);
+	//this->right = glm::vec3(1, 0, 0);
 }
 
 void Turtle::onStart() {}
@@ -133,14 +131,18 @@ void Turtle::drawForward(float amt) {
 	cyl_t->addChild(c);
 	branches->addChild(cyl_t);
 
-	c->transform->setPosition(this->position);
+	c->transform->scaleLocal(0.1f, amt * 2, 0.1f);
 	c->transform->rotateLocal(Quaternion(direction.x, direction.y, direction.z, 1));
-	c->transform->scaleLocal(0.2f, amt, 0.2f);
+	c->transform->translateLocal(this->position);
+	
 
 	glm::vec3 toAdd = this->direction * amt;
 	this->position += toAdd;
 	//mesh->addVertex(this->position);
-	
+	std::cout << "curr direction: " << this->direction.x << " " << this->direction.y << " " << this->direction.z << std::endl;
+	//std::cout << "curr position: " << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
+	//std::cout << "position: " << c->transform->getPosition().x << " " << c->transform->getPosition().y << c->transform->getPosition().z << std::endl;
+	//std::cout << "branches size: " << branches->children.size() << std::endl;
 }
 
 void Turtle::pitchUp(float amt) {

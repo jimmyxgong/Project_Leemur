@@ -143,12 +143,12 @@ void LSystem::drawRules() {
 		case 'F': {
 			//draw forward
 			//std::cout << "move forward" << std::endl;
-			turtle->drawForward(0.01f + r_dist);
+			turtle->drawForward(0.5f + r_dist);
 			break;
 		}
 		case 'X': {
 			//move turtle
-			turtle->moveForward(0.01f + r_dist);
+			turtle->moveForward(0.5f + r_dist);
 			break;
 		}
 		case '+': {
@@ -203,6 +203,8 @@ void LSystem::drawRules() {
 
 		}
 	}
+
+	this->turtle->world->updateAll();
 }
 
 float LSystem::randomize() {
