@@ -200,6 +200,8 @@ void World::generateChunks() {
 	int x = position.x;
 	int z = position.z;
 
+	int count = 1;
+
 	for (int i = 0; i < radius; i++) {
 		int col_tmp = -col;
 		int row_tmp = -row;
@@ -209,25 +211,30 @@ void World::generateChunks() {
 		// Top-left of matrix to right
 		for (; col_tmp < col; col_tmp++) {
 			addNewChunk(x + row_tmp, z + col_tmp);
+			count++;
 		}
 		// Top-right of matrix going down
 		for (; row_tmp < row; row_tmp++) {
 			addNewChunk(x + row_tmp, z + col_tmp);
+			count++;
 		}
 
 		// Bottom right of matrix going left
 		for (; col_tmp != -col; col_tmp--) {
 			addNewChunk(x + row_tmp, z + col_tmp);
+			count++;
 		}
 
 		// Bottom left of matrix going up
 		for (; row_tmp != -row; row_tmp--) {
 			addNewChunk(x + row_tmp, z + col_tmp);
+			count++;
 		}
 
 		col++;
 		row++;
 	}
+	printf("chunk size: %d\n", count);
 }
 
 void World::evaluateChunks() {
@@ -237,6 +244,7 @@ void World::evaluateChunks() {
 	}
 	for (auto & ref : chunks) {
 		ref.second->renderMesh();
+		ref.second->resetResumable();
 	}
 }
 
@@ -259,10 +267,20 @@ void World::renderChunks() {
 }
 
 void World::updateChunks() {
+	int count = 0;
+	//printf("chunk size: %d", chunks.size());
 	for (auto & ref : chunks) {
 		auto & chunk = ref.second;
 		chunk->onUpdate();
+		if (chunk->readyForWaveUpdate()) count++;
 	}
+
+	//printf("count: %d", count);
+	if (count == (2 * RENDER_DISTANCE + 1) * (2 * RENDER_DISTANCE + 1))
+		for (auto & ref : chunks) {
+			auto & chunk = ref.second;
+			chunk->updateMesh();
+		}
 }
 
 void World::deleteChunks() {

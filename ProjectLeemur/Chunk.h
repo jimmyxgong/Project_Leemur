@@ -72,11 +72,15 @@ public: /* terrain generations */
 	void allowKeyBindings();
 	void resizeStructure();
 	void loadToShader();
-	void generateChunk();
 	void generateChunk(Terrain & terrain);
 	void buildMeshData();
 	void renderMesh();
 	void printHeightMap();
+	
+	/* Methods used for wave motion*/
+	bool readyForWaveUpdate();
+	void updateMesh();
+	void resetResumable();
 
 	routine yieldBuildMeshData();
     Resumable updateWaves();

@@ -46,12 +46,11 @@ struct Resumable {
 
 		return *this;
 	}
-	//Resumable()
 
 	~Resumable() {
-		/*if (coroutine) {
+		if (coroutine) {
 			coroutine.destroy();
-		}*/
+		}
 	}
 
 

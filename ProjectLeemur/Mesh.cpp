@@ -183,10 +183,6 @@ void Mesh::recalculateNormalsBold() {
 
 		Vector3f N = (cross(BA, CA));	// normalize(cross(...))
 
-		addNormal(N);
-		addNormal(N);
-		addNormal(N);
-
 		normals[indices.at(i)] = N;
 		normals[indices.at(i + 1)] = N;
 		normals[indices.at(i + 2)] = N;

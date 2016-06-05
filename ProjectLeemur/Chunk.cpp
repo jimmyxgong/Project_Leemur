@@ -58,25 +58,19 @@ void print(double val) {
 
 void Chunk::onCreate() {
 	resizeStructure();
-	//generateChunk();
-	//printHeightMap();
 }
 
 void Chunk::onStart() {
 	// Happens after all chunks are created.
 
 	buildMeshData();
-	//mesh.capture();
 	mesh.recalculateNormals();
 	mesh.init();
-
 }
 
 void Chunk::onRender() {
 	loadToShader();
-	//glBindTexture(GL_TEXTURE_2D, mesh.getCapturedTexture());
 	mesh.render();
-	//mesh.capture();
 }
 
 void Chunk::onUpdate() {
@@ -84,7 +78,7 @@ void Chunk::onUpdate() {
 		resumable = updateWaves();
 		canceled = false;
 	}
-	if (!stop) resumable.resume();
+	else if (!stop) resumable.resume();
 
 	/*for (auto c : updateWaves()) {
 		printf("val %d", c.count());
@@ -135,14 +129,11 @@ void Chunk::onUpdate() {
 	//	});
 	//}
 
-
-	//if (changed) {
-	//	printf("Updating\n");
-	//	//generateChunk();
-	//	//printHeightMap();
-	//	renderMesh();
-	//	changed = false;
-	//}
+	if (changed) {
+		printf("\nUpdating\n");
+		renderMesh();
+		changed = false;
+	}
 }
 
 void Chunk::onDestroy() {
@@ -150,10 +141,6 @@ void Chunk::onDestroy() {
 	BaseEntity::onDestroy();
 	mesh.destroy();
 }
-
-//generator<int> Chunk::coUpdate() {
-//	
-//}
 
 
 
@@ -172,7 +159,6 @@ void Chunk::resizeStructure() {
 }
 
 void Chunk::loadToShader() {
-
 	Matrix4f model = transform.getLocalToWorldMatrix();
 	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
 		* Window::getFocusedWindow().getView()
@@ -243,44 +229,6 @@ void Chunk::generateChunk(Terrain & terrain) {
 
 
 
-
-
-
-
-
-
-void Chunk::generateChunk() {
-	clear();
-	for (int i = 0; i < CHUNK_SIZE; i++) {
-		//for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			for (int k = 0; k < CHUNK_SIZE; k++) {
-
-				Vector3f pos = transform.getPosition();
-				double x = i + round(pos.x);
-				double z = k + round(pos.z);
-				
-				//int j = CHUNK_HEIGHT;
-				//double height = terrain.perlinNoise(x, j, z, _parts, _div);
-				//while (height > _cutoff && j > 0) {
-				//	height = terrain.perlinNoise(x, --j, z, _parts, _div);
-				//}
-				//height = j;
-					//height = terrain.height(x, z);
-				//if (j > 0 && height > _cutoff) {
-				//	//cells[i][j][k] = Cell::Air;
-				//	continue;
-				//}
-
-				//if (heightMap[i][k] < j)
-					//heightMap[i][k] = j;
-
-				//cells[i][j][k] = SolidCell();
-				//double g = terrain.height(x, z);
-				//heightMap[i][k] = (int) round(g); // (int)((g - (int)g) * 10);
-			}
-		//}
-	}
-}
 
 // When there are two chunks: we need to interwove their vertices together
 // while also maintaining their out of bounds checking.
@@ -401,9 +349,22 @@ void Chunk::printHeightMap() {
 	}
 }
 
+bool Chunk::readyForWaveUpdate() {
+	return ready;
+}
 
+void Chunk::updateMesh() {
+	mesh.updateMeshData();
+	canceled = true;
+	stop = false;
+	ready = false;
+}
 
-
+void Chunk::resetResumable() {
+	canceled = true;
+	stop = false;
+	ready = false;
+}
 
 routine Chunk::yieldBuildMeshData() {
 	Random::setSeedToCurrentTime();
@@ -418,7 +379,7 @@ routine Chunk::yieldBuildMeshData() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		co_yield 1ms;
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			if (k % 8 == 0) co_yield 1ms;
+			if (k % 4 == 0) co_yield 1ms;
 			if (i == CHUNK_SIZE - 1) {
 				if (chunk10) break;
 				if (k == CHUNK_SIZE - 1 && chunk11 && chunk01)
@@ -440,8 +401,6 @@ routine Chunk::yieldBuildMeshData() {
 			meshData.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 0));
 			meshData.addVertex(outOfBoundsVertex(x, zz, i, k, 0, 1));
 			meshData.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 1));
-			
-			//co_yield 1ms;
 		}
 	}
 	mesh.setVertices(meshData.getVertices());
@@ -449,11 +408,11 @@ routine Chunk::yieldBuildMeshData() {
 }
 
 
-float waveHeight = 0.1f;
+float waveHeight = 0.2f;
 float speed = 0.5f;
 float waveLength = 1.0f;
 float randomHeight = 0.2f;
-float randomSpeed = 5.0f;
+float randomSpeed = 7.0f;
 
 double maxHeight = 2.2;
 double minHeight = 1.9;
@@ -462,20 +421,15 @@ Resumable Chunk::updateWaves() {
 	using namespace std;
 	using namespace std::chrono;
 
-	//if (!timer.ready()) return;
-	const float time = 0;
-	const float speed = 1.0f;
-	const Array<unsigned int> & indices = mesh.getIndices();
-	Array<Vector3f> & vertices = mesh.getVertices();
+	//const Array<unsigned int> & indices = mesh.getIndices();
+	//Array<Vector3f> & vertices = mesh.getVertices();
 
-	//std::vector<Vector3f> verts;
-	//verts.resize(vertices.size());
-	//for (int )
 	// height map
 	Vector3f pos = transform.getPosition();
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-
 		for (int k = 0; k < CHUNK_SIZE; k++) {
+			if (k % 4 == 0) co_await suspend_always{};
+
 			double h = dheightMap[i][k];
 
 			if (h < 2.2) {
@@ -496,8 +450,6 @@ Resumable Chunk::updateWaves() {
 				
 				dheightMap[i][k] = h;
 			}
-
-			if (k % 8 == 0) co_await suspend_always{};
 		}
 	}
 	co_await suspend_always{};
@@ -527,11 +479,14 @@ Resumable Chunk::updateWaves() {
 		co_await suspend_always{};
 	}
 	mesh.recalculateNormals();
-	mesh.updateMeshData();
 
-	//renderMesh();
-	canceled = true;
-	//stop = true;
+	// update mesh is done in world.updateChunks()
+	//mesh.updateMeshData();
+
+	//canceled = true;
+	stop = true;
+	ready = true;
+	co_await suspend_always {};
 }
 
 
@@ -644,11 +599,10 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 				outOfBounds = true;
 			}
 			if (outOfBounds) {
-				//double y = world->getChunk(mapPosition.x + oi, mapPosition.z + ok).getHeightMap()[_ii][_kk];
-				//_kk += _ii % 2 == 0 ? 0.5 : 0;
-				//mesh.addVertex(transform.getPosition().x + _ii, y, transform.getPosition().z + kk);
+				double y = world->getChunk(mapPosition.x + oi, mapPosition.z + ok).getHeightMap()[_ii][_kk];
+				_kk += _ii % 2 == 0 ? 0.5 : 0;
+				mesh.addVertex(transform.getPosition().x + _ii, y, transform.getPosition().z + _kk);
 			}
-
 
 			int jj = outOfBounds 
 				? world->getChunk(mapPosition.x + oi, mapPosition.z + ok)
