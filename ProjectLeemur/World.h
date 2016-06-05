@@ -11,7 +11,7 @@
 #include <boost/unordered_map.hpp>
 #endif
 
-#define RENDER_DISTANCE 4
+#define RENDER_DISTANCE 3
 
 class World : public BaseEntity {
 private:
@@ -20,7 +20,7 @@ private:
 
 	/* Noise profile */
 	Terrain terrain;
-	bool changed = true;
+	bool changed = false;
 
 	void allowKeyBindings();
 

@@ -28,6 +28,7 @@ public:
 	void updateMeshData();
 	void clear();
 	void recalculateNormals();
+	void recalculateNormalsBold();
 	void optimize();
 
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);
@@ -43,6 +44,8 @@ public:
 	virtual Mesh& addFace(unsigned int x, unsigned int y, unsigned z);
 	Mesh& addTriangle(unsigned int i, unsigned int j, unsigned int k);
 	Mesh& addTriangles(std::vector<unsigned int> const & triangles);
+	
+	Mesh& addTriangles(std::vector<unsigned int> const & triangles, unsigned int count);
 
 	Mesh& addVertex(float x, float y, float z);
 	Mesh& addVertex(Vector3f const &);
@@ -52,6 +55,8 @@ public:
 	Mesh& addColor(Vector3f const &);
 
 
+	std::vector<Vector3f> getVerts() const;
+	std::vector<unsigned int> getInd() const;
 	std::vector<Vector3f>& getVertices();
 	std::vector<unsigned int>& getIndices();
 	std::vector<Vector3f>& getNormals();

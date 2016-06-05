@@ -1,25 +1,31 @@
 #pragma once
 
-#include "Commons.h"
-
 #include <atomic>
-
-#ifdef _WIN32
+#include <chrono>
 #include <future>
 #include <pplawait.h>
 #include <experimental/generator>
-#endif
 
-template <typename E>
+using namespace std::experimental;
+using routine = generator<std::chrono::milliseconds>;
+
 class AsyncTask {
 private:
+	std::atomic<bool> online;
 	std::atomic<bool> canceled;
-	std::future<E> future;
+	std::future<void> future;
+	std::function<routine()> savedTask;
+	
+	void startTask(routine & task);
 
 public:
 
-	template <typename T>
-	void StartRoutine(std::generator<T> f);
+	void StartCoroutine(routine &);
 
+	void restart();
 	void cancel();
+	bool isValid() const;
+	bool isRunning() const;
+
+	explicit AsyncTask();
 };

@@ -70,6 +70,9 @@
     <Filter Include="Header Files\Concurrency">
       <UniqueIdentifier>{468141ea-bc58-4db5-bff2-b0ba0f330618}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Concurrency">
+      <UniqueIdentifier>{f2d804b5-5bf5-4433-af11-2a3b60968a8f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -186,6 +189,9 @@
     <ClInclude Include="AsyncTask.h">
       <Filter>Header Files\Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="Resumable.h">
+      <Filter>Header Files\Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -280,6 +286,12 @@
     </ClCompile>
     <ClCompile Include="Random.cpp">
       <Filter>Source Files\Game\Mechanics</Filter>
+    </ClCompile>
+    <ClCompile Include="AsyncTask.cpp">
+      <Filter>Source Files\Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Resumable.cpp">
+      <Filter>Source Files\Concurrency</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -29,8 +29,8 @@ int main(void) {
 
 	while (!glfwWindowShouldClose(glWindow)) {
 		if (timer.ready()) {
-			window.onUpdate();
 			window.onRender(glWindow);
+			window.onUpdate();
 		}
 	}
 

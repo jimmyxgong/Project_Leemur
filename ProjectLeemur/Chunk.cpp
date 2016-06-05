@@ -11,6 +11,7 @@
 #include "World.h"
 #include "Random.h"
 #include "Time.h"
+#include "MeshData.h"
 
 #ifdef _WIN32
 #include <future>
@@ -57,7 +58,7 @@ void print(double val) {
 
 void Chunk::onCreate() {
 	resizeStructure();
-	generateChunk();
+	//generateChunk();
 	//printHeightMap();
 }
 
@@ -68,55 +69,84 @@ void Chunk::onStart() {
 	//mesh.capture();
 	mesh.recalculateNormals();
 	mesh.init();
+
 }
 
 void Chunk::onRender() {
 	loadToShader();
-	glBindTexture(GL_TEXTURE_2D, mesh.getCapturedTexture());
+	//glBindTexture(GL_TEXTURE_2D, mesh.getCapturedTexture());
 	mesh.render();
 	//mesh.capture();
 }
 
 void Chunk::onUpdate() {
+	if (canceled) {
+		resumable = updateWaves();
+		canceled = false;
+	}
+	if (!stop) resumable.resume();
+
 	/*for (auto c : updateWaves()) {
 		printf("val %d", c.count());
 	}*/
-	if (!future.valid()) {
-		future = async(
-			std::launch::async,
-			[this] {});
-	}
-	else {
-		auto status = future.wait_for(0ms);
-		if (status == std::future_status::ready) {
-			future = async(
-				std::launch::async,
-				[this] {
-				for (auto c : updateWaves()) {
-					//printf("running at: %d", c);
-					this_thread::sleep_for(1ms);
-				}
-			});
-		}
-	}
+	//routine i = updateWaves();
+	//for (auto c : i) {
+	//	
+	//}
+	//co_await updateWaves();
+	//coroutine_handle<int> handle;
 	
+	//if (!future.valid()) {
+	//	canceled = false;
+	//	future = async(
+	//		std::launch::async,
+	//		[this] {});
+	//}
+	//else {
+	//	auto status = future.wait_for(0ms);
+	//	if (status == std::future_status::ready) {
+	//		canceled = false;
+	//		future = async(
+	//			std::launch::async,
+	//			[this] {
+	//			for (auto c : updateWaves()) {
+	//				if (canceled) break;
+	//				//printf("running at: %d", c);
+	//				this_thread::sleep_for(1ms);
+	//			}
+	//			canceled = true;
+	//		});
+	//	}
+	//}
+	//if (!task.isValid()) {
+		//task.StartCoroutine(updateWaves());
+	//}
+	//std::function<routine()> f = std::bind(&this->updateWaves);
+
+	//if (canceled) {
+	//	canceled = false;
+	//	async(std::launch::async, [this] {
+	//		for (auto time : updateWaves()) {
+	//			if (canceled) break;
+	//			//printf("running at: %d", c);
+	//			this_thread::sleep_for(time);
+	//		}
+	//		canceled = true;
+	//	});
+	//}
 
 
-	if (changed) {
-		printf("Updating\n");
-		//generateChunk();
-		//printHeightMap();
-		renderMesh();
-		changed = false;
-	}
+	//if (changed) {
+	//	printf("Updating\n");
+	//	//generateChunk();
+	//	//printHeightMap();
+	//	renderMesh();
+	//	changed = false;
+	//}
 }
 
 void Chunk::onDestroy() {
-	auto status = future.wait_for(0ms);
-	if (status != std::future_status::ready) {
-		
-	}
-
+	canceled = true;
 	BaseEntity::onDestroy();
 	mesh.destroy();
 }
@@ -254,7 +284,7 @@ void Chunk::generateChunk() {
 
 // When there are two chunks: we need to interwove their vertices together
 // while also maintaining their out of bounds checking.
-void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k) {
+Vector3f Chunk::outOfBoundsVertex(double x, double z, int fi, int fk, int i, int k) {
 	const double d = HEIGHT_UNIT;
 
 	int oi = 0;
@@ -287,12 +317,7 @@ void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k)
 		// Get neighboring chunk
 		
 		std::string key = world->toKey(mapPosition.x + oi, mapPosition.z + ok);
-		Chunk const & chunk = world->getChunk(key);
-		if (chunk.isInvalid()) {
-			printf("INVALID chunk found in out of bounds\n");
-			printf("at %d, %d", i, k);
-			return;
-		}
+
 		//Array<Array<double> const & map = world->getChunk(key).getHeightMap();
 		//mesh.addVertex(x + i, map[ii][kk] * d, z + k);
 		//return;
@@ -300,14 +325,28 @@ void Chunk::addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k)
 	}
 	else y = getHeightMap()[fi + i][fk + k];
 
-	mesh.addVertex(x + i, y, z + k);
+	//mesh.addVertex(x + i, y, z + k);
+	return {x + i, y, z + k};
 }
+
+
 
 void Chunk::buildMeshData() {
 	Random::setSeedToCurrentTime();
 
 	const Vector3f pos = transform.getPosition();
 	const double d = HEIGHT_UNIT;
+
+	// Generate vertices: optimized way, but too much of a hassle for now :/
+	//for (int i = 0; i < CHUNK_SIZE; i++) {
+	//	double displace = i % 2 == 0 ? 0 : 0.5;
+	//	for (int k = 0; k < CHUNK_SIZE; k++) {
+	//		double y = getHeightMap()[i][k];
+	//		double x = i + pos.x;
+	//		double z = k + pos.z;
+	//		mesh.addVertex(x, y, z + displace);
+	//	}
+	//}
 
 	bool chunk10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
 	bool chunk01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
@@ -324,7 +363,6 @@ void Chunk::buildMeshData() {
 				if (chunk01) break;
 			}
 
-
 			double y = getHeightMap()[i][k];
 			double x = i + pos.x;
 			double z = k + pos.z;
@@ -332,12 +370,12 @@ void Chunk::buildMeshData() {
 			double val = i % 2 == 0 ? 0.5 : 0;
 
 			Vector4f min = getLeast(i, y, k);
-			mesh.addTriangles(generateTriangles(min.w));
 
+			mesh.addTriangles(generateTriangles(min.w));
 			mesh.addVertex(x, y, zz);
-			addMeshOutOfBounds(x, z + val, i, k, 1, 0);
-			addMeshOutOfBounds(x, zz, i, k, 0, 1);
-			addMeshOutOfBounds(x, z + val, i, k, 1, 1);
+			mesh.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 0));
+			mesh.addVertex(outOfBoundsVertex(x, zz, i, k, 0, 1));
+			mesh.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 1));
 		}
 	}
 }
@@ -364,71 +402,136 @@ void Chunk::printHeightMap() {
 }
 
 
-//auto operator wait(std::chrono::system_clock::duration duratio);
-
-//auto operator await(std::chrono::system_clock::duration duration) {
-//	class awaiter {
-//		static void CALLBACK TimerCallback(PTP_CALLBACK_INSTANCE, void *Context, PTP_TIMER) {
-//			std::experimental::coroutine_handle<>::from_address(Context)();
-//		}
-//		PTP_TIMER timer = nullptr;
-//		std::chrono::system_clock::duration duration;
-//	public:
-//		explicit awaiter(std::chrono::system_clock::duration d) : duration(d) {}
-//		bool await_ready() const { return duration.count() <= 0; }
-//		bool await_suspend(std::experimental::coroutine_handle<> resume_cb) {
-//			int64_t relative_count = -duration.count();
-//			timer = CreateThreadpoolTimer(TimerCallback, resume_cb.to_address(), nullptr);
-//			SetThreadpoolTimer(timer, (PFILETIME)&relative_count, 0, 0);
-//			return timer != 0;
-//		}
-//		void await_resume() {}
-//		~awaiter() { if (timer) CloseThreadpoolTimer(timer); }
-//	};
-//	return awaiter { duration };
-//}
 
 
 
+routine Chunk::yieldBuildMeshData() {
+	Random::setSeedToCurrentTime();
+	const Vector3f pos = transform.getPosition();
+
+	bool chunk10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
+	bool chunk01 = !world->containsKey(mapPosition.x, mapPosition.z + 1);
+	bool chunk11 = !world->containsKey(mapPosition.x + 1, mapPosition.z + 1);
+
+	MeshData meshData;
+
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+		co_yield 1ms;
+		for (int k = 0; k < CHUNK_SIZE; k++) {
+			if (k % 8 == 0) co_yield 1ms;
+			if (i == CHUNK_SIZE - 1) {
+				if (chunk10) break;
+				if (k == CHUNK_SIZE - 1 && chunk11 && chunk01)
+					break;
+			}
+			if (k == CHUNK_SIZE - 1) {
+				if (chunk01) break;
+			}
+
+			double y = getHeightMap()[i][k];
+			double x = i + pos.x;
+			double z = k + pos.z;
+			double zz = z + (i % 2 == 0 ? 0 : 0.5);
+			double val = i % 2 == 0 ? 0.5 : 0;
+
+			Vector4f min = getLeast(i, y, k);
+			meshData.addTriangles(generateTriangles(min.w));
+			meshData.addVertex(x, y, zz);
+			meshData.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 0));
+			meshData.addVertex(outOfBoundsVertex(x, zz, i, k, 0, 1));
+			meshData.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 1));
+			
+			//co_yield 1ms;
+		}
+	}
+	mesh.setVertices(meshData.getVertices());
+	mesh.setTriangles(meshData.getIndices());
+}
 
 
+float waveHeight = 0.1f;
+float speed = 0.5f;
+float waveLength = 1.0f;
+float randomHeight = 0.2f;
+float randomSpeed = 5.0f;
 
+double maxHeight = 2.2;
+double minHeight = 1.9;
 
-
-
-
-generator<int> Chunk::updateWaves() {
+Resumable Chunk::updateWaves() {
 	using namespace std;
 	using namespace std::chrono;
 
 	//if (!timer.ready()) return;
 	const float time = 0;
 	const float speed = 1.0f;
+	const Array<unsigned int> & indices = mesh.getIndices();
+	Array<Vector3f> & vertices = mesh.getVertices();
+
+	//std::vector<Vector3f> verts;
+	//verts.resize(vertices.size());
+	//for (int )
+	// height map
+	Vector3f pos = transform.getPosition();
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+
+		for (int k = 0; k < CHUNK_SIZE; k++) {
+			double h = dheightMap[i][k];
+
+			if (h < 2.2) {
+
+				int x = i + pos.x;
+				int z = k + pos.z;
 
 
+				int seed = (int)(x*x + z*z);
+				Random::setSeed(seed);
 
-	for (int i = 0; i < mesh.getIndices().size(); i++) {
+				double val0 = Random::Range(0.0, 0.3);
+				double val1 = Random::Range(0.0, 0.3);
+				h += sin(Time::getTime() * speed + x * waveLength + h * waveLength) * waveHeight;
+				h += sin(cos(val0) * randomHeight * cos(Time::getTime() * randomSpeed * sin(val1)));
+				if (h > maxHeight) h = maxHeight - Random::Range(0.0, 0.3);
+				else if (h < minHeight) h = minHeight + Random::Range(0.0, 0.3);
+				
+				dheightMap[i][k] = h;
+			}
 
-		//Vector3f & vertex = mesh.getVertices()[mesh.getIndices()[i]];
-		//if (vertex.y >= 2.2) continue;
-
-
-
-		//int seed = (int)(vertex.x*vertex.x + vertex.z*vertex.z);
-		//Random::setSeed(seed);
-
-		//double val0 = Random::Range(0.0, 0.3);
-		//double val1 = Random::Range(0.0, 0.3);
-		//vertex.y += sin(Time::getTime() * speed + vertex.x + vertex.y) / 100.f;
-		//vertex.y += sin(cos(val0) * cos(Time::getTime() * sin(val1))) / 100.f;
-
-		yield i;
+			if (k % 8 == 0) co_await suspend_always{};
+		}
 	}
-	printf("reached build");
-	//changed = true;
-	buildMeshData();
-	//mesh.recalculateNormals();
+	co_await suspend_always{};
+	//for (int i = 0; i < indices.size(); i++) {
+	//	Vector3f & vertex = vertices[indices[i]];
+
+	//	if (i % 300 == 0) co_await suspend_always{};
+
+	//	//if (i % 100 == 0) yield 1ms;
+	//	//yield 1ms;
+	//	//printf("At: %d", i);
+	//	//co_await this_thread::sleep_for();
+
+
+	//	if (vertex.y < 2.2) {
+	//		int seed = (int)(vertex.x*vertex.x + vertex.z*vertex.z);
+	//		Random::setSeed(seed);
+
+	//		double val0 = Random::Range(0.0, 0.3);
+	//		double val1 = Random::Range(0.0, 0.3);
+	//		vertex.y += sin(Time::getTime() * speed + vertex.x + vertex.y) / 10.f;
+	//		vertex.y += sin(cos(val0) * cos(Time::getTime() * sin(val1))) / 10.f;
+	//	}
+	//	//verts.push_back(vertex);
+	//}
+	for (auto v : yieldBuildMeshData()) {
+		co_await suspend_always{};
+	}
+	mesh.recalculateNormals();
 	mesh.updateMeshData();
+
+	//renderMesh();
+	canceled = true;
+	//stop = true;
 }
 
 
@@ -448,6 +551,19 @@ std::vector<unsigned int> Chunk::generateTriangles(int i) {
 	if (i == 1 || i == 2) 
 		return _0;
 	return _1;
+}
+
+std::vector<unsigned int> Chunk::generateTriangles(int i, int k, int min) {
+
+	unsigned int _00 = (i << 4) + k;
+	unsigned int _10 = _00 + 1;
+	unsigned int _01 = ((i + 1) << 4) + k;
+	unsigned int _11 = _01 + 1;
+
+	if (i == 1 || i == 2) {
+		return { _00, _10, _01, _11, _01, _10 };
+	}
+	return { _10, _11, _00, _01, _00, _11 };
 }
 
 
@@ -527,6 +643,12 @@ Vector4f Chunk::getLeast(int i, int j, int k) {
 
 				outOfBounds = true;
 			}
+			if (outOfBounds) {
+				//double y = world->getChunk(mapPosition.x + oi, mapPosition.z + ok).getHeightMap()[_ii][_kk];
+				//_kk += _ii % 2 == 0 ? 0.5 : 0;
+				//mesh.addVertex(transform.getPosition().x + _ii, y, transform.getPosition().z + kk);
+			}
+
 
 			int jj = outOfBounds 
 				? world->getChunk(mapPosition.x + oi, mapPosition.z + ok)

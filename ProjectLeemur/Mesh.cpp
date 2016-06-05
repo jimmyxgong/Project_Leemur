@@ -171,6 +171,28 @@ void Mesh::recalculateNormals() {
 	}
 }
 
+void Mesh::recalculateNormalsBold() {
+	normals.resize(vertices.size());
+	for (int i = 0; i < indices.size(); i += 3) {
+		Vector3f A = vertices.at(indices.at(i));
+		Vector3f B = vertices.at(indices.at(i + 1));
+		Vector3f C = vertices.at(indices.at(i + 2));
+
+		Vector3f BA = B - A;
+		Vector3f CA = C - A;
+
+		Vector3f N = (cross(BA, CA));	// normalize(cross(...))
+
+		addNormal(N);
+		addNormal(N);
+		addNormal(N);
+
+		normals[indices.at(i)] = N;
+		normals[indices.at(i + 1)] = N;
+		normals[indices.at(i + 2)] = N;
+	}
+}
+
 void Mesh::optimize() {
 	int i = 0;
 	std::unordered_map<VecRef, unsigned int, Hasher, Comparator> mapped;
@@ -233,6 +255,13 @@ Mesh& Mesh::addTriangles(std::vector<unsigned int> const & triangles) {
 	return *this;
 }
 
+Mesh& Mesh::addTriangles(std::vector<unsigned int> const & triangles, unsigned int count) {
+	for (unsigned int const & index : triangles) {
+		addIndex(index + count);
+	}
+	return *this;
+}
+
 
 
 
@@ -270,6 +299,13 @@ Mesh& Mesh::addColor(Vector3f const & val) {
 	return *this;
 }
 
+std::vector<Vector3f> Mesh::getVerts() const {
+	return vertices;
+}
+
+std::vector<unsigned int> Mesh::getInd() const {
+	return indices;
+}
 
 std::vector<Vector3f>& Mesh::getVertices() {
 	return vertices;

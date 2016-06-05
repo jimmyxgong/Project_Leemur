@@ -155,6 +155,7 @@ void World::onStart() {
 	allowKeyBindings();
 	generateChunks();
 	startChunks();
+	evaluateChunks();
 }
 
 void World::onRender() {

@@ -6,6 +6,9 @@
 #include "Mesh.h"
 #include "Terrain.h"
 #include "Time.h"
+#include "AsyncTask.h"
+#include "Resumable.h"
+#include "MeshData.h"
 
 #ifdef _WIN32
 #include <experimental/generator>
@@ -30,10 +33,15 @@ public:
 	Transform transform;
 
 private:
+	bool ready = false;
 	bool empty = false;
+	bool stop = false;
 	Mesh mesh;
 	Mesh waveMesh;
-	std::future<void> future;
+	//AsyncTask task;
+	std::atomic<bool> canceled = true;
+	Resumable resumable;
+	//future<void> future;
 
 	//Array<Array<int>> interpolatedHeightMap;
 	Array<Array<int>> heightMap;
@@ -60,8 +68,6 @@ public: /* Lifecycle */
 	void onUpdate() override;
 	void onDestroy() override;
 
-	generator<int> coUpdate();
-
 public: /* terrain generations */
 	void allowKeyBindings();
 	void resizeStructure();
@@ -72,11 +78,12 @@ public: /* terrain generations */
 	void renderMesh();
 	void printHeightMap();
 
-    generator<int> updateWaves();
-	//future<void> startRoutine();
+	routine yieldBuildMeshData();
+    Resumable updateWaves();
 
 public: /* Info functions */
 	std::vector<unsigned int> generateTriangles(int i);
+	std::vector<unsigned int> generateTriangles(int i, int k, int min);
 
 	bool isOutOfBounds(int x, int y, int z) const;
 	bool isCell(int x, int y, int z) const;
@@ -89,7 +96,7 @@ public: /* Info functions */
 	Vector4f getLeast(int i, int j, int k);
 	
 	Chunk & getNeighbor(int x, int z);
-	void addMeshOutOfBounds(double x, double z, int fi, int fk, int i, int k);
+	Vector3f outOfBoundsVertex(double x, double z, int fi, int fk, int i, int k);
 
 	void clear();
 
