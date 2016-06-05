@@ -1,6 +1,7 @@
 #include "Turtle.h"
 #include "Resources.h"
 #include "Material.h"
+#include "Light.h"
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
@@ -51,6 +52,7 @@ void Turtle::onCreate() {
 void Turtle::onStart() {}
 
 void Turtle::onRender() {
+	Light::Directional.loadToShader();
 	world->renderAll();
 }
 

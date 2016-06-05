@@ -1,24 +1,177 @@
 #include "World.h"
 #include "Resources.h"
 #include "Light.h"
+#include "Keyboard.h"
+#include <chrono>
 
 //void println(std::string const & v) {
 //	std::cout << v << std::endl;
 //}
+Keyboard::Layout bindings;
+
+double _parts = 9.8;
+double _div = 1.5;
+double _cutoff = 10.7;
+
+void World::allowKeyBindings() {
+	static bool once = false;
+	if (once) return;
+	once = true;
+
+	// Testing values
+	bindings.onKeyPressed(GLFW_KEY_P, [this](bool shifted) {
+		changed = true;
+		_parts += shifted ? -0.2 : 0.2;
+
+		std::string out = "parts = ";
+		out.append(std::to_string(_parts));
+		out.append(", div = ");
+		out.append(std::to_string(_div));
+		out.append(", cutoff = ");
+		out.append(std::to_string(_cutoff));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
+		changed = true;
+		_div += shifted ? -0.2 : 0.2;
+
+		std::string out = "parts = ";
+		out.append(std::to_string(_parts));
+		out.append(", div = ");
+		out.append(std::to_string(_div));
+		out.append(", cutoff = ");
+		out.append(std::to_string(_cutoff));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_I, [this](bool shifted) {
+		changed = true;
+		_cutoff += shifted ? -0.2 : 0.2;
+
+		std::string out = "parts = ";
+		out.append(std::to_string(_parts));
+		out.append(", div = ");
+		out.append(std::to_string(_div));
+		out.append(", cutoff = ");
+		out.append(std::to_string(_cutoff));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_J, [this](bool shifted) {
+		changed = true;
+		terrain.persistence += shifted ? -0.25 : 0.25;
+
+		std::string out = "persist = ";
+		out.append(std::to_string(terrain.persistence));
+		out.append(", freq = ");
+		out.append(std::to_string(terrain.frequency));
+		out.append(", amp = ");
+		out.append(std::to_string(terrain.amplitude));
+		out.append(", oct = ");
+		out.append(std::to_string(terrain.octaves));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
+		changed = true;
+		terrain.frequency *= shifted ? 0.5 : 2.0;
+
+		std::string out = "persist = ";
+		out.append(std::to_string(terrain.persistence));
+		out.append(", freq = ");
+		out.append(std::to_string(terrain.frequency));
+		out.append(", amp = ");
+		out.append(std::to_string(terrain.amplitude));
+		out.append(", oct = ");
+		out.append(std::to_string(terrain.octaves));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_L, [this](bool shifted) {
+		changed = true;
+		terrain.amplitude += shifted ? -0.1 : 0.1;
+
+		std::string out = "persist = ";
+		out.append(std::to_string(terrain.persistence));
+		out.append(", freq = ");
+		out.append(std::to_string(terrain.frequency));
+		out.append(", amp = ");
+		out.append(std::to_string(terrain.amplitude));
+		out.append(", oct = ");
+		out.append(std::to_string(terrain.octaves));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_H, [this](bool shifted) {
+		changed = true;
+		terrain.octaves += shifted ? -1 : 1;
+
+		std::string out = "persist = ";
+		out.append(std::to_string(terrain.persistence));
+		out.append(", freq = ");
+		out.append(std::to_string(terrain.frequency));
+		out.append(", amp = ");
+		out.append(std::to_string(terrain.amplitude));
+		out.append(", oct = ");
+		out.append(std::to_string(terrain.octaves));
+		out.append("\n");
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_S, [this](bool shifted) {
+		changed = true;
+		terrain.seed = terrain.gen(0, 5000);
+		std::string out = "seed: ";
+		out.append(std::to_string(terrain.seed));
+		printf(out.c_str());
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_T, [this](bool shifted) {
+		const static std::string key = toKey(0, 0);
+		chunks[key]->printHeightMap();
+	});
+
+	Keyboard::addLayout(&bindings);
+}
 
 void World::onStart() {
+	terrain = { // 0.5, 0.025, 10, 6, 100
+		0.5, 0.0625, 1, 6, 3685	// 0.85freq
+	};
+	terrain.setOct1(1.0)
+		//.setOct2(0.67)
+		//.setOct3(0.22)
+		.setElevationExp(1.71);
+
+	allowKeyBindings();
 	generateChunks();
 	startChunks();
 }
 
 void World::onRender() {
-	Resources::getShader(SHADER_LIGHT).use();
-	Light::Directional.loadToShader();
+	Resources::getShader(TERRAIN_LIGHT).use();
+	Light::Directional.loadToShaderi();
+	Material::Grass.loadToShader();
+	Material::Snow.loadToShader();
+	Material::Sand.loadToShader();
+	Material::Water.loadToShader();
 	renderChunks();
 }
 
 void World::onUpdate() {
-	updateChunks();
+	//updateChunks();
+	if (changed) {
+		evaluateChunks();
+		//chunks[toKey(0, 0)]->printHeightMap();
+		changed = false;
+	}
 }
 
 void World::onDestroy() {
@@ -71,6 +224,16 @@ void World::generateChunks() {
 	}
 }
 
+void World::evaluateChunks() {
+	for (auto & ref : chunks) {
+		auto & chunk = ref.second;
+		chunk->generateChunk(terrain);
+	}
+	for (auto & ref : chunks) {
+		ref.second->renderMesh();
+	}
+}
+
 void World::startChunks() {
 	for (auto & ref : chunks) {
 		auto & chunk = ref.second;
@@ -118,14 +281,15 @@ void World::addNewChunk(int x, int z) {
 	addNewChunk(position, x, z);
 }
 
-void World::addNewChunk(Vector3f const & chunkPos, int x, int z) {
+void World::addNewChunk(Vector3f & chunkPos, int x, int z) {
+
 	std::string key = toKey(x, z);
 	if (containsKey(key)) return;
 
 	chunks[key] = unique<Chunk>(this);
 	Chunk & chunk = getChunk(key);
 	chunk.transform.setPosition(chunkPos);
-	chunk.setPosition(Vector3f(x, 0, z));
+	chunk.setMapPosition(Vector3f(x, 0, z));
 }
 
 
@@ -211,20 +375,9 @@ Chunk & World::findChunk(Vector3f pos, int targetX, int targetZ) {
 	return *Chunk::EMPTY;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 void World::setPlayer(WeakPointer<Player> player) {
 	this->player = player;
 }
 
+World::World() : terrain(0) {
+}

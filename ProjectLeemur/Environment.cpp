@@ -9,8 +9,7 @@
 	the scene graph. NOTE: Animations are not implemented in
 	the scene graph yet.
 */
-SharedPointer<Centrifuge> centrifuge;
-SharedPointer<LSystem> test1;
+//SharedPointer<LSystem> test1;
 
 #include "Chunk.h"
 #include "World.h"
@@ -45,8 +44,11 @@ void Environment::onCreate() {
 	//addEntity((SharedPointer<Entity> &) test1->turtle->obj);
 	//addEntity((SharedPointer<Entity> &) test1->turtle);
 
-	Window::getFocusedWindow()
-		.setActiveCamera(&player->getCamera());
+	// Create pod and add a reference to what it should render.
+	//SharedPointer<GameObject> pod =
+	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
+	//addEntity((SharedPointer<Entity> &) pod);
+	//addEntity((SharedPointer<Entity> &) share<Centrifuge>());
 
 	for (auto & entity : entities) {
 		entity->onCreate();
@@ -84,6 +86,7 @@ void Environment::onUpdate() {
 void Environment::onDestroy() {
     delete (&Resources::getShader(SHADER_LIGHT));
     delete (&Resources::getShader(TOON_LIGHT));
+	delete (&Resources::getShader(TERRAIN_LIGHT));
 	skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
@@ -99,7 +102,6 @@ void Environment::onDestroy() {
 
 	int size = entities.size();
 	for (int i = 0; i < size; i++) {
-		std::cout << "deleteing" << std::endl;
 		entities[i]->onDestroy();
 		entities[i] = nullptr;
 	}

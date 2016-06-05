@@ -21,6 +21,7 @@
     <ClCompile Include="ObjObject.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="Random.cpp" />
     <ClCompile Include="Resources.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Skybox.cpp" />
@@ -30,9 +31,9 @@
     <ClCompile Include="Trackball.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="TransparentCell.cpp" />
+    <ClCompile Include="Turtle.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />
-    <ClCompile Include="Turtle.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -57,6 +58,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Point.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="Random.h" />
     <ClInclude Include="Resources.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="Skybox.h" />
@@ -67,9 +69,9 @@
     <ClInclude Include="Transform.h" />
     <ClInclude Include="TransformEntity.h" />
     <ClInclude Include="TransparentCell.h" />
+    <ClInclude Include="Turtle.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
-    <ClInclude Include="Turtle.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="down-under_bk.tga" />
@@ -83,5 +85,6 @@
     <None Include="packages.config" />
     <None Include="skybox.frag.shader" />
     <None Include="skybox.vert.shader" />
+    <None Include="terrain.frag.shader" />
   </ItemGroup>
 </Project>
