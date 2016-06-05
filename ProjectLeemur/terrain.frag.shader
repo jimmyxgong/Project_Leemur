@@ -31,6 +31,10 @@ uniform mat4 model;
 uniform samplerCube skybox;
 uniform float ratio = 1.0 / 1.52;
 
+uniform float waterHeight = 2.2;
+uniform float snowHeight = 6.7;
+uniform float sandHeight = 4;
+
 uniform sampler2D renderedTexture;
 
 in vec3 FragmentPosition;
@@ -47,9 +51,9 @@ float Fresnel(float NdotL, float fresnelBias, float fresnelPow) {
 void main() {
 	vec3 position = FragmentPosition;
 	Material material = grass;
-	if (position.y > 6.7) material = snow;
-	else if (position.y < 4 && position.y >= 2.2) material = sand;
-	else if (position.y < 2.2) material = water;
+	if (position.y > snowHeight) material = snow;
+	else if (position.y < sandHeight && position.y > waterHeight) material = sand;
+	else if (position.y < waterHeight) material = water;
 	
 
 	vec3 normal = normalize(NormalMatrix * FragmentNormal);

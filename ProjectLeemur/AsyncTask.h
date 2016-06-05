@@ -7,7 +7,7 @@
 #include <experimental/generator>
 
 using namespace std::experimental;
-using routine = generator<std::chrono::milliseconds>;
+using routine = generator<std::chrono::nanoseconds>;
 
 class AsyncTask {
 private:

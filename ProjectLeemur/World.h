@@ -11,9 +11,25 @@
 #include <boost/unordered_map.hpp>
 #endif
 
-#define RENDER_DISTANCE 4
+#define RENDER_DISTANCE 3
 
 class World : public BaseEntity {
+public:
+	struct Options {
+		bool useWaves = false;
+		
+	} options;
+
+	struct Biomes {
+		float waterMax = 2.2;
+		float waterMin = 1.9;
+
+		//float grass = 4;
+		float sand = 4;
+		float snow = 6.7;
+	} biomeOptions;
+
+
 private:
 	WeakPointer<Player> player;
 	std::unordered_map<std::string, UniquePointer<Chunk>> chunks;

@@ -140,6 +140,26 @@ void World::allowKeyBindings() {
 		chunks[key]->printHeightMap();
 	});
 
+	bindings.onKeyPressed(GLFW_KEY_A, [this](bool shifted) {
+		options.useWaves = !options.useWaves;
+		printf("Switch waves %s", options.useWaves ? "on" : "off");
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_Z, [this](bool shifted) {
+		biomeOptions.snow += shifted ? -0.2 : 0.2;
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_X, [this](bool shifted) {
+		biomeOptions.sand += shifted ? -0.2 : 0.2;
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_C, [this](bool shifted) {
+		biomeOptions.waterMax += shifted ? -0.2 : 0.2;
+		biomeOptions.waterMin += shifted ? -0.2 : 0.2;
+		biomeOptions.sand += shifted ? -0.16 : 0.16;
+		changed = true;
+	});
+
 	Keyboard::addLayout(&bindings);
 }
 
@@ -160,14 +180,18 @@ void World::onStart() {
 
 void World::onRender() {
 	static Skybox & skybox = (Skybox &) Resources::getEntity(SKYBOX);
-
 	Resources::getShader(TERRAIN_LIGHT).use();
+
 	Light::Directional.loadToShaderi();
 	Material::Grass.loadToShader();
 	Material::Snow.loadToShader();
 	Material::Sand.loadToShader();
 	Material::Water.loadToShader();
 	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTexture());
+
+	Shader::loadFloat("waterHeight", biomeOptions.waterMax)
+		.loadFloat("sandHeight", biomeOptions.sand)
+		.loadFloat("snowHeight", biomeOptions.snow);
 
 	renderChunks();
 }
@@ -275,11 +299,13 @@ void World::updateChunks() {
 		if (chunk->readyForWaveUpdate()) count++;
 	}
 
+	constexpr int size = (2 * RENDER_DISTANCE + 1) * (2 * RENDER_DISTANCE + 1);
 	//printf("count: %d", count);
-	if (count == (2 * RENDER_DISTANCE + 1) * (2 * RENDER_DISTANCE + 1))
+	if (count == size)
 		for (auto & ref : chunks) {
 			auto & chunk = ref.second;
 			chunk->updateMesh();
+			chunk->resetResumable();
 		}
 }
 

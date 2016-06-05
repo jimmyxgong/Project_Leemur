@@ -56,8 +56,6 @@ private:
 
 	/* Position in chunk map */
 	Vector3f mapPosition;
-
-	Array<unsigned int> waves;
 	Time timer;
 
 
@@ -77,11 +75,14 @@ public: /* terrain generations */
 	void renderMesh();
 	void printHeightMap();
 	
+	
 	/* Methods used for wave motion*/
 	bool readyForWaveUpdate();
 	void updateMesh();
 	void resetResumable();
+	void resumeWaves();
 
+	routine waveMotion();
 	routine yieldBuildMeshData();
     Resumable updateWaves();
 

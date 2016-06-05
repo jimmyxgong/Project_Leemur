@@ -24,6 +24,8 @@ struct Resumable {
 		auto final_suspend() {
 			return suspend_never{};
 		}
+
+		void return_void() {}
 	};
 
 	coroutine_handle<promise_type> coroutine = nullptr;
