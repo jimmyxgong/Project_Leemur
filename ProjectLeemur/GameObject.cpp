@@ -13,9 +13,6 @@ bool Comparator::operator()(TypeRef lhs, TypeRef rhs) const {
 }
 
 
-
-
-
 void GameObject::onStart() {
 	//Mesh * mesh = new Mesh();
 	//addComponent<Mesh>(*mesh);

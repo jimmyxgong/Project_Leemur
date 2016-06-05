@@ -6,8 +6,10 @@
 #include <vector>
 #include <sstream>
 #include <iterator>
+#include <random>
 #include "Mesh.h"
 #include "Turtle.h"
+
 
 #define RULE_1	1
 #define RULE_2	2
@@ -17,10 +19,11 @@
 
 class LSystem{
 public:
-	LSystem(std::string const & infile);
+	LSystem(std::string const & infile, long long seed);
 
 	int iterations;
 	int angle;
+	long long seed;
 	std::string axiom;
 	std::string r1;
 	std::string r2;
@@ -37,5 +40,6 @@ public:
 	void parse_file(std::string const & infile);
 	void create_grammar();
 	void drawRules();
+	float randomize();
 	int set_replace_grammar(int grammar_loop_pos, int r);
 };

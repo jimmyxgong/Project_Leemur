@@ -1,6 +1,6 @@
 #include "LSystem.h"
 
-LSystem::LSystem(std::string const & infile) {
+LSystem::LSystem(std::string const & infile, long long seed) : seed(seed) {
 	parse_file(infile);
 	//now create the grammar used to draw the L-system
 	create_grammar();
@@ -33,7 +33,7 @@ void LSystem::parse_file(std::string const & infile) {
 	std::getline(settings, this->axiom);	
 	std::getline(settings, iter);
 	std::getline(settings, ang);	
-	//for now lets limit to only 3 rules
+	//for now lets limit to only 4 rules
 	std::getline(settings, this->r1);
 	std::getline(settings, this->r2);
 	std::getline(settings, this->r3);
@@ -133,50 +133,54 @@ int LSystem::set_replace_grammar(int grammar_loop_pos, int r) {
 }
 
 void LSystem::drawRules() {
+	//handle randomization for our plants branch lengths and angles
+	float r_angle = randomize();
+	float r_dist = std::abs(std::fmod(r_angle, 1.5f)) / 10.0f;
+	std::cout << "r_angle: " << r_angle << " r_dist: " << r_dist << std::endl;
 	for (int i = 0; i < grammar.size(); i++) {
 		char rule = grammar[i];
 		switch (rule) {
 		case 'F': {
 			//draw forward
 			//std::cout << "move forward" << std::endl;
-			turtle->drawForward(1.0f);
+			turtle->drawForward(0.01f + r_dist);
 			break;
 		}
 		case 'X': {
 			//move turtle
-			turtle->moveForward(1.0f);
+			turtle->moveForward(0.01f + r_dist);
 			break;
 		}
 		case '+': {
 			//turn right angle
 			//std::cout << "rotate left" << std::endl;
-			turtle->rotateLeft(this->angle);
+			turtle->rotateLeft(this->angle + r_angle);
 			break;
 		}
 		case '-': {
 			//turn left angle
 			//std::cout << "rotate right" << std::endl;
-			turtle->rotateRight(this->angle);
+			turtle->rotateRight(this->angle + r_angle);
 			break;
 		}
 		case '&': {
 			//pitch down
-			turtle->pitchDown(this->angle);
+			turtle->pitchDown(this->angle + r_angle);
 			break;
 		}
 		case '^': {
 			//pitch up
-			turtle->pitchUp(this->angle);
+			turtle->pitchUp(this->angle + r_angle);
 			break;
 		}
 	   case '\\' : {
 		   //roll left
-		   turtle->rollLeft(this->angle);
+		   turtle->rollLeft(this->angle + r_angle);
 		   break;
 		}
 	   case '/': {
 		   //roll right
-		   turtle->rollRight(this->angle);
+		   turtle->rollRight(this->angle + r_angle);
 		   break;
 	   }
 	   case '|': {
@@ -186,7 +190,7 @@ void LSystem::drawRules() {
 	   }
 	   case '[': {
 			//save matrix state
-		  // std::cout << "save state" << std::endl;
+		    //std::cout << "save state" << std::endl;
 		    turtle->saveState();
 			break;
 		}
@@ -199,4 +203,14 @@ void LSystem::drawRules() {
 
 		}
 	}
+}
+
+float LSystem::randomize() {
+	std::minstd_rand generator(this->seed);
+	int gen = generator();
+	float r = (gen % 100) / 10.0f;
+	if (gen % 2 == 0)	
+		r *= -1;
+	 
+	return r;
 }

@@ -23,7 +23,7 @@ public:
 	
 	void updateMeshData();
 	Mesh& clear();
-	Mesh& recalculateNormals();
+	void recalculateNormals();
 
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);
 	Mesh& setNormals(std::vector<Vector3f> const & normals);

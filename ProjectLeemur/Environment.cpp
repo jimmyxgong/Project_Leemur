@@ -10,7 +10,7 @@
 	the scene graph yet.
 */
 SharedPointer<Centrifuge> centrifuge;
-std::shared_ptr<LSystem> test1;
+SharedPointer<LSystem> test1;
 
 #include "Chunk.h"
 #include "World.h"
@@ -31,16 +31,19 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	//SharedPointer<World> world = share<World>();
-	//world->setPlayer(player);
-	//addEntity((SharedPointer<Entity> &) world);
+	SharedPointer<World> world = share<World>();
+	world->setPlayer(player);
+	addEntity((SharedPointer<Entity> &) world);
 
-	test1 = std::make_shared<LSystem>("lsystemtest1.txt");
-	test1->turtle->setPosition(glm::vec3(0, 0, 0));
-	test1->drawRules();
-	test1->turtle->setIndices();
-	test1->turtle->initialize_mesh();
-	addEntity((SharedPointer<Entity> &) test1->turtle->obj);
+	//test1 = std::make_shared<LSystem>("lsystemtest1.txt", 565);
+	//test1->turtle->setPosition(glm::vec3(0, 0, 0));
+	//test1->drawRules();
+	//test1->turtle->world->updateAll();
+	//test1->turtle->setIndices();
+	//test1->turtle->initialize_mesh();
+	
+	//addEntity((SharedPointer<Entity> &) test1->turtle->obj);
+	//addEntity((SharedPointer<Entity> &) test1->turtle);
 
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());
@@ -85,11 +88,14 @@ void Environment::onDestroy() {
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
 	Mesh& cyl = (Mesh&) Resources::getEntity(CYL_OBJ);
+	//Mesh& icos = (Mesh&)Resources::getEntity(ICOSAHEDRON_OBJ);
 	pod.destroy();
 	cyl.destroy();
+	//icos.destroy();
 
 	delete &cyl;
 	delete &pod;
+	//delete &icos;
 
 	int size = entities.size();
 	for (int i = 0; i < size; i++) {

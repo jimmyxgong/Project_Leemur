@@ -6,10 +6,13 @@
 #include "Quaternion.h"
 #include "glm/gtx/rotate_vector.hpp"
 
-class Turtle{
+class Turtle : public BaseEntity{
 public:
 	Turtle();
 
+	SharedPointer<Transform> world;
+	SharedPointer<Transform> branches;
+	SharedPointer<Transform> leaves;
 	SharedPointer<Mesh> mesh;
 	SharedPointer<GameObject> obj;
 	glm::vec3 position;
@@ -17,6 +20,12 @@ public:
 	glm::vec3 right;
 	std::vector<Turtle> stack;
 	float distance;
+
+	void onCreate();
+	void onStart();
+	void onRender();
+	void onUpdate();
+	void onDestroy();
 
 	void initialize_mesh();
 	void setIndices();

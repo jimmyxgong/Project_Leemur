@@ -19,6 +19,12 @@ void Resources::init() {
 	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
 		.attachShader(&Resources::getShader(TOON_LIGHT))
 		.setMaterial(&Material::Gold);
+
+	// Create Icosahedron object and add it to resources.
+	/*Resources::newObjEntity(ICOSAHEDRON_OBJ, "icosahedron.obj")
+		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.setMaterial(&Material::Gold);*/
+
 #else
     // Create Pod object and add it to resources.
     Resources::newObjEntity(POD_OBJ, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/pod.obj")

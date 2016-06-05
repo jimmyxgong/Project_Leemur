@@ -34,17 +34,16 @@ void Mesh::init() {
 
 
 	// Bind normals
-	//glBindBuffer(GL_ARRAY_BUFFER, NBO);
-	//glBufferData(
-	//	GL_ARRAY_BUFFER,
-	//	normals.size() * sizeof(Vector3f),
-	//	&normals[0],
-	//	glDrawType
-	//);
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		normals.size() * sizeof(Vector3f),
+		&normals[0],
+		glDrawType
+	);
 
-	/*glEnableVertexAttribArray(1);
-	glVertexAttribPointer(
-		1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);*/
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -89,7 +88,7 @@ void Mesh::render() {
 	glBindVertexArray(VAO);
 	glPointSize(5.0f);
 	glDrawElements(
-		GL_POINTS,
+		GL_TRIANGLES,
 		indices.size(),
 		GL_UNSIGNED_INT,
 		0
@@ -111,7 +110,10 @@ Mesh& Mesh::clear() {
 	return *this;
 }
 
-Mesh& Mesh::recalculateNormals() {
+void Mesh::recalculateNormals() {
+	// needs to optimize to be able to calculate the normals correctly
+	//optimize();
+	normals.resize(vertices.size());
 	for (int i = 0; i < indices.size(); i += 3) {
 		Vector3f A = vertices.at(indices.at(i));
 		Vector3f B = vertices.at(indices.at(i + 1));
@@ -120,24 +122,20 @@ Mesh& Mesh::recalculateNormals() {
 		Vector3f BA = B - A;
 		Vector3f CA = C - A;
 
-		Vector3f N = (cross(BA, CA));	// normalize(cross...)
+		Vector3f N = (cross(BA, CA));    // normalize(cross(...))
 
-		if (normals.size() > i + 2) {
-			Vector3f NA = normals.at(indices.at(i));
-			Vector3f NB = normals.at(indices.at(i + 1));
-			Vector3f NC = normals.at(indices.at(i + 2));
+		Vector3f NA = normals.at(indices.at(i));
+		Vector3f NB = normals.at(indices.at(i + 1));
+		Vector3f NC = normals.at(indices.at(i + 2));
 
-			addNormal(N + NA);
-			addNormal(N + NB);
-			addNormal(N + NC);
-			continue;
-		}
-		addNormal(N);
-		addNormal(N);
-		addNormal(N);
+		NA = normalize(N + NA);
+		NB = normalize(N + NB);
+		NC = normalize(N + NC);
+
+		normals[indices.at(i)] = NA;
+		normals[indices.at(i + 1)] = NB;
+		normals[indices.at(i + 2)] = NC;
 	}
-
-	return *this;
 }
 
 Mesh& Mesh::setVertices(std::vector<Vector3f> const & vertices) {
