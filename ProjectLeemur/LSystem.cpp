@@ -37,6 +37,7 @@ void LSystem::parse_file(std::string const & infile) {
 	std::getline(settings, this->r1);
 	std::getline(settings, this->r2);
 	std::getline(settings, this->r3);
+	std::getline(settings, this->r4);
 
 	//create variable vector
 	std::istringstream buffer(vars);
@@ -58,6 +59,7 @@ void LSystem::parse_file(std::string const & infile) {
 	//std::cout << "r1: " << r1 << std::endl;
 	//std::cout << "r2: " << r2 << std::endl;
 	//std::cout << "r3: " << r3 << std::endl;
+	//std::cout << "r4: " << r4 << std::endl;
 }
 
 void LSystem::create_grammar() {
@@ -77,16 +79,19 @@ void LSystem::create_grammar() {
 			else if (grammar[j] == this->r3[0]) {	//rule 3
 				j = set_replace_grammar(j, RULE_3);
 			}
+			else if (grammar[j] == this->r4[0]) {	//rule 3
+				j = set_replace_grammar(j, RULE_4);
+			}
 		}
 	}
 
 	/* USE THIS TO CHECK OUTPUT OF THE FINAL GRAMMAR*/
-	
+	/*
 	for (std::vector<char>::iterator iz = grammar.begin(); iz != grammar.end(); iz++) {
 		std::cout << *iz;
 	}
 	std::cout << std::endl;
-	
+	*/
 }
 
 int LSystem::set_replace_grammar(int grammar_loop_pos, int r) {
@@ -98,6 +103,7 @@ int LSystem::set_replace_grammar(int grammar_loop_pos, int r) {
 	case 1: rule = this->r1; break;
 	case 2: rule = this->r2; break;
 	case 3: rule = this->r3; break;
+	case 4: rule = this->r4; break;
 	}
 
 	//start from index 3 because of the "F->" syntax at start of the string
@@ -132,7 +138,7 @@ void LSystem::drawRules() {
 		switch (rule) {
 		case 'F': {
 			//draw forward
-			std::cout << "move forward" << std::endl;
+			//std::cout << "move forward" << std::endl;
 			turtle->drawForward(1.0f);
 			break;
 		}
@@ -143,45 +149,50 @@ void LSystem::drawRules() {
 		}
 		case '+': {
 			//turn right angle
-			std::cout << "rotate left" << std::endl;
+			//std::cout << "rotate left" << std::endl;
 			turtle->rotateLeft(this->angle);
 			break;
 		}
 		case '-': {
 			//turn left angle
-			std::cout << "rotate right" << std::endl;
+			//std::cout << "rotate right" << std::endl;
 			turtle->rotateRight(this->angle);
 			break;
 		}
 		case '&': {
 			//pitch down
+			turtle->pitchDown(this->angle);
 			break;
 		}
 		case '^': {
 			//pitch up
+			turtle->pitchUp(this->angle);
 			break;
 		}
 	   case '\\' : {
 		   //roll left
+		   turtle->rollLeft(this->angle);
 		   break;
 		}
 	   case '/': {
 		   //roll right
+		   turtle->rollRight(this->angle);
 		   break;
 	   }
 	   case '|': {
 		   //turn 180
+		   turtle->turnAround();
 		   break;
 	   }
 	   case '[': {
 			//save matrix state
-		   std::cout << "save state" << std::endl;
+		  // std::cout << "save state" << std::endl;
 		    turtle->saveState();
 			break;
 		}
 	    case ']': {
 			//restore matrix state
-			std::cout << "restore state" << std::endl;
+			//std::cout << "restore state" << std::endl;
 			turtle->restoreState();
 			break;
 		}

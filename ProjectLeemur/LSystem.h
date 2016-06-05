@@ -12,6 +12,7 @@
 #define RULE_1	1
 #define RULE_2	2
 #define RULE_3	3
+#define RULE_4  4
 #define RULE_START_POS	3
 
 class LSystem{
@@ -24,6 +25,7 @@ public:
 	std::string r1;
 	std::string r2;
 	std::string r3;
+	std::string r4;
 	std::vector<char> grammar;
 	float posX, posY, posZ;
 

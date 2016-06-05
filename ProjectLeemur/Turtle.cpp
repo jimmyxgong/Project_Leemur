@@ -41,10 +41,10 @@ void Turtle::rotateRight(float angle) {
 	float a = angle * glm::pi<float>() / 180.0f;
 	glm::vec3 ax = this->direction;
 	glm::vec3 cross = glm::cross(ax, this->right);
-	direction = glm::rotate(direction, a, cross);
-	right = glm::rotate(right, a, cross);
-	glm::normalize(direction);
-	glm::normalize(right);
+	this->direction = glm::rotate(direction, a, cross);
+	this->right = glm::rotate(right, a, cross);
+	glm::normalize(this->direction);
+	glm::normalize(this->right);
 	//std::cout << "direction: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
 }
 
@@ -54,15 +54,15 @@ void Turtle::rotateLeft(float angle) {
 
 void Turtle::saveState() {
 	Turtle t = (Turtle)*this;
-	std::cout << "saved position: " << t.position.x << " " << t.position.y << " " << t.position.z << std::endl;
-	std::cout << "saved direction: " << t.direction.x << " " << t.direction.y << " " << t.direction.z << std::endl;
+	//std::cout << "saved position: " << t.position.x << " " << t.position.y << " " << t.position.z << std::endl;
+	//std::cout << "saved direction: " << t.direction.x << " " << t.direction.y << " " << t.direction.z << std::endl;
 	stack.push_back(t);
 }
 
 void Turtle::restoreState() {
 	Turtle oldTurtle = stack.back();
-	std::cout << "restored position: " << oldTurtle.position.x << " " << oldTurtle.position.y << " " << oldTurtle.position.z << std::endl;
-	std::cout << "restored direction: " << oldTurtle.direction.x << " " << oldTurtle.direction.y << " " << oldTurtle.direction.z << std::endl;
+	//std::cout << "restored position: " << oldTurtle.position.x << " " << oldTurtle.position.y << " " << oldTurtle.position.z << std::endl;
+	//std::cout << "restored direction: " << oldTurtle.direction.x << " " << oldTurtle.direction.y << " " << oldTurtle.direction.z << std::endl;
 	stack.pop_back();
 	this->position = oldTurtle.position;
 	this->direction = oldTurtle.direction;
@@ -77,10 +77,31 @@ void Turtle::moveForward(float amt) {
 
 //for now just add vertice to VBO
 void Turtle::drawForward(float amt) {
-	//std::cout << "direction: " << direction.x << " " << direction.y << " " << direction.z << std::endl;
 	glm::vec3 toAdd = this->direction * amt;
-	//old_position = position;
 	this->position += toAdd;
 	mesh->addVertex(this->position);
 }
 
+void Turtle::pitchUp(float amt) {
+	float ang = amt * glm::pi<float>() / 180.0f;
+	this->direction = glm::rotate(this->direction, ang, right);
+	glm::normalize(this->direction);
+}
+
+void Turtle::pitchDown(float amt) {
+	pitchUp(-amt);
+}
+
+void Turtle::rollRight(float amt) {
+	float ang = amt * glm::pi<float>() / 180.0f;
+	this->right = glm::rotate(this->right, ang, direction);
+	glm::normalize(this->right);
+}
+
+void Turtle::rollLeft(float amt) {
+	rollRight(-amt);
+}
+
+void Turtle::turnAround() {
+	rollRight(glm::pi<float>());
+}

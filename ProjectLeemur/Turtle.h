@@ -12,7 +12,6 @@ public:
 
 	SharedPointer<Mesh> mesh;
 	SharedPointer<GameObject> obj;
-	glm::vec3 old_position;
 	glm::vec3 position;
 	glm::vec3 direction;
 	glm::vec3 right;
@@ -29,6 +28,7 @@ public:
 	void rollRight(float angle);
 	void pitchUp(float angle);
 	void pitchDown(float angle);
+	void turnAround();
 	void setPosition(glm::vec3 pos);
 	void setDirection(glm::vec3 dir);
 	void saveState();
