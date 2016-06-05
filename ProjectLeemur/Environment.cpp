@@ -36,9 +36,14 @@ void Environment::onCreate() {
 //    SharedPointer<Centrifuge> pod =
 //    share<Centrifuge>();
 //    addEntity((SharedPointer<Entity> &) pod);
-    SharedPointer<Building> pod =
+    SharedPointer<Building> build =
     share<Building>();
-    addEntity((SharedPointer<Entity> &) pod);
+    addEntity((SharedPointer<Entity> &) build);
+    
+    SharedPointer<Building> build1 =
+    share<Building>(Vector3f(5,5,5), Vector3f(5,5,5));
+    addEntity((SharedPointer<Entity> &) build1);
+
 
 	for (auto & entity : entities) {
 		entity->onCreate();

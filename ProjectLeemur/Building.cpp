@@ -17,15 +17,23 @@ typedef SharedPointer<GameObject>		game_object;
 /*selects a random material of a set ofspecific materials */
 Material * randomMaterial();
 
-void Building::onCreate() {
-	world = unique<Transform>();
-    
+Building::Building() {
     base_center = Vector3f(0,0,0);
     up = Vector3f(0,1,0);
     x_dim = 1.5;
     z_dim = 1.5;
     y_dim = 5;
-    
+    onCreate();
+}
+Building::Building(Vector3f pos, Vector3f dim) {
+    base_center = pos;
+    x_dim = dim.x;
+    y_dim = dim.y;
+    z_dim = dim.z;
+}
+
+void Building::onCreate() {
+	world = unique<Transform>();
     /* used while building */
     top_height = 0;
     current_x_dim = x_dim;
@@ -33,7 +41,6 @@ void Building::onCreate() {
     prev_block_height = -1;
     prev_shape = -1;
     prev_type = -1;
-    
 }
 
 void Building::onStart() {
@@ -57,41 +64,43 @@ void Building::onStart() {
 
     
     // sphere of buildings
-    int building_radius = 2;
-    int spacing = 2*building_radius;
-    int per_sphere = 10;
-    float sphere_radius = 40;
-    
-    for ( double i = 0; i<2*M_PI; i+=2*M_PI/per_sphere) {
-        for (double j = M_PI/per_sphere; j<M_PI; j+=M_PI/per_sphere){
-//            if (rand() % 4)
-//                continue;
-            // reset to add many buildings
-            top_height = 0;
-            current_x_dim = x_dim;
-            current_z_dim = z_dim;
-            prev_block_height = -1;
-            prev_shape = -1;
-            prev_type = -1;
-            transform_group building = CreateRandomBuilding();
-            Vector3f location = Vector3f(sphere_radius*cos(i)*sin(j),
-                                         sphere_radius*sin(i)*sin(j),
-                                         sphere_radius*cos(j));
-            
-            transform_group rotated_building = rotatePieceFromUp(building, location);
-            rotated_building->translateLocal(location);
-            world->addChild(rotated_building);
-            }
-    }
-    
-    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
-    game_object planet = share<GameObject>(&sph);
-    planet->transform->scaleLocal(sphere_radius);
-    world->addChild(planet);
+//    int building_radius = 2;
+//    int spacing = 2*building_radius;
+//    int per_sphere = 10;
+//    float sphere_radius = 40;
+//    
+//    for ( double i = 0; i<2*M_PI; i+=2*M_PI/per_sphere) {
+//        for (double j = M_PI/per_sphere; j<M_PI; j+=M_PI/per_sphere){
+////            if (rand() % 4)
+////                continue;
+//            // reset to add many buildings
+//            top_height = 0;
+//            current_x_dim = x_dim;
+//            current_z_dim = z_dim;
+//            prev_block_height = -1;
+//            prev_shape = -1;
+//            prev_type = -1;
+//            transform_group building = CreateRandomBuilding();
+//            Vector3f location = Vector3f(sphere_radius*cos(i)*sin(j),
+//                                         sphere_radius*sin(i)*sin(j),
+//                                         sphere_radius*cos(j));
+//            
+//            transform_group rotated_building = rotatePieceFromUp(building, location);
+//            rotated_building->translateLocal(location);
+//            world->addChild(rotated_building);
+//            }
+//    }
+//    
+//    Component& sph = (ObjObject&) Resources::getEntity(SPH_OBJ);
+//    game_object planet = share<GameObject>(&sph);
+//    planet->transform->scaleLocal(sphere_radius);
+//    world->addChild(planet);
     
     
 //    CreateTower();
-
+    transform_group random = CreateRandomBuilding();
+    random->translateLocal(base_center.x, base_center.y, base_center.z);
+    world->addChild(random);
 }
 
 void Building::CreateTower() {
@@ -140,7 +149,7 @@ void Building::CreateTower() {
 
     transform_group j = CreateDome(randomMaterial());
     tower->addChild(j);
-    tower->translateLocal(0, 0, -50);
+//    tower->translateLocal(0, 0, -50);
     world->addChild(tower);
 }
 
@@ -246,6 +255,7 @@ transform_group Building::CreateRandomBuilding() {
         top_type = rand()%3;
         top_shape = rand()%2;
     } while (!isValidPlacement(top_types[top_type], top_shape));
+//             (top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20));// if the prev_height isn't enough for a dome
     
     int lip = rand()%2;
     if (lip && top_type != 1){
@@ -283,11 +293,6 @@ void Building::onUpdate() {
 void Building::onDestroy() {
 	
 }
-
-Building::Building() {
-	onCreate();
-}
-
 
 /* adds a x_dim by z_dim by .1 box to building */
 transform_group Building::CreateStep(Material* mat, int shape) {

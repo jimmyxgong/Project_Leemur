@@ -62,4 +62,5 @@ private:
 
 public:
 	Building();
+    Building(Vector3f pos, Vector3f dim);
 };
