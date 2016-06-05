@@ -40,6 +40,7 @@ private:
 	Mesh waveMesh;
 	//AsyncTask task;
 	std::atomic<bool> canceled = true;
+	std::atomic<bool> hasWater;
 	Resumable resumable;
 	//future<void> future;
 

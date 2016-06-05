@@ -156,7 +156,7 @@ void World::allowKeyBindings() {
 	bindings.onKeyPressed(GLFW_KEY_C, [this](bool shifted) {
 		biomeOptions.waterMax += shifted ? -0.2 : 0.2;
 		biomeOptions.waterMin += shifted ? -0.2 : 0.2;
-		biomeOptions.sand += shifted ? -0.16 : 0.16;
+		biomeOptions.sand += shifted ? -0.11 : 0.11;
 		changed = true;
 	});
 

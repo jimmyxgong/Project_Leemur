@@ -11,7 +11,7 @@
 #include <boost/unordered_map.hpp>
 #endif
 
-#define RENDER_DISTANCE 3
+#define RENDER_DISTANCE 6
 
 class World : public BaseEntity {
 public:
@@ -25,7 +25,7 @@ public:
 		float waterMin = 1.9;
 
 		//float grass = 4;
-		float sand = 4;
+		float sand = 3.2;
 		float snow = 6.7;
 	} biomeOptions;
 

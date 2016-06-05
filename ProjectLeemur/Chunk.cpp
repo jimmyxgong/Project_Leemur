@@ -166,12 +166,10 @@ void Chunk::loadToShader() {
 
 
 void Chunk::generateChunk(Terrain & terrain) {
-	//double val = terrain.fbm(0, 0, 0);
-	//printf("val: %.4f", val);
-	
 	Random::setSeedToCurrentTime();
-
+	hasWater = false;
 	clear();
+
 	const Vector3f pos = transform.getPosition();
 	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
 	const double roundedZ = round(pos.z);// +pos.z < 0 ? 1000 : 999;
@@ -185,6 +183,7 @@ void Chunk::generateChunk(Terrain & terrain) {
 			if (h < world->biomeOptions.waterMax + 0.02) {
 				h = world->biomeOptions.waterMax - 0.01;
 				h -= Random::Range(0.0, 0.3);
+				hasWater = true;
 			}
 			dheightMap[i][k] = h;
 
@@ -265,15 +264,15 @@ void Chunk::buildMeshData() {
 	const double d = HEIGHT_UNIT;
 
 	// Generate vertices: optimized way, but too much of a hassle for now :/
-	//for (int i = 0; i < CHUNK_SIZE; i++) {
-	//	double displace = i % 2 == 0 ? 0 : 0.5;
-	//	for (int k = 0; k < CHUNK_SIZE; k++) {
-	//		double y = getHeightMap()[i][k];
-	//		double x = i + pos.x;
-	//		double z = k + pos.z;
-	//		mesh.addVertex(x, y, z + displace);
-	//	}
-	//}
+	for (int i = 0; i < CHUNK_SIZE; i++) {
+		double displace = i % 2 == 0 ? 0 : 0.5;
+		for (int k = 0; k < CHUNK_SIZE; k++) {
+			double y = getHeightMap()[i][k];
+			double x = i + pos.x;
+			double z = k + pos.z;
+			mesh.addVertex(x, y, z + displace);
+		}
+	}
 
 	bool chunk10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
 	bool chunk01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
@@ -299,7 +298,7 @@ void Chunk::buildMeshData() {
 			double val = i % 2 == 0 ? 0.5 : 0;
 
 			Vector4f min = getLeast(i, y, k);
-
+			//mesh.addTriangles(generateTriangles(i, k, min.w), 0);
 			mesh.addTriangles(generateTriangles(min.w));
 			mesh.addVertex(x, y, zz);
 			mesh.addVertex(outOfBoundsVertex(x, z + val, i, k, 1, 0));
@@ -331,6 +330,8 @@ void Chunk::printHeightMap() {
 }
 
 bool Chunk::readyForWaveUpdate() {
+	if (!hasWater) return true;
+
 	return ready;
 }
 
@@ -358,9 +359,9 @@ routine Chunk::yieldBuildMeshData() {
 	MeshData meshData;
 
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		co_yield 1ns;
+		co_yield 100ns;
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			if (k % 8 == 0) co_yield 1ns;
+			if (k % 8 == 0) co_yield 100ns;
 			if (i == CHUNK_SIZE - 1) {
 				if (chunk10) break;
 				if (k == CHUNK_SIZE - 1 && chunk11 && chunk01)
@@ -395,7 +396,7 @@ float randomHeight = 0.2f;
 float randomSpeed = 7.0f;
 
 void Chunk::resumeWaves() {
-	if (world->options.useWaves) {
+	if (world->options.useWaves && hasWater) {
 		//if (canceled) {
 		//	canceled = false;
 		//	ready = false;
@@ -449,8 +450,9 @@ routine Chunk::waveMotion() {
 		}
 	}
 	//mesh.clear();
+	int i = 0;
 	for (auto time : yieldBuildMeshData()) {
-		yield time;
+		if (i++ % 16 == 0) yield time;
 	}
 	mesh.recalculateNormals();
 	//mesh.updateMeshData();
@@ -470,9 +472,13 @@ Resumable Chunk::updateWaves() {
 	const double waterMax = world->biomeOptions.waterMax;
 	const double waterMin = world->biomeOptions.waterMin;
 
+	Array<Array<double>> hmap;
+	hmap.resize(CHUNK_SIZE);
+
 	// height map
 	Vector3f pos = transform.getPosition();
 	for (int i = 0; i < CHUNK_SIZE; i++) {
+		hmap[i].resize(CHUNK_SIZE);
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			if (k % 4 == 0) co_await suspend_always{};
 
@@ -493,13 +499,13 @@ Resumable Chunk::updateWaves() {
 				h += sin(cos(val0) * randomHeight * cos(Time::getTime() * randomSpeed * sin(val1)));
 				if (h > waterMax) h = waterMax - Random::Range(0.0, 0.3);
 				else if (h < waterMin) h = waterMin + Random::Range(0.0, 0.3);
-				
-				dheightMap[i][k] = h;
 			}
+			hmap[i][k] = h;
 		}
 	}
 	co_await suspend_always{};
 
+	dheightMap = hmap;
 	int i = 0;
 	for (auto v : yieldBuildMeshData()) {
 		if (i++ % 16 == 0) co_await suspend_always{};
