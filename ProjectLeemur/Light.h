@@ -23,6 +23,7 @@ public:
 	Shader * shader;
 
 	void loadToShader();
+	void loadToShaderi();
 
 	static Light Directional;
 	static void init();

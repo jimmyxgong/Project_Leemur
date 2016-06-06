@@ -4,12 +4,12 @@
 #include "BaseEntity.h"
 #include "Material.h"
 #include "Mesh.h"
+#include "Terrain.h"
 
 class Chunk;
 
 class Cell : BaseEntity {
 public:
-
 
 public:
 	struct Data {
@@ -17,6 +17,7 @@ public:
 		unsigned int type = GRASS;
 		bool transparent = false;
 		bool voidable = false;
+		Terrain::Biome biome;
 	} data;
 
 	Chunk * chunk;

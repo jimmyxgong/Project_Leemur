@@ -13,7 +13,10 @@ protected:
 
 	std::vector<Vector3f> vertices;
 	std::vector<Vector3f> normals;
+	std::vector<Vector3f> colors;
 	std::vector<unsigned int> indices;
+
+
 
 public:
 
@@ -22,8 +25,9 @@ public:
 	void destroy();
 	
 	void updateMeshData();
-	Mesh& clear();
-	Mesh& recalculateNormals();
+	void recalculateNormals();
+	void clear();
+	void optimize();
 
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);
 	Mesh& setNormals(std::vector<Vector3f> const & normals);
@@ -43,6 +47,8 @@ public:
 	Mesh& addVertex(Vector3f const &);
 	Mesh& addNormal(float x, float y, float z);
 	Mesh& addNormal(Vector3f const &);
+	Mesh& addColor(float, float, float);
+	Mesh& addColor(Vector3f const &);
 
 
 	std::vector<Vector3f>& getVertices();

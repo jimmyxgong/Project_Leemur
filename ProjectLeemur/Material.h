@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #ifdef _WIN32
 #include <glm\vec4.hpp>
 #include <glm\vec3.hpp>
@@ -20,11 +22,19 @@ struct Material {
 	vec4 specular;
 	vec4 emission;
 
+	float shiny;
+	std::string name;
+
 	void loadToShader();
 
 	static Material RedPlastic;
 	static Material Parismarine;
-    static Material Gold;
+	static Material Emerald;
+	static Material Gold;
+	static Material Grass;
+	static Material Snow;
+	static Material Sand;
+	static Material Water;
     static Material Silver;
     static Material Bronze;
 };

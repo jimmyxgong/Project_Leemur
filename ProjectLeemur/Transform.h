@@ -27,15 +27,15 @@ private:
 	Matrix4f	localToWorldMatrix;
 	Matrix4f	worldToLocalMatrix;
 
-	/* Children used in Scene Graph */
-	std::list<SharedPointer<Transform>> children;
+	
 
 	/* Need to maintain a list of gameObjects to keep them alive */
 	std::list<SharedPointer<GameObject>> childGameObjects;
 	Transform * parent = nullptr;
 
 public:	/* Getters and Setters */
-
+		/* Children used in Scene Graph */
+	std::list<SharedPointer<Transform>> children;
 	Matrix4f    worldMatrix;
 
 	Vector3f getLocalScale() const;

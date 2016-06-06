@@ -11,6 +11,7 @@ Shader* Shader::instance = nullptr;
 
 void Shader::use() {
 	Shader::instance = this;
+
 	glUseProgram(id);
 }
 

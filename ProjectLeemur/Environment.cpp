@@ -4,6 +4,15 @@
 #include "Centrifuge.h"
 #include "Building.h"
 #include "Light.h"
+#include "LSystem.h"
+
+/* See the centrifuge for an example as to how to use
+	the scene graph. NOTE: Animations are not implemented in
+	the scene graph yet.
+*/
+
+SharedPointer<LSystem> test1, test2, test3;
+
 #include "Chunk.h"
 #include "World.h"
 #include "GameObject.h"
@@ -12,7 +21,6 @@
 void print(std::string const & val) {
 	std::cout << val << std::endl;
 }
-
 
 void Environment::onCreate() {
 	print("Creating Environment...");
@@ -24,27 +32,37 @@ void Environment::onCreate() {
 
 	Window::getFocusedWindow().setActiveCamera(&player->getCamera());
 
-	//SharedPointer<World> world = share<World>();
-	//world->setPlayer(player);
-	//addEntity((SharedPointer<Entity> &) world);
+	SharedPointer<World> world = share<World>();
+	world->setPlayer(player);
+	addEntity((SharedPointer<Entity> &) world);
 
-//	// Create pod and add a reference to what it should render.
-//	SharedPointer<GameObject> pod =
-//		share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
-//	addEntity((SharedPointer<Entity> &) pod);
-//    // Create centrifuge and add a reference to what it should render.
-//    SharedPointer<Centrifuge> pod =
-//    share<Centrifuge>();
-//    addEntity((SharedPointer<Entity> &) pod);
-    SharedPointer<Building> build =
-    share<Building>();
-    addEntity((SharedPointer<Entity> &) build);
-    
-    SharedPointer<Building> build1 =
-    share<Building>(Vector3f(5,5,5), Vector3f(5,5,5), 5);
-    addEntity((SharedPointer<Entity> &) build1);
+#ifdef _WIN32
+    test1 = std::make_shared<LSystem>("tree1.txt");
+	test1->setSeed(3681);
+	test2 = std::make_shared<LSystem>("tree2.txt");
+	test2->setSeed(3688);
+	test3 = std::make_shared<LSystem>("tree3.txt");
+	test3->setSeed(3684);
 
-
+#else
+    test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);
+    test2 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3683);
+#endif
+	test1->turtle->setPosition(glm::vec3(8, 4, -5));
+	test1->drawRules();
+    test2->turtle->setPosition(glm::vec3(12, 6, -20));
+    test2->drawRules();
+	test3->turtle->setPosition(glm::vec3(20, 4, -10));
+	test3->drawRules();
+    test2->turtle->world->scaleLocal(1);
+	
+    addEntity((SharedPointer<Entity> &) test1->turtle);
+    addEntity((SharedPointer<Entity> &) test2->turtle);
+	addEntity((SharedPointer<Entity> &) test3->turtle);
+	
+	SharedPointer<Building> build = share<Building>(Vector3f(16, 6.4, -15), Vector3f(3,8,4), 12323);
+	addEntity((SharedPointer<Entity> &) build);
+	
 	for (auto & entity : entities) {
 		entity->onCreate();
 	}
@@ -81,6 +99,7 @@ void Environment::onUpdate() {
 void Environment::onDestroy() {
     delete (&Resources::getShader(SHADER_LIGHT));
     delete (&Resources::getShader(TOON_LIGHT));
+//	delete (&Resources::getShader(TERRAIN_LIGHT));
 	skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);
@@ -93,7 +112,6 @@ void Environment::onDestroy() {
 
 	int size = entities.size();
 	for (int i = 0; i < size; i++) {
-		std::cout << "deleteing" << std::endl;
 		entities[i]->onDestroy();
 		entities[i] = nullptr;
 	}

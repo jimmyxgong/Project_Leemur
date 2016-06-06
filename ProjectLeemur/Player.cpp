@@ -4,6 +4,7 @@
 
 void Player::onStart() {
 	trackball = Trackball(&Window::getFocusedWindow());
+	//transform.setPosition(Vector3f(1000, 1000, 1000));
 
 	camera = unique<Camera>(Vector3f(0.0f, 1.0f, 2.2f));
 	//camera->setLookAt(Vector3f(0.0f, 16.0f, 0.2f));

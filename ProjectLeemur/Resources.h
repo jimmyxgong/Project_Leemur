@@ -4,6 +4,7 @@
 #include "Shader.h"
 #include "Entity.h"
 #include "ObjObject.h"
+#include "Terrain.h"
 
 // Put all keys here:
 
@@ -15,11 +16,10 @@
 #define CUB_OBJ 4
 #define SPH_OBJ 5
 
-
 /* Shader keys */
 #define SHADER_LIGHT 0
 #define TOON_LIGHT 1
-
+#define TERRAIN_LIGHT 2
 
 /* 
   Non owned resources: i.e. if you add resources to the Resources pool,
@@ -31,6 +31,7 @@ class Resources {
 private: /* Pool of resources */
 	std::unordered_map<int, Shader*> shaders;
 	std::unordered_map<int, Entity*> entities;
+	std::unordered_map<Terrain::Biome, Material*> biomes;
 	Resources() {}
 
 
@@ -57,6 +58,7 @@ public: /* Singleton methods */
 	static Resources & addEntity(int key, Entity *);
 	static ObjObject & newObjEntity(int key, const std::string &);
 
+	static Resources & mapBiomeToMaterial(Terrain::Biome b, Material *);
 
 	static void destroy();
 };
