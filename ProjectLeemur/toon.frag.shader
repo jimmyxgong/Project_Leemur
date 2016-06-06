@@ -103,13 +103,17 @@ void main() {
 
     //Silhouette Edges
     float edge = max(0, dot(surfaceToLight, normal));
-    if (edge < .01) {
+    if (edge < 0.01) {
         // in place of 1D texture to define edge ramp
         // use linear scaling for smoother transition
-        if (edge > 0)
-            color = 20*edge*vec4(1,1,1,1);
-        else
-            color = edge*vec4(0,0,0,1);
+		color = edge > 0
+			? vec4(vec3(20 * edge), 1.f)
+			: vec4(0,0,0,1);
+		
+        //if (edge > 0) {
+        //    color = vec4(vec3(20 * edge), 1.f);
+		//}
+        //else
+        //    color = vec4(0,0,0,1);
     }
-	//color = vec4(0, 0, 0, 1);
 }

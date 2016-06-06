@@ -72,6 +72,7 @@ public: /* Transformations on current orientation */
 	Transform& translate(float x, float y, float z);
 	Transform& translate(const Vector3f &);
 
+	/* experimental */
 	Transform& rotate(const Quaternion &);
 	Transform& rotate(float x, float y, float z, float deg);
 	Transform& rotateX(float deg);
@@ -108,6 +109,9 @@ public: /* Scene Graph */
 	// Render itself if has an attached gameObject, and its children
 	void renderAll();
 	void updateAll();
+
+	void forwardRender(Matrix4f const &);
+
 
 public:
 	bool changed;

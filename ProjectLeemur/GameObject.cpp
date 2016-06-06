@@ -25,7 +25,7 @@ void GameObject::onRender() {
 	//if (m != *Component::EMPTY)
 	if (component) {
 		if (component->attachedShader) {
-			component->attachedShader->use();
+			//component->attachedShader->use();
 			loadToShader();
 		}
 		((Mesh*)component)->render();
@@ -34,6 +34,15 @@ void GameObject::onRender() {
 
 void GameObject::onUpdate() {
 
+}
+
+void GameObject::forwardRender(Matrix4f const & val) {
+	if (component) {
+		if (component->attachedShader)
+			component->attachedShader->use();
+		loadToShader(val);
+		((Mesh*)component)->render();
+	}
 }
 
 template <class T>
@@ -75,6 +84,26 @@ void GameObject::loadToShader() {
 	Camera & cam = Window::getFocusedWindow().getActiveCamera();
 	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
 }
+
+void GameObject::loadToShader(Matrix4f const & forward) {
+	if (material != NULL)
+		this->getMaterial()->loadToShader();
+	else
+		component->getMaterial().loadToShader();
+
+	Matrix4f model = forward * transform->getLocalToWorldMatrix();
+	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
+		* Window::getFocusedWindow().getView()
+		* model;
+
+	Shader::loadMatrix("MVP", MVP);
+	Shader::loadMatrix("model", model);
+	Shader::loadMatrix("NormalMatrix", Matrix3f(transpose(inverse(model))));
+
+	Camera & cam = Window::getFocusedWindow().getActiveCamera();
+	Shader::loadVector("CameraPosition", cam.transform.getLocalPosition());
+}
+
 
 GameObject::GameObject(Component * component)
 	: component(component)

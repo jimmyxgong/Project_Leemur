@@ -9,6 +9,7 @@
 #include "AsyncTask.h"
 #include "Resumable.h"
 #include "MeshData.h"
+#include "Building.h"
 
 #ifdef _WIN32
 #include <experimental/generator>
@@ -33,6 +34,9 @@ public:
 	Transform transform;
 
 private:
+	Array<SharedPointer<Building>> buildings;
+	Array<SharedPointer<Transform>> plants;
+
 	bool ready = false;
 	bool empty = false;
 	bool stop = false;
@@ -110,6 +114,11 @@ public:
 	bool isInvalid() const;
 	Array<Array<double>> & getHeightMap();
 	Chunk & setMapPosition(Vector3f const &);
+
+public: /* object functions */
+	void clearAllObjects();
+	void clearBuildings();
+	void clearPlants();
 
 public:
 	Chunk(bool empty = false);

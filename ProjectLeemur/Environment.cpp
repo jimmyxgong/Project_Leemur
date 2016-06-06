@@ -38,11 +38,11 @@ void Environment::onCreate() {
 
 #ifdef _WIN32
     test1 = std::make_shared<LSystem>("tree1.txt");
-	test1->setSeed(3681);
+	test1->setSeed(4024);
 	test2 = std::make_shared<LSystem>("tree2.txt");
-	test2->setSeed(3688);
+	test2->setSeed(140);
 	test3 = std::make_shared<LSystem>("tree3.txt");
-	test3->setSeed(3684);
+	test3->setSeed(364);
 
 #else
     test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/tree1.txt");
@@ -53,20 +53,20 @@ void Environment::onCreate() {
     test3->setSeed(3684);
 
 #endif
-	test1->turtle->setPosition(glm::vec3(8, 4, -5));
-	test1->drawRules();
-    test2->turtle->setPosition(glm::vec3(12, 8, -20));
-    test2->drawRules();
-	test3->turtle->setPosition(glm::vec3(20, 4, -10));
-	test3->drawRules();
-    test2->turtle->world->scaleLocal(1);
+	//test1->turtle->setPosition(glm::vec3(8, 4, -5));
+	//test1->drawRules();
+ //   test2->turtle->setPosition(glm::vec3(12, 8, -20));
+ //   test2->drawRules();
+	//test3->turtle->setPosition(glm::vec3(20, 4, -10));
+	//test3->drawRules();
+ //   test2->turtle->world->scaleLocal(1);
 	
-    addEntity((SharedPointer<Entity> &) test1->turtle);
-    addEntity((SharedPointer<Entity> &) test2->turtle);
-	addEntity((SharedPointer<Entity> &) test3->turtle);
-	
-	SharedPointer<Building> build = share<Building>(Vector3f(16, 6.4, -15), Vector3f(3,8,4), 1323);
-	addEntity((SharedPointer<Entity> &) build);
+ //   addEntity((SharedPointer<Entity> &) test1->turtle);
+ //   addEntity((SharedPointer<Entity> &) test2->turtle);
+	//addEntity((SharedPointer<Entity> &) test3->turtle);
+	//
+	//SharedPointer<Building> build = share<Building>(Vector3f(16, 6.4, -15), Vector3f(3,8,4), 1323);
+	//addEntity((SharedPointer<Entity> &) build);
 	
 	for (auto & entity : entities) {
 		entity->onCreate();
@@ -92,6 +92,8 @@ void Environment::onRender() {
 	for (auto & entity : entities) {
 		entity->onRender();
 	}
+
+	test1->turtle->world->forwardRender(Transform::Translate(-8, -4, 5));
 }
 
 void Environment::onUpdate() {
@@ -124,7 +126,7 @@ void Environment::onDestroy() {
 }
 
 void Environment::addEntity(SharedPointer<Entity> & entity) {
-	entities.push_back(std::move(entity));
+	entities.push_back((entity));
 }
 
 

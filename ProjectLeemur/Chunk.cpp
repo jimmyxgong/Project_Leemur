@@ -12,6 +12,7 @@
 #include "Random.h"
 #include "Time.h"
 #include "MeshData.h"
+#include "Building.h"
 
 #ifdef _WIN32
 #include <future>
@@ -53,60 +54,14 @@ void Chunk::onStart() {
 void Chunk::onRender() {
 	loadToShader();
 	mesh.render();
+
+	for (WeakPointer<Building> build : buildings) {
+		build.lock()->onRender();
+	}
 }
 
 void Chunk::onUpdate() {
 	resumeWaves();
-
-
-	/*for (auto c : updateWaves()) {
-		printf("val %d", c.count());
-	}*/
-	//routine i = updateWaves();
-	//for (auto c : i) {
-	//	
-	//}
-	//co_await updateWaves();
-	//coroutine_handle<int> handle;
-	
-	//if (!future.valid()) {
-	//	canceled = false;
-	//	future = async(
-	//		std::launch::async,
-	//		[this] {});
-	//}
-	//else {
-	//	auto status = future.wait_for(0ms);
-	//	if (status == std::future_status::ready) {
-	//		canceled = false;
-	//		future = async(
-	//			std::launch::async,
-	//			[this] {
-	//			for (auto c : updateWaves()) {
-	//				if (canceled) break;
-	//				//printf("running at: %d", c);
-	//				this_thread::sleep_for(1ms);
-	//			}
-	//			canceled = true;
-	//		});
-	//	}
-	//}
-	//if (!task.isValid()) {
-		//task.StartCoroutine(updateWaves());
-	//}
-	//std::function<routine()> f = std::bind(&this->updateWaves);
-
-	//if (canceled) {
-	//	canceled = false;
-	//	async(std::launch::async, [this] {
-	//		for (auto time : updateWaves()) {
-	//			if (canceled) break;
-	//			//printf("running at: %d", c);
-	//			this_thread::sleep_for(time);
-	//		}
-	//		canceled = true;
-	//	});
-	//}
 
 	if (changed) {
 		printf("\nUpdating\n");
@@ -124,20 +79,30 @@ void Chunk::onDestroy() {
 
 
 void Chunk::resizeStructure() {
-	//cells.resize(CHUNK_SIZE);
 	heightMap.resize(CHUNK_SIZE);
 	dheightMap.resize(CHUNK_SIZE);
 	for (int i = 0; i < CHUNK_SIZE; i++) {
-		//cells[i].resize(CHUNK_HEIGHT);
 		heightMap[i].resize(CHUNK_SIZE);
 		dheightMap[i].resize(CHUNK_SIZE);
-		//for (int j = 0; j < CHUNK_HEIGHT; j++) {
-			//cells[i][j].resize(CHUNK_SIZE);
-		//}
 	}
 }
 
 void Chunk::loadToShader() {
+	const World::Biomes biome = world->biomeOptions;
+	static Skybox & skybox = (Skybox &)Resources::getEntity(SKYBOX);
+	Resources::getShader(TERRAIN_LIGHT).use();
+
+	Light::Directional.loadToShaderi();
+	Material::Grass.loadToShader();
+	Material::Snow.loadToShader();
+	Material::Sand.loadToShader();
+	Material::Water.loadToShader();
+	glBindTexture(GL_TEXTURE_CUBE_MAP, skybox.getTexture());
+
+	Shader::loadFloat("waterHeight", biome.waterMax)
+		.loadFloat("sandHeight", biome.sand)
+		.loadFloat("snowHeight", biome.snow);
+
 	Matrix4f model = transform.getLocalToWorldMatrix();
 	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
 		* Window::getFocusedWindow().getView()
@@ -166,6 +131,8 @@ void Chunk::loadToShader() {
 
 
 void Chunk::generateChunk(Terrain & terrain) {
+	if (buildings.size() > 0) buildings.clear();
+
 	Random::setSeedToCurrentTime();
 	hasWater = false;
 	clear();
@@ -173,6 +140,11 @@ void Chunk::generateChunk(Terrain & terrain) {
 	const Vector3f pos = transform.getPosition();
 	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
 	const double roundedZ = round(pos.z);// +pos.z < 0 ? 1000 : 999;
+
+	const World::Biomes & biome = world->biomeOptions;
+
+	bool hasGenerated = false;
+
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		double x = i + roundedX;
 		for (int k = 0; k < CHUNK_SIZE; k++) {
@@ -185,11 +157,28 @@ void Chunk::generateChunk(Terrain & terrain) {
 				h -= Random::Range(0.0, 0.3);
 				hasWater = true;
 			}
+			if (biome.frequency <= PLANT_BUILDING_FREQ_RENDER && !hasGenerated) {
+				if (h > biome.plantAppear && h < biome.plantMax && Random::Range(0, 100) > 40) {
+					SharedPointer<Building> build = share<Building>(Vector3f(x, h, z), Vector3f(1, 4, 2), Random::Range(100, 2000));
+					//build->world->translateLocal(0.f, 0.5f, 0.f);
+					buildings.push_back(build);
+					hasGenerated = true;
+				}
+			}
+
 			dheightMap[i][k] = h;
 
 			//dheightMap[i][k] = g;
 			//heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
 		}
+	}
+
+	for (WeakPointer<Building> build : buildings) {
+		build.lock()->onCreate();
+	}
+	for (WeakPointer<Building> build : buildings) {
+		build.lock()->onStart();
+		build.lock()->onUpdate();
 	}
 }
 
@@ -264,15 +253,15 @@ void Chunk::buildMeshData() {
 	const double d = HEIGHT_UNIT;
 
 	// Generate vertices: optimized way, but too much of a hassle for now :/
-	for (int i = 0; i < CHUNK_SIZE; i++) {
-		double displace = i % 2 == 0 ? 0 : 0.5;
-		for (int k = 0; k < CHUNK_SIZE; k++) {
-			double y = getHeightMap()[i][k];
-			double x = i + pos.x;
-			double z = k + pos.z;
-			mesh.addVertex(x, y, z + displace);
-		}
-	}
+	//for (int i = 0; i < CHUNK_SIZE; i++) {
+	//	double displace = i % 2 == 0 ? 0 : 0.5;
+	//	for (int k = 0; k < CHUNK_SIZE; k++) {
+	//		double y = getHeightMap()[i][k];
+	//		double x = i + pos.x;
+	//		double z = k + pos.z;
+	//		mesh.addVertex(x, y, z + displace);
+	//	}
+	//}
 
 	bool chunk10 = !world->containsKey(mapPosition.x + 1, mapPosition.z);
 	bool chunk01 = !world->containsKey(mapPosition.x,     mapPosition.z + 1);
@@ -397,16 +386,6 @@ float randomSpeed = 7.0f;
 
 void Chunk::resumeWaves() {
 	if (world->options.useWaves && hasWater) {
-		//if (canceled) {
-		//	canceled = false;
-		//	ready = false;
-		//	async(std::launch::async, [this] {
-		//		for (auto time : waveMotion()) {
-		//			if (canceled) break;
-		//			this_thread::sleep_for(time);
-		//		}
-		//	});
-		//}
 		if (canceled) {
 			resumable = updateWaves();
 			canceled = false;
@@ -414,9 +393,6 @@ void Chunk::resumeWaves() {
 		else if (!stop) resumable.resume();
 
 	}
-	//else if (resumable.coroutine) {
-	//	resumable.coroutine.destroy();
-	//}
 }
 
 routine Chunk::waveMotion() {
@@ -449,13 +425,11 @@ routine Chunk::waveMotion() {
 			}
 		}
 	}
-	//mesh.clear();
 	int i = 0;
 	for (auto time : yieldBuildMeshData()) {
 		if (i++ % 16 == 0) yield time;
 	}
 	mesh.recalculateNormals();
-	//mesh.updateMeshData();
 
 	//stop = true;
 	ready = true;
@@ -686,6 +660,21 @@ Array<Array<double>> & Chunk::getHeightMap() {
 Chunk & Chunk::setMapPosition(Vector3f const & val) {
 	mapPosition = val;
 	return *this;
+}
+
+
+
+void Chunk::clearAllObjects() {
+	clearBuildings();
+	clearPlants();
+}
+
+void Chunk::clearBuildings() {
+	buildings.clear();
+}
+
+void Chunk::clearPlants() {
+	plants.clear();
 }
 
 

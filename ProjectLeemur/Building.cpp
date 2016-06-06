@@ -34,7 +34,7 @@ Building::Building(Vector3f pos, Vector3f dim, int seed) {
 }
 
 void Building::onCreate() {
-	world = unique<Transform>();
+	world = share<Transform>();
     /* used while building */
     up = Vector3f(0,1,0);
     top_height = 0;

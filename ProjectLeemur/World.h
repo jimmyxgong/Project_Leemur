@@ -12,6 +12,7 @@
 #endif
 
 #define RENDER_DISTANCE 6
+#define PLANT_BUILDING_FREQ_RENDER 0.0625
 
 class World : public BaseEntity {
 public:
@@ -27,6 +28,11 @@ public:
 		//float grass = 4;
 		float sand = 3.2;
 		float snow = 6.7;
+
+		float frequency = PLANT_BUILDING_FREQ_RENDER;
+		float plantAppear = waterMax + 0.5;
+		float plantMax = snow - 0.6;
+
 	} biomeOptions;
 
 
@@ -74,10 +80,12 @@ public:
 	* pos = a position in the chunk map.
 	*/
 	Chunk & findChunk(Vector3f pos, int x, int z);
-
-
 	void setPlayer(WeakPointer<Player> player);
+
+
+
+
+
 	World();
 	~World() = default;
-
 };

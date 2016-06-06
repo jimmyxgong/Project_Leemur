@@ -44,10 +44,13 @@ public:
 	void onRender() override;
 	void onUpdate() override;
 
+	void forwardRender(Matrix4f const & val);
+
 	template <class T>
 	T & getComponent();
 
 	virtual void loadToShader();
+	virtual void loadToShader(Matrix4f const & forward);
     
 	GameObject(Component * component);
 	~GameObject();

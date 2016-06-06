@@ -22,8 +22,8 @@
 class Building : public BaseEntity {
 private:
 	Transform transform;
+	SharedPointer<Transform> world;
 
-	UniquePointer<Transform> world;
    
     Vector3f base_center, up;
     float x_dim, z_dim, y_dim; //general dimensions of building

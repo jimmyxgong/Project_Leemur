@@ -131,10 +131,10 @@ void Turtle::drawForward(float amt) {
 	transform_group rotated = share<Transform>();
     rotated->addChild(cyl_t);
     
-    Vector3f up = Vector3f(0,1,0);
+    const static Vector3f up = Vector3f(0,1,0);
     Vector3f new_up = normalize(Vector3f(direction.x, direction.y*amt, direction.z));
     Vector3f rotation_axis = cross(new_up, up);
-    float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
+    float rotation_degree = glm::degrees(acos(dot(up, new_up)/(length(up)*length(new_up))));
     
     rotated->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
     

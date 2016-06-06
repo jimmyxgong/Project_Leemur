@@ -250,6 +250,20 @@ void Transform::updateAll() {
 	}
 }
 
+void Transform::forwardRender(Matrix4f const & val) {
+	if (hasChanged()) locallyUpdate();
+
+	for (WeakPointer<GameObject> child : childGameObjects) {
+		child.lock()->forwardRender(val);
+	}
+
+	for (WeakPointer<Transform> child : children) {
+		child.lock()->forwardRender(val);
+	}
+}
+
+
+
 bool Transform::hasChanged() {
 	return changed;
 }
