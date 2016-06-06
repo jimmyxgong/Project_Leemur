@@ -19,7 +19,6 @@ Material * randomMaterial();
 
 Building::Building() {
     base_center = Vector3f(0,0,0);
-    up = Vector3f(0,1,0);
     x_dim = 1.5;
     z_dim = 1.5;
     y_dim = 5;
@@ -37,6 +36,7 @@ Building::Building(Vector3f pos, Vector3f dim, int seed) {
 void Building::onCreate() {
 	world = unique<Transform>();
     /* used while building */
+    up = Vector3f(0,1,0);
     top_height = 0;
     current_x_dim = x_dim;
     current_z_dim = z_dim;
@@ -99,10 +99,12 @@ void Building::onStart() {
 //    world->addChild(planet);
     
     
-    //CreateTower();
     transform_group random = CreateRandomBuilding();
     random->translateLocal(base_center.x, base_center.y, base_center.z);
     world->addChild(random);
+    
+//    CreateTower();
+
 }
 
 void Building::CreateTower() {
