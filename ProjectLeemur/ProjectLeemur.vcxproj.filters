@@ -34,6 +34,7 @@
     <ClCompile Include="Turtle.cpp" />
     <ClCompile Include="Window.cpp" />
     <ClCompile Include="World.cpp" />
+    <ClCompile Include="Building.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -72,6 +73,7 @@
     <ClInclude Include="Turtle.h" />
     <ClInclude Include="Window.h" />
     <ClInclude Include="World.h" />
+    <ClInclude Include="Building.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="down-under_bk.tga" />

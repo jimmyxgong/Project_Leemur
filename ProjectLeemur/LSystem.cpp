@@ -1,6 +1,6 @@
 #include "LSystem.h"
 
-LSystem::LSystem(std::string const & infile, long long seed) : seed(seed) {
+LSystem::LSystem(std::string const & infile){
 	parse_file(infile);
 	//now create the grammar used to draw the L-system
 	create_grammar();
@@ -136,7 +136,7 @@ void LSystem::drawRules() {
 	//handle randomization for our plants branch lengths and angles
 	float r_angle = randomize();
 	float r_dist = std::abs(std::fmod(r_angle, 1.5f)) / 10.0f;
-	std::cout << "r_angle: " << r_angle << " r_dist: " << r_dist << std::endl;
+	//std::cout << "r_angle: " << r_angle << " r_dist: " << r_dist << std::endl;
 	for (int i = 0; i < grammar.size(); i++) {
 		char rule = grammar[i];
 		switch (rule) {
@@ -215,4 +215,8 @@ float LSystem::randomize() {
 		r *= -1;
 	 
 	return r;
+}
+
+void LSystem::setSeed(long long input) {
+	this->seed = input;
 }

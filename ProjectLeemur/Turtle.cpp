@@ -2,7 +2,6 @@
 #include "Resources.h"
 #include "Material.h"
 #include "Light.h"
-#define M_PI	3.14159365
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
@@ -54,16 +53,12 @@ void Turtle::setIndices() {
 			count = 0;
 		}
 		else count++;
-		//mesh->addIndex(i);
 	}
-	//obj->transform->scaleLocal(0.5f);
-	//mesh->recalculateNormals();
 }
 
 void Turtle::setPosition(glm::vec3 pos) {
     original_position = pos;
 	this->position = pos;
-	//mesh->addVertex(this->position);
 }
 
 // set direction of UP
@@ -104,17 +99,10 @@ void Turtle::moveForward(float amt) {
 }
 
 //for now just add vertice to VBO
-void Turtle::drawForward(float amt) {
-//    SharedPointer<GameObject> temp =
-//    share<GameObject>((Component*)&Resources::getEntity(CYL_OBJ));
-//    SharedPointer<Transform> parent = share<Transform>();
-//    parent->addChild(temp);
-//    parent->scaleLocal(10, .0001, 10);
-//    branches->addChild(parent);
-    
+void Turtle::drawForward(float amt) {  
     // draw the points
     Component& pod = (ObjObject&)Resources::getEntity(SPH_OBJ);
-    pod.setMaterial(&Material::Parismarine);
+    pod.setMaterial(&Material::Emerald);
     game_object p = share<GameObject>(&pod);
     transform_group pod_t = share<Transform>();
     pod_t->addChild(p);
@@ -125,22 +113,20 @@ void Turtle::drawForward(float amt) {
 
     transform_group rotated_pod = share<Transform>();
     rotated_pod->addChild(pod_t);
-    if (position.y > amt*2+original_position.y)
+    if (position.y > amt*4+original_position.y)
         leaves->addChild(pod_t);
     
     
     
 	Component& cylinder = (ObjObject&)Resources::getEntity(CYL_OBJ);
-	cylinder.setMaterial(&Material::RedPlastic);
+	cylinder.setMaterial(&Material::Bronze);
 	
     game_object c = share<GameObject>(&cylinder);
 
     transform_group cyl_t = share<Transform>();
     cyl_t->addChild(c);
     cyl_t->scaleLocal(0.05f, amt/2, 0.05f);
-//    cyl_t->scaleLocal(.05);
     cyl_t->translateLocal(0, amt/4, 0);
-//    cyl_t->translateLocal(position.x, position.y, position.z);
     
 	transform_group rotated = share<Transform>();
     rotated->addChild(cyl_t);
@@ -155,22 +141,8 @@ void Turtle::drawForward(float amt) {
     transform_group translated_rotated = share<Transform>();
     translated_rotated->addChild(rotated);
     translated_rotated->translateLocal(position);
-
     
 	branches->addChild(translated_rotated);
-//	rotated_recenter->addChild(recenter);
-//	recenter->addChild(cyl_t);
-
-	//recenter->translateLocal(0, 2.0f, 0.0f);
-//    Quaternion rot = Quaternion(direction.x, direction.y, direction.z, 1);
-//	rotated_recenter->rotateLocal(rot);
-//    recenter->translateLocal(0, amt * 2,0);
-//	recenter->translateLocal(position.x, position.y, position.z);
-//		.translateLocal(0, 0.5f, 0);
-	
-
-	//c->transform->rotateLocal(direction.x, direction.y, direction.z, 23 );
-	//c->transform->translateLocal(this->position);
 
 	glm::vec3 toAdd = this->direction * amt;
 	this->position += toAdd;
@@ -180,7 +152,7 @@ void Turtle::drawForward(float amt) {
 	//std::cout << "curr direction: " << this->direction.x << " " << this->direction.y << " " << this->direction.z << std::endl;
 	//std::cout << "curr position: " << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 	//std::cout << "position: " << c->transform->getPosition().x << " " << c->transform->getPosition().y << c->transform->getPosition().z << std::endl;
-	std::cout << "branches size: " << branches->children.size() << std::endl;
+	//std::cout << "branches size: " << branches->children.size() << std::endl;
 }
 
 void Turtle::pitchUp(float amt) {

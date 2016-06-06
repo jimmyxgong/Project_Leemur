@@ -48,21 +48,21 @@ void Building::onCreate() {
 
 void Building::onStart() {
     /* flat layer of buildings */
-//    for ( int i = -5; i<5; i++) {
-//        for ( int j = -5; j<5; j++) {
-//            // reset to add many buildings
-//            top_height = 0;
-//            current_x_dim = x_dim;
-//            current_z_dim = z_dim;
-//            prev_block_height = -1;
-//            prev_shape = -1;
-//            prev_type = -1;
-//            transform_group building = CreateRandomBuilding();
-//            building->translateLocal(10*i, 0, 10*j);
-//            world->addChild(building);
-//            std::cout << x_dim << std::endl;
-//        }
-//    }
+    //for ( int i = -5; i<5; i++) {
+    //    for ( int j = -5; j<5; j++) {
+    //        // reset to add many buildings
+    //        top_height = 0;
+    //        current_x_dim = x_dim;
+    //        current_z_dim = z_dim;
+    //        prev_block_height = -1;
+    //        prev_shape = -1;
+    //        prev_type = -1;
+    //        transform_group building = CreateRandomBuilding();
+    //        building->translateLocal(10*i, 10, 10*j);
+    //        world->addChild(building);
+    //        std::cout << x_dim << std::endl;
+    //    }
+    //}
 
     
     // sphere of buildings
@@ -99,7 +99,7 @@ void Building::onStart() {
 //    world->addChild(planet);
     
     
-//    CreateTower();
+    //CreateTower();
     transform_group random = CreateRandomBuilding();
     random->translateLocal(base_center.x, base_center.y, base_center.z);
     world->addChild(random);
@@ -565,7 +565,7 @@ bool Building::isValidPlacement(int next_type,int next_shape) {
 }
 
 Material * randomMaterial() {
-    Material * toReturn;
+    Material * toReturn = &Material::Gold;
     int random = rand() % 4;
     if (random == 0) toReturn =  &Material::RedPlastic;
     else if (random == 1) toReturn = &Material::Bronze;

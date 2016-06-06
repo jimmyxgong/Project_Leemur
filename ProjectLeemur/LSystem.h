@@ -19,7 +19,7 @@
 
 class LSystem{
 public:
-	LSystem(std::string const & infile, long long seed);
+	LSystem(std::string const & infile);
 
 	int iterations;
 	int angle;
@@ -37,6 +37,7 @@ public:
 	void setIterations(int iteration);
 	void setAngle(float angle);
 	void setPosition(float x, float y, float z);
+	void setSeed(long long input);
 	void parse_file(std::string const & infile);
 	void create_grammar();
 	void drawRules();
