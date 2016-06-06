@@ -23,13 +23,15 @@ Building::Building() {
     x_dim = 1.5;
     z_dim = 1.5;
     y_dim = 5;
+    random_seed = (int)time(NULL);
     onCreate();
 }
-Building::Building(Vector3f pos, Vector3f dim) {
+Building::Building(Vector3f pos, Vector3f dim, int seed) {
     base_center = pos;
     x_dim = dim.x;
     y_dim = dim.y;
     z_dim = dim.z;
+    random_seed = seed;
 }
 
 void Building::onCreate() {
@@ -41,10 +43,10 @@ void Building::onCreate() {
     prev_block_height = -1;
     prev_shape = -1;
     prev_type = -1;
+    srand(random_seed);
 }
 
 void Building::onStart() {
-    srand ((int)time(NULL));
     /* flat layer of buildings */
 //    for ( int i = -5; i<5; i++) {
 //        for ( int j = -5; j<5; j++) {

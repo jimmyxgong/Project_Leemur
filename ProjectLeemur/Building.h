@@ -34,6 +34,7 @@ private:
     int prev_shape;
     int prev_type;
     float pyramid_step_height = .1;
+    int random_seed;
 
     
     SharedPointer<Transform> CreateStep(Material*, int shape);
@@ -62,5 +63,5 @@ private:
 
 public:
 	Building();
-    Building(Vector3f pos, Vector3f dim);
+    Building(Vector3f pos, Vector3f dim, int seed);
 };

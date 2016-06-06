@@ -41,7 +41,7 @@ void Environment::onCreate() {
     addEntity((SharedPointer<Entity> &) build);
     
     SharedPointer<Building> build1 =
-    share<Building>(Vector3f(5,5,5), Vector3f(5,5,5));
+    share<Building>(Vector3f(5,5,5), Vector3f(5,5,5), 5);
     addEntity((SharedPointer<Entity> &) build1);
 
 
