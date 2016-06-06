@@ -109,11 +109,5 @@ void main() {
 		color = edge > 0
 			? vec4(vec3(20 * edge), 1.f)
 			: vec4(0,0,0,1);
-		
-        //if (edge > 0) {
-        //    color = vec4(vec3(20 * edge), 1.f);
-		//}
-        //else
-        //    color = vec4(0,0,0,1);
     }
 }

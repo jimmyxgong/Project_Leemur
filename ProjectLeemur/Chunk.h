@@ -10,6 +10,7 @@
 #include "Resumable.h"
 #include "MeshData.h"
 #include "Building.h"
+#include "Turtle.h"
 
 #ifdef _WIN32
 #include <experimental/generator>
@@ -35,7 +36,7 @@ public:
 
 private:
 	Array<SharedPointer<Building>> buildings;
-	Array<SharedPointer<Transform>> plants;
+	Array<SharedPointer<Turtle>> plants;
 
 	bool ready = false;
 	bool empty = false;

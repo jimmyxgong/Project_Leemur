@@ -18,7 +18,9 @@ class World : public BaseEntity {
 public:
 	struct Options {
 		bool useWaves = false;
-		
+		bool generateBuildings = true;
+		bool generatePlants = true;
+
 	} options;
 
 	struct Biomes {
@@ -30,8 +32,11 @@ public:
 		float snow = 6.7;
 
 		float frequency = PLANT_BUILDING_FREQ_RENDER;
-		float plantAppear = waterMax + 0.5;
+		float plantAppear = sand + 0.5;
 		float plantMax = snow - 0.6;
+
+		float buildingMin = plantMax;
+		float buildingMax = snow + 1.2;
 
 	} biomeOptions;
 

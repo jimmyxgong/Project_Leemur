@@ -174,6 +174,12 @@ Transform& Transform::locallyUpdate(const Matrix4f & val) {
 	return *this;
 }
 
+Transform& Transform::locallyUpdateChildren(const Matrix4f & val) {
+	for (WeakPointer<Transform> child : children) {
+		child.lock()->locallyUpdate(localToWorldMatrix * val);
+	}
+}
+
 Transform& Transform::resetScale() {
 	localScale = Vector3f(1.f);
 	changed = true;

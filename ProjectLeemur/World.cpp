@@ -3,6 +3,7 @@
 #include "Light.h"
 #include "Keyboard.h"
 #include "Skybox.h"
+#include "Random.h"
 
 #include <chrono>
 
@@ -67,72 +68,58 @@ void World::allowKeyBindings() {
 		changed = true;
 		terrain.persistence += shifted ? -0.25 : 0.25;
 
-		std::string out = "persist = ";
-		out.append(std::to_string(terrain.persistence));
-		out.append(", freq = ");
-		out.append(std::to_string(terrain.frequency));
-		out.append(", amp = ");
-		out.append(std::to_string(terrain.amplitude));
-		out.append(", oct = ");
-		out.append(std::to_string(terrain.octaves));
-		out.append("\n");
-		printf(out.c_str());
+		printf(
+			"persist = %f, freq = %f, amp = %f, oct = %d\n",
+			terrain.persistence,
+			terrain.frequency,
+			terrain.amplitude,
+			terrain.octaves
+		);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_K, [this](bool shifted) {
 		changed = true;
 		terrain.frequency *= shifted ? 0.5 : 2.0;
+		biomeOptions.frequency = terrain.frequency;
 
-		std::string out = "persist = ";
-		out.append(std::to_string(terrain.persistence));
-		out.append(", freq = ");
-		out.append(std::to_string(terrain.frequency));
-		out.append(", amp = ");
-		out.append(std::to_string(terrain.amplitude));
-		out.append(", oct = ");
-		out.append(std::to_string(terrain.octaves));
-		out.append("\n");
-		printf(out.c_str());
+		printf(
+			"persist = %f, freq = %f, amp = %f, oct = %d\n",
+			terrain.persistence,
+			terrain.frequency,
+			terrain.amplitude,
+			terrain.octaves
+		);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_L, [this](bool shifted) {
 		changed = true;
 		terrain.amplitude += shifted ? -0.1 : 0.1;
 
-		std::string out = "persist = ";
-		out.append(std::to_string(terrain.persistence));
-		out.append(", freq = ");
-		out.append(std::to_string(terrain.frequency));
-		out.append(", amp = ");
-		out.append(std::to_string(terrain.amplitude));
-		out.append(", oct = ");
-		out.append(std::to_string(terrain.octaves));
-		out.append("\n");
-		printf(out.c_str());
+		printf(
+			"persist = %f, freq = %f, amp = %f, oct = %d\n",
+			terrain.persistence,
+			terrain.frequency,
+			terrain.amplitude,
+			terrain.octaves
+		);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_H, [this](bool shifted) {
 		changed = true;
 		terrain.octaves += shifted ? -1 : 1;
-
-		std::string out = "persist = ";
-		out.append(std::to_string(terrain.persistence));
-		out.append(", freq = ");
-		out.append(std::to_string(terrain.frequency));
-		out.append(", amp = ");
-		out.append(std::to_string(terrain.amplitude));
-		out.append(", oct = ");
-		out.append(std::to_string(terrain.octaves));
-		out.append("\n");
-		printf(out.c_str());
+		printf(
+			"persist = %f, freq = %f, amp = %f, oct = %d\n",
+			terrain.persistence,
+			terrain.frequency,
+			terrain.amplitude,
+			terrain.octaves
+		);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_S, [this](bool shifted) {
 		changed = true;
-		terrain.seed = terrain.gen(0, 5000);
-		std::string out = "seed: ";
-		out.append(std::to_string(terrain.seed));
-		printf(out.c_str());
+		terrain.seed = Random::Range(100, 10000);
+		printf("Seed: %d\n", terrain.seed);
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_T, [this](bool shifted) {
@@ -142,7 +129,7 @@ void World::allowKeyBindings() {
 
 	bindings.onKeyPressed(GLFW_KEY_A, [this](bool shifted) {
 		options.useWaves = !options.useWaves;
-		printf("Switch waves %s", options.useWaves ? "on" : "off");
+		printf("Switch waves %s\n", options.useWaves ? "on" : "off");
 	});
 
 	bindings.onKeyPressed(GLFW_KEY_Z, [this](bool shifted) {

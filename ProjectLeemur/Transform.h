@@ -92,6 +92,7 @@ public: /* Scene Graph */
 	// itself and all of its children just like a regular scene graph
 	// node would.
 	Transform& locallyUpdate(const Matrix4f & val = IDENTITY);
+	Transform& locallyUpdateChildren(const Matrix4f & val);
 
 	Transform& resetScale();
 	Transform& resetPosition();

@@ -59,6 +59,7 @@ void Turtle::setIndices() {
 void Turtle::setPosition(glm::vec3 pos) {
     original_position = pos;
 	this->position = pos;
+	world->setLocalPosition(pos);
 }
 
 // set direction of UP
