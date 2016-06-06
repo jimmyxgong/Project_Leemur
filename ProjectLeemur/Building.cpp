@@ -48,21 +48,21 @@ void Building::onCreate() {
 
 void Building::onStart() {
     /* flat layer of buildings */
-    //for ( int i = -5; i<5; i++) {
-    //    for ( int j = -5; j<5; j++) {
-    //        // reset to add many buildings
-    //        top_height = 0;
-    //        current_x_dim = x_dim;
-    //        current_z_dim = z_dim;
-    //        prev_block_height = -1;
-    //        prev_shape = -1;
-    //        prev_type = -1;
-    //        transform_group building = CreateRandomBuilding();
-    //        building->translateLocal(10*i, 10, 10*j);
-    //        world->addChild(building);
-    //        std::cout << x_dim << std::endl;
-    //    }
-    //}
+//    for ( int i = -5; i<5; i++) {
+//        for ( int j = -5; j<5; j++) {
+//            // reset to add many buildings
+//            top_height = 0;
+//            current_x_dim = x_dim;
+//            current_z_dim = z_dim;
+//            prev_block_height = -1;
+//            prev_shape = -1;
+//            prev_type = -1;
+//            transform_group building = CreateRandomBuilding();
+//            building->translateLocal(10*i, 10, 10*j);
+//            world->addChild(building);
+//            std::cout << x_dim << std::endl;
+//        }
+//    }
 
     
     // sphere of buildings
@@ -258,8 +258,10 @@ transform_group Building::CreateRandomBuilding() {
     do {
         top_type = rand()%3;
         top_shape = rand()%2;
-    } while (!isValidPlacement(top_types[top_type], top_shape));
-//             (top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20));// if the prev_height isn't enough for a dome
+        if (top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20) // prevents thin domes
+            continue;
+    } while (!(isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] != ELLIPSE) || // if valid non elipse
+             (isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20)); // if valid elipse with heigh >= 1/20th
     
     int lip = rand()%2;
     if (lip && top_type != 1){
