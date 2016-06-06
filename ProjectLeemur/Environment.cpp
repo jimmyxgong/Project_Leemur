@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "ObjObject.h"
 #include "Centrifuge.h"
+#include "Building.h"
 #include "Light.h"
 #include "LSystem.h"
 
@@ -59,7 +60,6 @@ void Environment::onCreate() {
 	//	share<GameObject>((Component*)&Resources::getEntity(POD_OBJ));
 	//addEntity((SharedPointer<Entity> &) pod);
 	//addEntity((SharedPointer<Entity> &) share<Centrifuge>());
-
 	for (auto & entity : entities) {
 		entity->onCreate();
 	}

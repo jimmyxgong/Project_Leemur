@@ -34,4 +34,6 @@ struct Material {
 	static Material Snow;
 	static Material Sand;
 	static Material Water;
+    static Material Silver;
+    static Material Bronze;
 };

@@ -65,7 +65,8 @@ transform_group Centrifuge::CreateMiniBar(float rotation) {
 			bar2->transform->scaleLocal(0.125f, 0.5f, 0.125f)
 				.translateLocal(0.0f, 0.1f, 0.0f);
 			sub->addChild(bar2);
-			sub->addChild(CreatePod());
+            transform_group pod = CreatePod();
+			sub->addChild(pod);
 		center->addChild(sub);
 
 	return center;
@@ -81,10 +82,12 @@ transform_group Centrifuge::TripleMiniBars() {
 	center->rotateLocal(0.0f, 0.0f, 1.0f, 120.0f);
 
 	parent->addChild(center);
-
-	center->addChild(CreateMiniBar(0.0f));
-	center->addChild(CreateMiniBar(120.0f));
-	center->addChild(CreateMiniBar(240.0f));
+    transform_group mini_bar = CreateMiniBar(0.0f);
+    transform_group mini_bar1 = CreateMiniBar(120.0f);
+    transform_group mini_bar2 = CreateMiniBar(240.0f);
+	center->addChild(mini_bar);
+	center->addChild(mini_bar1);
+	center->addChild(mini_bar2);
 
 	return parent;
 }
@@ -110,7 +113,8 @@ transform_group Centrifuge::CreateBar(float rotationDeg) {
 				->translateLocal(0.0f, 0.3f, 0.0f)
 				.scaleLocal(0.25f, 1.5f, 0.25f);
 			sub->addChild(bar2);
-			sub->addChild(TripleMiniBars());
+        transform_group trip_mini_bar = TripleMiniBars();
+        sub->addChild(trip_mini_bar);
 		center->addChild(sub);
 
 	return center;
@@ -118,9 +122,12 @@ transform_group Centrifuge::CreateBar(float rotationDeg) {
 
 transform_group Centrifuge::TripleBars() {
 	transform_group center = share<Transform>();
-	center->addChild(CreateBar(0.0f));
-	center->addChild(CreateBar(120.0f));
-	center->addChild(CreateBar(240.0f));
+    transform_group bar = CreateBar(0.0f);
+    transform_group bar1 = CreateBar(120.0f);
+    transform_group bar2 = CreateBar(240.0f);
+    center->addChild(bar);
+    center->addChild(bar1);
+    center->addChild(bar2);
 
 	return center;
 }
