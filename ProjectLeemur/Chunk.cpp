@@ -143,7 +143,8 @@ void Chunk::generateChunk(Terrain & terrain) {
 	if (buildings.size() > 0) buildings.clear();
 	if (plants.size() > 0) plants.clear();
 
-	Random::setSeed(terrain.seed);
+	Random::setSeedToCurrentTime();
+	//Random::setSeed(terrain.seed);
 	hasWater = false;
 	clear();
 
@@ -154,7 +155,11 @@ void Chunk::generateChunk(Terrain & terrain) {
 	const World::Biomes & biome = world->biomeOptions;
 
 	float freq = PLANT_BUILDING_FREQ_RENDER / biome.frequency;
-	bool hasGenerated = false;
+	const static int NUM_OF_GENERATIONS = 1;
+	int count = 0;
+
+	Terrain placement = terrain;
+	placement.setSeed(terrain.seed * 2 + 1);
 
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		double x = i + roundedX;
@@ -168,45 +173,85 @@ void Chunk::generateChunk(Terrain & terrain) {
 				h -= Random::Range(0.0, 0.3);
 				hasWater = true;
 			}
-			if (world->options.generatePlants 
-				&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER
-				&& !hasGenerated) 
+
+			double m = placement.valueAt(x, z);
+			if (biome.frequency <= PLANT_BUILDING_FREQ_RENDER 
+				&& count < NUM_OF_GENERATIONS
+				&& m < biome.waterMin
+				&& Random::Range(0, 10000) < 100) 
 			{
-				if (h > biome.plantAppear && h < biome.plantMax && Random::Range(0, 1000) > 980) {
+				if (world->options.generateBuildings) {
+					if (h > biome.buildingMin && h < biome.buildingMax) {
+						Vector3f size = Vector3f(0.35f, 1.5f, 0.35f);
+						size *= freq;
+
+						SharedPointer<Building> build =
+							share<Building>(Vector3f(x, h, z), size, (int) round(Random::Range(0, 1000) * m));
+						//build->world->translateLocal(0.f, 0.5f, 0.f);
+						buildings.push_back(build);
+						count++;
+					}
+				}
+				if (count < NUM_OF_GENERATIONS 
+					&& world->options.generatePlants 
+					&& h > biome.plantMin && h < biome.plantMax) {
 					Vector3f position = Vector3f(x, h, z);
 					LSystem plant = LSystem(
-						Random::Range(0, 2) == 1 
-							? Random::Range(0, 2) == 1 
-								? TREE1 
+						Random::Range(0, 10) >= 5
+							? Random::Range(0, 10) >= 5
+								? TREE1
 								: TREE3
 							: TREE2);
-					plant.setSeed(terrain.seed + Random::Range(0, 5000));
-					plant.turtle->setPosition(position);
-					
 
-					//plant.turtle->branches->scaleLocal(0.4f);
-					//plant.turtle->leaves->scaleLocal(0.4f);
-					
+					plant.setSeed((long long) round(Random::Range(0, 1000) * m));
+					plant.turtle->branches->setLocalPosition(position);
+					plant.turtle->leaves->setLocalPosition(position);
+					plant.turtle->branches->scaleLocal(0.4f * freq);
+					plant.turtle->leaves->scaleLocal(0.4f * freq);
+
 					plant.drawRules();
 
 					plants.push_back(plant.turtle);
-					hasGenerated = true;
+					count++;
 				}
 			}
-			if (world->options.generateBuildings && !hasGenerated
-				&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER) 
-			{
-				if (h > biome.buildingMin && h < biome.buildingMin) {
-					Vector3f size = Vector3f(0.3f, freq == 1 ? 1.5 : 0.9f, 0.3f);
-					size *= freq;
 
-					SharedPointer<Building> build =
-						share<Building>(Vector3f(x, h, z), size, Random::Range(100, 2000));
-					//build->world->translateLocal(0.f, 0.5f, 0.f);
-					buildings.push_back(build);
-					hasGenerated = true;
-				}
-			}
+
+			//if (world->options.generatePlants 
+			//	&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER) 
+			//{
+			//	if (h > biome.plantMin && h < biome.plantMax && Random::Range(0, 1000) > 940) {
+			//		Vector3f position = Vector3f(x, h, z);
+			//		LSystem plant = LSystem(
+			//			Random::Range(0, 10) >= 5 
+			//				? Random::Range(0, 10) >= 5 
+			//					? TREE1 
+			//					: TREE3
+			//				: TREE2);
+			//		plant.setSeed(terrain.seed + Random::Range(0, 10000));
+			//		plant.turtle->branches->setLocalPosition(position);
+			//		plant.turtle->leaves->setLocalPosition(position);
+			//		plant.turtle->branches->scaleLocal(0.4f);
+			//		plant.turtle->leaves->scaleLocal(0.4f);
+			//		
+			//		plant.drawRules();
+
+			//		plants.push_back(plant.turtle);
+			//	}
+			//}
+			//if (world->options.generateBuildings
+			//	&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER) 
+			//{
+			//	if (h > biome.buildingMin && h < biome.buildingMax) {
+			//		Vector3f size = Vector3f(0.3f, freq == 1 ? 1.5 : 0.9f, 0.3f);
+			//		size *= freq;
+
+			//		SharedPointer<Building> build =
+			//			share<Building>(Vector3f(x, h, z), size, terrain.seed + Random::Range(0, 10000));
+			//		//build->world->translateLocal(0.f, 0.5f, 0.f);
+			//		buildings.push_back(build);
+			//	}
+			//}
 
 			dheightMap[i][k] = h;
 
