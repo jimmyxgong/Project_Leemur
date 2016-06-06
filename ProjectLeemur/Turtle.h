@@ -15,7 +15,8 @@ public:
 	SharedPointer<Transform> leaves;
 	SharedPointer<Mesh> mesh;
 	SharedPointer<GameObject> obj;
-	glm::vec3 position;
+    glm::vec3 original_position;
+    glm::vec3 position;
 	glm::vec3 direction;
 	glm::vec3 right;
 	std::vector<Turtle> stack;

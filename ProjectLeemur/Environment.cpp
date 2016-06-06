@@ -10,7 +10,7 @@
 	the scene graph yet.
 */
 
-SharedPointer<LSystem> test1;
+SharedPointer<LSystem> test1, test2;
 
 #include "Chunk.h"
 #include "World.h"
@@ -39,15 +39,20 @@ void Environment::onCreate() {
     test1 = std::make_shared<LSystem>("lsystemtest1.txt", 3685);
 
 #else
-	test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);
+    test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);
+    test2 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3683);
 #endif
-	test1->turtle->setPosition(glm::vec3(0, 0, 0));
+	test1->turtle->setPosition(glm::vec3(5, 0, 0));
 	test1->drawRules();
+    test2->turtle->setPosition(glm::vec3(-5, 5, 0));
+    test2->drawRules();
+    test2->turtle->world->scaleLocal(.5);
 	//test1->turtle->setIndices();
 	//test1->turtle->initialize_mesh();
 	
 	//addEntity((SharedPointer<Entity> &) test1->turtle->obj);
-	addEntity((SharedPointer<Entity> &) test1->turtle);
+    addEntity((SharedPointer<Entity> &) test1->turtle);
+    addEntity((SharedPointer<Entity> &) test2->turtle);
 
 	// Create pod and add a reference to what it should render.
 	//SharedPointer<GameObject> pod =

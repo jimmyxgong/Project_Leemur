@@ -60,6 +60,7 @@ void Turtle::setIndices() {
 }
 
 void Turtle::setPosition(glm::vec3 pos) {
+    original_position = pos;
 	this->position = pos;
 	//mesh->addVertex(this->position);
 }
@@ -111,16 +112,20 @@ void Turtle::drawForward(float amt) {
 //    branches->addChild(parent);
     
     // draw the points
-//    Component& pod = (ObjObject&)Resources::getEntity(POD_OBJ);
-//    pod.setMaterial(&Material::Parismarine);
-//    game_object p = share<GameObject>(&pod);
-//    transform_group pod_t = share<Transform>();
-//    pod_t->addChild(p);
-//    pod_t->scaleLocal(.05);
-//    pod_t->translateLocal(position.x, position.y, position.z);
-//    transform_group rotated_pod = share<Transform>();
-//    rotated_pod->addChild(pod_t);
-//    branches->addChild(pod_t);
+    Component& pod = (ObjObject&)Resources::getEntity(SPH_OBJ);
+    pod.setMaterial(&Material::Parismarine);
+    game_object p = share<GameObject>(&pod);
+    transform_group pod_t = share<Transform>();
+    pod_t->addChild(p);
+    pod_t->scaleLocal(amt/2);
+    pod_t->translateLocal(position.x, position.y, position.z);
+    pod_t->translateLocal(amt*normalize(Vector3f(direction.x, direction.y*amt, direction.z)));
+    pod_t->translateLocal(0, amt/4, 0);
+
+    transform_group rotated_pod = share<Transform>();
+    rotated_pod->addChild(pod_t);
+    if (position.y > amt*2+original_position.y)
+        leaves->addChild(pod_t);
     
     
     
@@ -131,7 +136,7 @@ void Turtle::drawForward(float amt) {
 
     transform_group cyl_t = share<Transform>();
     cyl_t->addChild(c);
-    cyl_t->scaleLocal(0.1f, amt/2, 0.1f);
+    cyl_t->scaleLocal(0.05f, amt/2, 0.05f);
 //    cyl_t->scaleLocal(.05);
     cyl_t->translateLocal(0, amt/4, 0);
 //    cyl_t->translateLocal(position.x, position.y, position.z);
