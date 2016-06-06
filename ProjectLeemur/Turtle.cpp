@@ -103,23 +103,64 @@ void Turtle::moveForward(float amt) {
 
 //for now just add vertice to VBO
 void Turtle::drawForward(float amt) {
+//    SharedPointer<GameObject> temp =
+//    share<GameObject>((Component*)&Resources::getEntity(CYL_OBJ));
+//    SharedPointer<Transform> parent = share<Transform>();
+//    parent->addChild(temp);
+//    parent->scaleLocal(10, .0001, 10);
+//    branches->addChild(parent);
+    
+    // draw the points
+//    Component& pod = (ObjObject&)Resources::getEntity(POD_OBJ);
+//    pod.setMaterial(&Material::Parismarine);
+//    game_object p = share<GameObject>(&pod);
+//    transform_group pod_t = share<Transform>();
+//    pod_t->addChild(p);
+//    pod_t->scaleLocal(.05);
+//    pod_t->translateLocal(position.x, position.y, position.z);
+//    transform_group rotated_pod = share<Transform>();
+//    rotated_pod->addChild(pod_t);
+//    branches->addChild(pod_t);
+    
+    
+    
 	Component& cylinder = (ObjObject&)Resources::getEntity(CYL_OBJ);
 	cylinder.setMaterial(&Material::RedPlastic);
-	transform_group recenter = share<Transform>();
-	transform_group cyl_t = share<Transform>();
-	transform_group rotated_recenter = share<Transform>();
+	
+    game_object c = share<GameObject>(&cylinder);
 
-	game_object c = share<GameObject>(&cylinder);
-	branches->addChild(rotated_recenter);
-	rotated_recenter->addChild(recenter);
-	recenter->addChild(cyl_t);
-	cyl_t->addChild(c);
+    transform_group cyl_t = share<Transform>();
+    cyl_t->addChild(c);
+    cyl_t->scaleLocal(0.1f, amt/2, 0.1f);
+//    cyl_t->scaleLocal(.05);
+    cyl_t->translateLocal(0, amt/4, 0);
+//    cyl_t->translateLocal(position.x, position.y, position.z);
+    
+	transform_group rotated = share<Transform>();
+    rotated->addChild(cyl_t);
+    
+    Vector3f up = Vector3f(0,1,0);
+    Vector3f new_up = normalize(Vector3f(direction.x, direction.y*amt, direction.z));
+    Vector3f rotation_axis = cross(new_up, up);
+    float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
+    
+    rotated->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
+    
+    transform_group translated_rotated = share<Transform>();
+    translated_rotated->addChild(rotated);
+    translated_rotated->translateLocal(position);
+
+    
+	branches->addChild(translated_rotated);
+//	rotated_recenter->addChild(recenter);
+//	recenter->addChild(cyl_t);
 
 	//recenter->translateLocal(0, 2.0f, 0.0f);
-	rotated_recenter->rotateLocal(Quaternion(direction.x, direction.y, direction.z, 1));
-	recenter->translateLocal(position.x, position.y, position.z);
-	cyl_t->scaleLocal(0.1f, amt * 2, 0.1f)
-		.translateLocal(0, 0.5f, 0);
+//    Quaternion rot = Quaternion(direction.x, direction.y, direction.z, 1);
+//	rotated_recenter->rotateLocal(rot);
+//    recenter->translateLocal(0, amt * 2,0);
+//	recenter->translateLocal(position.x, position.y, position.z);
+//		.translateLocal(0, 0.5f, 0);
 	
 
 	//c->transform->rotateLocal(direction.x, direction.y, direction.z, 23 );

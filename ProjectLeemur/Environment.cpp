@@ -35,7 +35,12 @@ void Environment::onCreate() {
 	//world->setPlayer(player);
 	//addEntity((SharedPointer<Entity> &) world);
 
-	test1 = std::make_shared<LSystem>("lsystemtest1.txt", 3685);
+#ifdef _WIN32
+    test1 = std::make_shared<LSystem>("lsystemtest1.txt", 3685);
+
+#else
+	test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);
+#endif
 	test1->turtle->setPosition(glm::vec3(0, 0, 0));
 	test1->drawRules();
 	//test1->turtle->setIndices();
@@ -86,7 +91,7 @@ void Environment::onUpdate() {
 void Environment::onDestroy() {
     delete (&Resources::getShader(SHADER_LIGHT));
     delete (&Resources::getShader(TOON_LIGHT));
-	delete (&Resources::getShader(TERRAIN_LIGHT));
+//	delete (&Resources::getShader(TERRAIN_LIGHT));
 	skybox->onDestroy();
 
 	Mesh& pod = (Mesh&) Resources::getEntity(POD_OBJ);

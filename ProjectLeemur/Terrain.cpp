@@ -318,9 +318,9 @@ double Terrain::fbm(double x, double y, double z) const {
 
 
 int Terrain::gen(int rangeFrom, int rangeTo) const {
-	const std::uniform_int_distribution<int> dis(rangeFrom, rangeTo);
+//	const std::uniform_int_distribution<int> dis(rangeFrom, rangeTo);
 	std::minstd_rand generator(std::chrono::system_clock::now().time_since_epoch().count());
-	return dis(generator);
+    return dis(generator);
 }
 
 

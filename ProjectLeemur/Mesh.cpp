@@ -186,7 +186,7 @@ void Mesh::optimize() {
 	for (Vector3f & vertex : getVertices()) {
 
 		// map does not contain vertices, add them.
-		auto & pair = mapped.find(vertex);
+		const auto & pair = mapped.find(vertex);
 		if (pair == mapped.end()) {
 			mapped.emplace(vertex, indices[i++]);
 			continue;
