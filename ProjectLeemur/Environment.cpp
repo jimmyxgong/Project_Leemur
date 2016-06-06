@@ -45,12 +45,17 @@ void Environment::onCreate() {
 	test3->setSeed(3684);
 
 #else
-    test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);
-    test2 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3683);
+    test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/tree1.txt");
+    test1->setSeed(3681);
+    test2 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/tree2.txt");
+    test2->setSeed(3688);
+    test3 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/tree3.txt");
+    test3->setSeed(3684);
+
 #endif
 	test1->turtle->setPosition(glm::vec3(8, 4, -5));
 	test1->drawRules();
-    test2->turtle->setPosition(glm::vec3(12, 6, -20));
+    test2->turtle->setPosition(glm::vec3(12, 8, -20));
     test2->drawRules();
 	test3->turtle->setPosition(glm::vec3(20, 4, -10));
 	test3->drawRules();
@@ -60,7 +65,7 @@ void Environment::onCreate() {
     addEntity((SharedPointer<Entity> &) test2->turtle);
 	addEntity((SharedPointer<Entity> &) test3->turtle);
 	
-	SharedPointer<Building> build = share<Building>(Vector3f(16, 6.4, -15), Vector3f(3,8,4), 12323);
+	SharedPointer<Building> build = share<Building>(Vector3f(16, 6.4, -15), Vector3f(3,8,4), 1323);
 	addEntity((SharedPointer<Entity> &) build);
 	
 	for (auto & entity : entities) {

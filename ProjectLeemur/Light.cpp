@@ -54,6 +54,8 @@ void Light::init() {
 #else
     Resources::addShader(SHADER_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.frag.shader");
     Resources::addShader(TOON_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/toon.frag.shader");
+    Resources::addShader(TERRAIN_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/terrain.frag.shader");
+
 #endif
 //	Light::Directional.shader = &Resources::getShader(SHADER_LIGHT);
     Light::Directional.shader = &Resources::getShader(TOON_LIGHT);
