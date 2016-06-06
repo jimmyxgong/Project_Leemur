@@ -7,24 +7,9 @@ typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
 
 Turtle::Turtle(){
-	//VAO,VBO,EBO
-	//mesh = share<Mesh>();
-	//mesh->attachShader(&Resources::getShader(SHADER_LIGHT))
-	//	.setMaterial(&Material::Gold);
-	
-	//world = share<Transform>();
-	//branches = share<Transform>();
-	//leaves = share<Transform>();
-
 	world = share<Transform>();
 	branches = share<Transform>();
 	leaves = share<Transform>();
-
-	//world->addChild(branches)
-	//	.addChild(leaves);
-
-	////obj = share<GameObject>((Component *)mesh.get());
-
 	//default up direction
 	this->direction = glm::vec3(0, 1, 0);
 	//default right direction
@@ -38,18 +23,12 @@ void Turtle::initialize_mesh() {
 void Turtle::onCreate() {
 	world->addChild(branches)
 		.addChild(leaves);
-
-	//obj = share<GameObject>((Component *)mesh.get());
-
-	//default up direction
-	//this->direction = glm::vec3(0, 1, 0);
-	//default right direction
-	//this->right = glm::vec3(1, 0, 0);
 }
 
 void Turtle::onStart() {}
 
 void Turtle::onRender() {
+	Resources::getShader(SHADER_LIGHT);
 	Light::Directional.loadToShader();
 	world->renderAll();
 }
@@ -126,23 +105,35 @@ void Turtle::moveForward(float amt) {
 void Turtle::drawForward(float amt) {
 	Component& cylinder = (ObjObject&)Resources::getEntity(CYL_OBJ);
 	cylinder.setMaterial(&Material::RedPlastic);
+	transform_group recenter = share<Transform>();
 	transform_group cyl_t = share<Transform>();
-	game_object c = share<GameObject>(&cylinder);
-	cyl_t->addChild(c);
-	branches->addChild(cyl_t);
+	transform_group rotated_recenter = share<Transform>();
 
-	c->transform->scaleLocal(0.1f, amt * 2, 0.1f);
-	c->transform->rotateLocal(Quaternion(direction.x, direction.y, direction.z, 1));
-	c->transform->translateLocal(this->position);
+	game_object c = share<GameObject>(&cylinder);
+	branches->addChild(rotated_recenter);
+	rotated_recenter->addChild(recenter);
+	recenter->addChild(cyl_t);
+	cyl_t->addChild(c);
+
+	//recenter->translateLocal(0, 2.0f, 0.0f);
+	rotated_recenter->rotateLocal(Quaternion(direction.x, direction.y, direction.z, 1));
+	recenter->translateLocal(position.x, position.y, position.z);
+	cyl_t->scaleLocal(0.1f, amt * 2, 0.1f)
+		.translateLocal(0, 0.5f, 0);
 	
+
+	//c->transform->rotateLocal(direction.x, direction.y, direction.z, 23 );
+	//c->transform->translateLocal(this->position);
 
 	glm::vec3 toAdd = this->direction * amt;
 	this->position += toAdd;
+
+
 	//mesh->addVertex(this->position);
-	std::cout << "curr direction: " << this->direction.x << " " << this->direction.y << " " << this->direction.z << std::endl;
+	//std::cout << "curr direction: " << this->direction.x << " " << this->direction.y << " " << this->direction.z << std::endl;
 	//std::cout << "curr position: " << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
 	//std::cout << "position: " << c->transform->getPosition().x << " " << c->transform->getPosition().y << c->transform->getPosition().z << std::endl;
-	//std::cout << "branches size: " << branches->children.size() << std::endl;
+	std::cout << "branches size: " << branches->children.size() << std::endl;
 }
 
 void Turtle::pitchUp(float amt) {
