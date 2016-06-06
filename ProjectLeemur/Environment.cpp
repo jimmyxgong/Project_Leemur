@@ -38,6 +38,7 @@ void Environment::onCreate() {
 
 #ifdef _WIN32
     test1 = std::make_shared<LSystem>("lsystemtest1.txt", 3685);
+	test2 = std::make_shared<LSystem>("lsystemtest1.txt", 3683);
 
 #else
     test1 = std::make_shared<LSystem>("/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/lsystemtest1.txt", 3686);

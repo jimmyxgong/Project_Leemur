@@ -2,6 +2,7 @@
 #include "Resources.h"
 #include "Material.h"
 #include "Light.h"
+#define M_PI	3.14159365
 
 typedef SharedPointer<Transform>		transform_group;
 typedef SharedPointer<GameObject>		game_object;
