@@ -84,6 +84,7 @@ void LSystem::create_grammar() {
 			}
 		}
 	}
+	
 
 	/* USE THIS TO CHECK OUTPUT OF THE FINAL GRAMMAR*/
 	/*
@@ -199,4 +200,7 @@ void LSystem::drawRules() {
 
 		}
 	}
+	//turtle->obj->transform->updateAll();
+	printf("output: %s\n", glm::to_string(turtle->obj->transform->getLocalScale()).c_str());
+	
 }

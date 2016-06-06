@@ -1,7 +1,10 @@
 #include "Turtle.h"
 #include "Resources.h"
 #include "Material.h"
+#include "Light.h"
 
+typedef SharedPointer<Transform>		transform_group;
+typedef SharedPointer<GameObject>		game_object;
 
 Turtle::Turtle(){
 	//VAO,VBO,EBO
@@ -10,6 +13,13 @@ Turtle::Turtle(){
 		.setMaterial(&Material::Gold);
 	
 	obj = share<GameObject>((Component *)mesh.get());
+	//obj->
+
+	//obj->transform->
+	//obj->transform->translateLocal(0.2f, 1.f, 0.2f)
+		//.scaleLocal(0.2f, 0.2f, 0.2f);
+	//obj->transform->locallyUpdate(Matrix4f(1.0f));
+
 	//default up direction
 	this->direction = glm::vec3(0, 1, 0);
 	//default right direction
@@ -21,10 +31,19 @@ void Turtle::initialize_mesh() {
 }
 
 void Turtle::setIndices() {
+	int pos = 0;
+	int count = 0;
 	for (int i = 0; i < mesh->getVertices().size(); i++) {
-		mesh->addIndex(i);
+		if (count == 3) {
+			mesh->addIndex(pos);
+			mesh->addIndex(pos + 1);
+			mesh->addIndex(pos + 2);
+			pos += 3;
+			count = 0;
+		}
+		else count++;
 	}
-	//mesh->recalculateNormals();
+	mesh->recalculateNormals();
 }
 
 void Turtle::setPosition(glm::vec3 pos) {
@@ -71,7 +90,6 @@ void Turtle::restoreState() {
 
 void Turtle::moveForward(float amt) {
 	glm::vec3 toAdd = this->direction * amt;
-	//old_position = position;
 	this->position += toAdd;
 }
 

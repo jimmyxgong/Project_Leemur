@@ -35,12 +35,22 @@ void Environment::onCreate() {
 	//world->setPlayer(player);
 	//addEntity((SharedPointer<Entity> &) world);
 
-	test1 = std::make_shared<LSystem>("lsystemtest1.txt");
+	test1 = std::make_shared<LSystem>("lsystemtest1.txt"); 
 	test1->turtle->setPosition(glm::vec3(0, 0, 0));
 	test1->drawRules();
 	test1->turtle->setIndices();
 	test1->turtle->initialize_mesh();
+	test1->turtle->obj->transform->
+		translateLocal(0.2f, 1.f, 0.2f)
+		.scaleLocal(0.2f, 0.2f, 0.2f)
+		.updateAll();
+
+
+	printf("output: %s\n", glm::to_string(test1->turtle->obj->transform->getLocalToWorldMatrix()).c_str());
+
 	addEntity((SharedPointer<Entity> &) test1->turtle->obj);
+
+	printf("num of size: ", entities.size());
 
 	Window::getFocusedWindow()
 		.setActiveCamera(&player->getCamera());

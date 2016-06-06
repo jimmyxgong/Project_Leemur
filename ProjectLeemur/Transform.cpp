@@ -160,8 +160,16 @@ Transform::~Transform() {}
 
 
 Transform& Transform::locallyUpdate(const Matrix4f & val) {
+	printf("At locally update\n");
 	localToWorldMatrix = (localRotation * Translate(localPosition) * Scale(localScale));
 	localToWorldMatrix = val * localToWorldMatrix;
+	
+	//static bool once = false;
+	//if (!once) {
+		//once = true;
+		//printf("output: %s\n", glm::to_string(localScale).c_str());
+	//}
+
 
 	position = GetPosition(localToWorldMatrix);
 	rotation = Quaternion::FromMatrix(localToWorldMatrix);
@@ -239,6 +247,7 @@ void Transform::renderAll() {
 }
 
 void Transform::updateAll() {
+	printf("called\n");
 	if (hasChanged()) {
 		locallyUpdate(parent == nullptr ? IDENTITY : parent->localToWorldMatrix);
 		return;

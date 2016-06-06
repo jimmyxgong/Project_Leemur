@@ -34,17 +34,17 @@ void Mesh::init() {
 
 
 	// Bind normals
-	//glBindBuffer(GL_ARRAY_BUFFER, NBO);
-	//glBufferData(
-	//	GL_ARRAY_BUFFER,
-	//	normals.size() * sizeof(Vector3f),
-	//	&normals[0],
-	//	glDrawType
-	//);
+	glBindBuffer(GL_ARRAY_BUFFER, NBO);
+	glBufferData(
+		GL_ARRAY_BUFFER,
+		normals.size() * sizeof(Vector3f),
+		&normals[0],
+		glDrawType
+	);
 
-	/*glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(
-		1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);*/
+		1, 3, GL_FLOAT, GL_FALSE, sizeof(Vector3f), (GLvoid*)0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -87,9 +87,9 @@ void Mesh::updateMeshData() {
 
 void Mesh::render() {
 	glBindVertexArray(VAO);
-	glPointSize(5.0f);
+	glLineWidth(2.0f);
 	glDrawElements(
-		GL_POINTS,
+		GL_LINE_STRIP,
 		indices.size(),
 		GL_UNSIGNED_INT,
 		0

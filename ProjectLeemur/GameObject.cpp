@@ -28,6 +28,7 @@ void GameObject::onRender() {
 	//if (m != *Component::EMPTY)
 	if (component) {
 		if (component->attachedShader) {
+			//printf("running");
 			component->attachedShader->use();
 			loadToShader();
 		}
@@ -67,13 +68,20 @@ void GameObject::loadToShader() {
 	// if you don't attach a material, it will crash...
 
 	//component->getShader().use();
-	if (component->material)
-		component->getMaterial().loadToShader();
+	if (component->material) component->getMaterial().loadToShader();
 
 	Matrix4f model = transform->getLocalToWorldMatrix();
+
+
+
 	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
 		* Window::getFocusedWindow().getView()
 		* model;
+
+	static int count = 0;
+	if (count++ < 5) {
+		printf("output: %s\n", glm::to_string(model).c_str());
+	}
 
 	Shader::loadMatrix("MVP", MVP);
 	Shader::loadMatrix("model", model);
