@@ -192,6 +192,15 @@
     <ClInclude Include="Resumable.h">
       <Filter>Header Files\Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="Building.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="LSystem.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Turtle.h">
+      <Filter>Header Files\Game\Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Time.cpp">
@@ -293,25 +302,28 @@
     <ClCompile Include="Resumable.cpp">
       <Filter>Source Files\Concurrency</Filter>
     </ClCompile>
+    <ClCompile Include="Building.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="LSystem.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Turtle.cpp">
+      <Filter>Source Files\Game\Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="down-under_bk.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="down-under_dn.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="down-under_ft.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="down-under_lf.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="down-under_rt.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="down-under_up.tga">
-      <Filter>Resource Files</Filter>
-    </Image>
+    <None Include="packages.config" />
+    <None Include="skybox.frag.shader" />
+    <None Include="skybox.vert.shader" />
+    <None Include="terrain.frag.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="down-under_bk.tga" />
+    <Image Include="down-under_dn.tga" />
+    <Image Include="down-under_ft.tga" />
+    <Image Include="down-under_lf.tga" />
+    <Image Include="down-under_rt.tga" />
+    <Image Include="down-under_up.tga" />
   </ItemGroup>
 </Project>

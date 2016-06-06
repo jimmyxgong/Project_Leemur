@@ -36,6 +36,8 @@
 #include <unordered_map>
 #include <typeinfo>
 
+#define M_PI	3.14159365
+
 /**   NOTES
 * 1. All naming conventions are done here.
 * 2. Constants that are not appropriate for user-defined classes should be alotted here.

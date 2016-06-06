@@ -26,9 +26,9 @@ public:
 	void destroy();
 	
 	void updateMeshData();
-	void clear();
 	void recalculateNormals();
 	void recalculateNormalsBold();
+	void clear();
 	void optimize();
 
 	Mesh& setVertices(std::vector<Vector3f> const & vertices);

@@ -1,8 +1,7 @@
 #include "Window.h"
 #include "Time.h"
-
-#ifdef _WIN32
 //#include "vld.h"
+#ifdef _WIN32
 #endif
 
 #define WIDTH 2160

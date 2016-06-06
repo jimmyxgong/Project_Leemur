@@ -19,7 +19,7 @@ static int hashCode(const char * bytes, int numBytes)
 
 struct Hasher {
 	std::size_t operator()(VecRef code) const {
-		return hashCode((const char *) &code, sizeof(code));
+		return hashCode((const char *)&code, sizeof(code));
 	}
 };
 
@@ -92,8 +92,8 @@ void Mesh::updateMeshData() {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferSubData(
 		GL_ARRAY_BUFFER,
-		offset, 
-		vertices.size() * sizeof(Vector3f), 
+		offset,
+		vertices.size() * sizeof(Vector3f),
 		&vertices[0]
 	);
 
@@ -195,7 +195,7 @@ void Mesh::optimize() {
 	for (Vector3f & vertex : getVertices()) {
 
 		// map does not contain vertices, add them.
-		auto & pair = mapped.find(vertex);
+		const auto & pair = mapped.find(vertex);
 		if (pair == mapped.end()) {
 			mapped.emplace(vertex, indices[i++]);
 			continue;

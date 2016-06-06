@@ -13,9 +13,6 @@ bool Comparator::operator()(TypeRef lhs, TypeRef rhs) const {
 }
 
 
-
-
-
 void GameObject::onStart() {
 	//Mesh * mesh = new Mesh();
 	//addComponent<Mesh>(*mesh);
@@ -61,7 +58,10 @@ void GameObject::addComponent(T const & val) {
 
 void GameObject::loadToShader() {
 	component->getShader().use();
-	component->getMaterial().loadToShader();
+    if (material != NULL)
+        this->getMaterial()->loadToShader();
+    else
+        component->getMaterial().loadToShader();
 
 	Matrix4f model = transform->getLocalToWorldMatrix();
 	Matrix4f MVP = Window::getFocusedWindow().getPerspective()
@@ -83,3 +83,10 @@ GameObject::GameObject(Component * component)
 }
 
 GameObject::~GameObject() {}
+
+void GameObject::setMaterial(Material * m) {
+    material = m;
+}
+Material * GameObject::getMaterial(){
+    return material;
+}

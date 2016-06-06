@@ -29,9 +29,12 @@ struct Material {
 
 	static Material RedPlastic;
 	static Material Parismarine;
+	static Material Emerald;
 	static Material Gold;
 	static Material Grass;
 	static Material Snow;
 	static Material Sand;
 	static Material Water;
+    static Material Silver;
+    static Material Bronze;
 };

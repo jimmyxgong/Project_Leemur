@@ -14,11 +14,9 @@ private:
 	void onUpdate() override;
 	void onDestroy() override;
 
-protected:
-	Material * material;
-
 public:
 	Shader * attachedShader;
+	Material * material;
 
 
 	//virtual void render();

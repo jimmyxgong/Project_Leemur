@@ -102,7 +102,7 @@ void main() {
     color = vec4(pow(linearColor, gamma), 1.0);
 
     //Silhouette Edges
-    float edge = max(0, dot(surfaceToLight, FragmentNormal));
+    float edge = max(0, dot(surfaceToLight, normal));
     if (edge < .01) {
         // in place of 1D texture to define edge ramp
         // use linear scaling for smoother transition
@@ -111,4 +111,5 @@ void main() {
         else
             color = edge*vec4(0,0,0,1);
     }
+	//color = vec4(0, 0, 0, 1);
 }
