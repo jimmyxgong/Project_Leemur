@@ -91,6 +91,16 @@ void main() {
 		specularity = pow(specularity, material.shiny);
 	}
 
+    //Discretized Shading
+    if (brightness < .25)        brightness = .25;
+    else if (brightness < .5)    brightness = .5;
+    else if (brightness < .75)   brightness = .75;
+
+    if (specularity < .125)       specularity = .00;
+    else if (specularity < .25)   specularity = .25;
+    else if (specularity < .5)    specularity = .5;
+    else if (specularity < .75)   specularity = .75;
+
 	// Breakup into components and add them all together to form the final object color
 	vec3 specular = specularity * intensity * vec3(material.specular) ;
 	vec3 diffuse = brightness * intensity * vec3(material.diffuse) ;
@@ -99,4 +109,16 @@ void main() {
 	vec3 linearColor = ambient + attenuation * (diffuse + specular);
 	vec3 gamma = vec3(1.0 / 2.2);
     color = vec4(pow(linearColor, gamma), 1.0);
+
+    //Silhouette Edges
+    float edge = max(0, dot(surfaceToLight, normal));
+    if (edge < 0.01) {
+        // in place of 1D texture to define edge ramp
+        // use linear scaling for smoother transition
+        if (edge > 0) {
+            color = vec4(vec3(20 * edge), 1.f);
+        }
+        else
+            color = vec4(0,0,0,1);
+    }
 }
