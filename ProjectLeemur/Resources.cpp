@@ -12,22 +12,22 @@ void Resources::init() {
 #ifdef _WIN32
 	// Create Pod object and add it to resources.
 	Resources::newObjEntity(POD_OBJ, "pod.obj")
-		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT))
 		.setMaterial(&Material::RedPlastic);
 
 	// Create Cylinder object and add it to resources.
 	Resources::newObjEntity(CYL_OBJ, "cylinder.obj")
-		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT))
 		.setMaterial(&Material::Gold);
     
     // Create Cube object and add it to resources.
     Resources::newObjEntity(CUB_OBJ, "cube.obj")
-		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT))
 		.setMaterial(&Material::Gold);
     
     // Create Sphere object and add it to resources.
     Resources::newObjEntity(SPH_OBJ, "sphere.obj")
-		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT))
 		.setMaterial(&Material::Parismarine);
     
 #else

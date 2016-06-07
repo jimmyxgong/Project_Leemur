@@ -59,6 +59,6 @@ void Light::init() {
 
 #endif
 //	Light::Directional.shader = &Resources::getShader(SHADER_LIGHT);
-    Light::Directional.shader = &Resources::getShader(TOON_LIGHT);
+    Light::Directional.shader = &Resources::getShader(TOON_NON_EDGE_LIGHT);
 
 }

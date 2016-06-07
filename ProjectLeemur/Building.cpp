@@ -287,6 +287,10 @@ transform_group Building::CreateRandomBuilding() {
 }
 
 void Building::onRender() {
+	Light::Directional.shader = &Resources::getShader(TOON_NON_EDGE_LIGHT);
+	((ObjObject&)Resources::getEntity(CYL_OBJ)).attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT));
+	((ObjObject&)Resources::getEntity(CUB_OBJ)).attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT));
+	((ObjObject&)Resources::getEntity(SPH_OBJ)).attachShader(&Resources::getShader(TOON_NON_EDGE_LIGHT));
 	Light::Directional.loadToShader();
 	world->renderAll();
 }
