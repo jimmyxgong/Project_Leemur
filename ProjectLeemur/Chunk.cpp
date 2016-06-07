@@ -169,7 +169,7 @@ void Chunk::generateChunk(Terrain & terrain) {
 			double z = k + roundedZ;
 
 			double h = 0;
-			if (!biome.restructureParts) {
+			//if (!biome.restructureParts) {
 				double g = terrain.height(x, z);
 				h = ((int)round(g * HEIGHT_CONSTANT)) * HEIGHT_UNIT;
 				if (h < world->biomeOptions.waterMax + 0.02) {
@@ -178,8 +178,8 @@ void Chunk::generateChunk(Terrain & terrain) {
 					hasWater = true;
 				}
 				dheightMap[i][k] = h;
-			}
-			else h = dheightMap[i][k];
+			//}
+			//else h = dheightMap[i][k];
 
 			if (world->options.isWaterDecreasing) continue;
 

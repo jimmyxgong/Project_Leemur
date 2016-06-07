@@ -207,7 +207,7 @@ transform_group Building::CreateRandomBuilding() {
 
     
     int mid_types[] = {BLOCK, PILLARS_V, PYRAMID, PILLARS_H,PILLARS_H,PILLARS_H,PILLARS_H};
-    for (int i = 0, loop = rand()%4+1, remaining_mid_space = 7;
+    for (int i = 0, loop = rand()%6+4, remaining_mid_space = 7;
          i<loop && remaining_mid_space > 0;
          i++) {
         int mid_type = rand()%7;
@@ -260,8 +260,8 @@ transform_group Building::CreateRandomBuilding() {
         top_shape = rand()%2;
         if (top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20) // prevents thin domes
             continue;
-    } while (!(isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] != ELLIPSE) || // if valid non elipse
-             (isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] == ELLIPSE && prev_block_height < y_dim/20)); // if valid elipse with heigh >= 1/20th
+    } while (!(isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] != ELLIPSE) && // if valid non elipse
+             !(isValidPlacement(top_types[top_type], top_shape) && top_types[top_type] == ELLIPSE && prev_block_height > y_dim/20)); // if valid elipse with heigh >= 1/20th
     
     int lip = rand()%2;
     if (lip && top_type != 1){

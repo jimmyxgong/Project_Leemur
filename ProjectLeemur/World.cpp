@@ -174,6 +174,9 @@ void World::onStart() {
 	generateChunks();
 	startChunks();
 	evaluateChunks();
+
+	biomeOptions.restructureParts = false;
+	options.isWaterDecreasing = false;
 }
 
 void World::onRender() {
@@ -186,6 +189,9 @@ void World::onUpdate() {
 		evaluateChunks();
 		changed = false;
 	}
+
+	biomeOptions.restructureParts = false;
+	options.isWaterDecreasing = false;
 }
 
 void World::onDestroy() {
@@ -250,13 +256,10 @@ void World::evaluateChunks() {
 		auto & chunk = ref.second;
 		chunk->generateChunk(terrain);
 	}
-	if (!biomeOptions.restructureParts)
-		for (auto & ref : chunks) {
-			ref.second->renderMesh();
-			ref.second->resetResumable();
-		}
-	biomeOptions.restructureParts = false;
-	options.isWaterDecreasing = false;
+	for (auto & ref : chunks) {
+		ref.second->renderMesh();
+		ref.second->resetResumable();
+	}
 }
 
 void World::startChunks() {
