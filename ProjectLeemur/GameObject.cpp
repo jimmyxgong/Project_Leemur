@@ -25,7 +25,6 @@ void GameObject::onRender() {
 	//if (m != *Component::EMPTY)
 	if (component) {
 		if (component->attachedShader) {
-			//component->attachedShader->use();
 			loadToShader();
 		}
 		((Mesh*)component)->render();

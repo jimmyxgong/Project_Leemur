@@ -22,13 +22,13 @@ void Resources::init() {
     
     // Create Cube object and add it to resources.
     Resources::newObjEntity(CUB_OBJ, "cube.obj")
-    .attachShader(&Resources::getShader(TOON_LIGHT))
-    .setMaterial(&Material::Gold);
+		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.setMaterial(&Material::Gold);
     
     // Create Sphere object and add it to resources.
     Resources::newObjEntity(SPH_OBJ, "sphere.obj")
-    .attachShader(&Resources::getShader(TOON_LIGHT))
-    .setMaterial(&Material::Gold);
+		.attachShader(&Resources::getShader(TOON_LIGHT))
+		.setMaterial(&Material::Parismarine);
     
 #else
     // Create Pod object and add it to resources.

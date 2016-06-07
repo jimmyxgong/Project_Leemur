@@ -5,7 +5,7 @@
 
 /* Default values for the camera */
 #define CAMERA_POSITION   Vector3f(0.0f, 0.0f, 2.0f)
-#define CAMERA_LOOK_AT    Vector3f(0.0f, 0.0f, 0.0f)
+#define CAMERA_LOOK_AT    Vector3f(0.0f, 6.f, 0.0f)
 #define CAMERA_UP_VECTOR  Vector3f(0.0f, 1.0f, 0.0f)
 
 class Camera {
@@ -13,12 +13,12 @@ private:
 	Matrix4f OriginViewMatrix;
 	Matrix4f relativeWorldMatrix;
 
-	Vector3f lookAt;
 	Vector3f upVector;
 	Matrix4f view;
 
 public:
 	Transform transform;
+	Vector3f lookAt;
 
 
 	Matrix4f viewMatrix();

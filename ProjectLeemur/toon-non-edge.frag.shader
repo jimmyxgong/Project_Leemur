@@ -100,14 +100,4 @@ void main() {
     vec3 linearColor = ambient + attenuation * (diffuse + specular);
 	vec3 gamma = vec3(1.0 / 2.2);
     color = vec4(pow(linearColor, gamma), 1.0);
-
-    //Silhouette Edges
-    float edge = max(0, dot(surfaceToLight, normal));
-    if (edge < 0.00001) {
-        // in place of 1D texture to define edge ramp
-        // use linear scaling for smoother transition
-		color = edge > 0
-			? vec4(vec3(20 * edge), 1.f)
-			: vec4(0,0,0,1);
-    }
 }

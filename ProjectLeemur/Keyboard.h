@@ -13,7 +13,11 @@ public:
 	
 
 private:
+	/*Deprecated*/
 	static std::stack<Layout*> layoutBackstack;
+	
+	
+	static std::vector<Layout*> layoutStack;
 
 public:
 	static void init();

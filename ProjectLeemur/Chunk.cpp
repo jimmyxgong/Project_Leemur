@@ -140,21 +140,23 @@ void Chunk::loadToShader() {
 
 
 void Chunk::generateChunk(Terrain & terrain) {
-	if (buildings.size() > 0) buildings.clear();
-	if (plants.size() > 0) plants.clear();
+	if (!world->options.isWaterDecreasing) {
+		if (buildings.size() > 0) buildings.clear();
+		if (plants.size() > 0) plants.clear();
+	}
+	
 
 	Random::setSeedToCurrentTime();
-	//Random::setSeed(terrain.seed);
 	hasWater = false;
-	clear();
+	//clear();
 
 	const Vector3f pos = transform.getPosition();
-	const double roundedX = round(pos.x);// +pos.x < 0 ? 1000 : 999;
-	const double roundedZ = round(pos.z);// +pos.z < 0 ? 1000 : 999;
+	const double roundedX = round(pos.x);
+	const double roundedZ = round(pos.z);
 
 	const World::Biomes & biome = world->biomeOptions;
 
-	float freq = PLANT_BUILDING_FREQ_RENDER / biome.frequency;
+	const float freq = PLANT_BUILDING_FREQ_RENDER / biome.frequency;
 	const static int NUM_OF_GENERATIONS = 1;
 	int count = 0;
 
@@ -166,19 +168,26 @@ void Chunk::generateChunk(Terrain & terrain) {
 		for (int k = 0; k < CHUNK_SIZE; k++) {
 			double z = k + roundedZ;
 
-			double g = terrain.height(x, z);
-			double h = ((int) round(g * HEIGHT_CONSTANT)) * HEIGHT_UNIT;
-			if (h < world->biomeOptions.waterMax + 0.02) {
-				h = world->biomeOptions.waterMax - 0.01;
-				h -= Random::Range(0.0, 0.3);
-				hasWater = true;
+			double h = 0;
+			if (!biome.restructureParts) {
+				double g = terrain.height(x, z);
+				h = ((int)round(g * HEIGHT_CONSTANT)) * HEIGHT_UNIT;
+				if (h < world->biomeOptions.waterMax + 0.02) {
+					h = world->biomeOptions.waterMax - 0.01;
+					h -= Random::Range(0.0, 0.3);
+					hasWater = true;
+				}
+				dheightMap[i][k] = h;
 			}
+			else h = dheightMap[i][k];
+
+			if (world->options.isWaterDecreasing) continue;
 
 			double m = placement.valueAt(x, z);
-			if (biome.frequency <= PLANT_BUILDING_FREQ_RENDER 
+			if (biome.frequency <= PLANT_BUILDING_FREQ_RENDER
 				&& count < NUM_OF_GENERATIONS
 				&& m < biome.waterMin
-				&& Random::Range(0, 10000) < 100) 
+				&& Random::Range(0, 10000) < 100)
 			{
 				if (world->options.generateBuildings) {
 					if (h > biome.buildingMin && h < biome.buildingMax) {
@@ -186,24 +195,24 @@ void Chunk::generateChunk(Terrain & terrain) {
 						size *= freq;
 
 						SharedPointer<Building> build =
-							share<Building>(Vector3f(x, h, z), size, (int) round(Random::Range(0, 1000) * m));
-						//build->world->translateLocal(0.f, 0.5f, 0.f);
+							share<Building>(Vector3f(x, h - 0.01, z), size, 
+								(int)round(Random::Range(0, 1000000) * m));
 						buildings.push_back(build);
 						count++;
 					}
 				}
-				if (count < NUM_OF_GENERATIONS 
-					&& world->options.generatePlants 
+				if (count < NUM_OF_GENERATIONS
+					&& world->options.generatePlants
 					&& h > biome.plantMin && h < biome.plantMax) {
 					Vector3f position = Vector3f(x, h, z);
 					LSystem plant = LSystem(
 						Random::Range(0, 10) >= 5
-							? Random::Range(0, 10) >= 5
-								? TREE1
-								: TREE3
-							: TREE2);
+						? Random::Range(0, 10) >= 5
+						? TREE1
+						: TREE3
+						: TREE2);
 
-					plant.setSeed((long long) round(Random::Range(0, 1000) * m));
+					plant.setSeed((long long)round(Random::Range(0, 100000) * m));
 					plant.turtle->branches->setLocalPosition(position);
 					plant.turtle->leaves->setLocalPosition(position);
 					plant.turtle->branches->scaleLocal(0.4f * freq);
@@ -215,52 +224,12 @@ void Chunk::generateChunk(Terrain & terrain) {
 					count++;
 				}
 			}
-
-
-			//if (world->options.generatePlants 
-			//	&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER) 
-			//{
-			//	if (h > biome.plantMin && h < biome.plantMax && Random::Range(0, 1000) > 940) {
-			//		Vector3f position = Vector3f(x, h, z);
-			//		LSystem plant = LSystem(
-			//			Random::Range(0, 10) >= 5 
-			//				? Random::Range(0, 10) >= 5 
-			//					? TREE1 
-			//					: TREE3
-			//				: TREE2);
-			//		plant.setSeed(terrain.seed + Random::Range(0, 10000));
-			//		plant.turtle->branches->setLocalPosition(position);
-			//		plant.turtle->leaves->setLocalPosition(position);
-			//		plant.turtle->branches->scaleLocal(0.4f);
-			//		plant.turtle->leaves->scaleLocal(0.4f);
-			//		
-			//		plant.drawRules();
-
-			//		plants.push_back(plant.turtle);
-			//	}
-			//}
-			//if (world->options.generateBuildings
-			//	&& biome.frequency <= PLANT_BUILDING_FREQ_RENDER) 
-			//{
-			//	if (h > biome.buildingMin && h < biome.buildingMax) {
-			//		Vector3f size = Vector3f(0.3f, freq == 1 ? 1.5 : 0.9f, 0.3f);
-			//		size *= freq;
-
-			//		SharedPointer<Building> build =
-			//			share<Building>(Vector3f(x, h, z), size, terrain.seed + Random::Range(0, 10000));
-			//		//build->world->translateLocal(0.f, 0.5f, 0.f);
-			//		buildings.push_back(build);
-			//	}
-			//}
-
-			dheightMap[i][k] = h;
-
-			//dheightMap[i][k] = g;
-			//heightMap[i][k] = (int)round(g * HEIGHT_CONSTANT);
 		}
 	}
 
 	Random::setSeedToCurrentTime();
+	if (world->options.isWaterDecreasing) return;
+
 	for (WeakPointer<Building> build : buildings) {
 		build.lock()->onCreate();
 	}
@@ -445,7 +414,7 @@ routine Chunk::yieldBuildMeshData() {
 	for (int i = 0; i < CHUNK_SIZE; i++) {
 		co_yield 100ns;
 		for (int k = 0; k < CHUNK_SIZE; k++) {
-			if (k % 8 == 0) co_yield 100ns;
+			//if (k % 8 == 0) co_yield 100ns;
 			if (i == CHUNK_SIZE - 1) {
 				if (chunk10) break;
 				if (k == CHUNK_SIZE - 1 && chunk11 && chunk01)
@@ -522,7 +491,7 @@ routine Chunk::waveMotion() {
 	}
 	int i = 0;
 	for (auto time : yieldBuildMeshData()) {
-		if (i++ % 16 == 0) yield time;
+		if (i++ % 5 == 0) yield time;
 	}
 	mesh.recalculateNormals();
 

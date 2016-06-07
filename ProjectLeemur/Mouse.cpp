@@ -44,13 +44,13 @@ void Mouse::init() {
 		Camera & cam = Window::getFocusedWindow().getActiveCamera();
 
 		// TODO Transform Position isn't working
-		Vector3f position = cam.transform.getLocalPosition();
+		Vector3f position = cam.lookAt - cam.transform.getLocalPosition();
 		//std::cout << to_string(position) << std::endl;
 		if (position.x == 0 && position.y == 0 && position.z == 0) {
 			position = CAMERA_POSITION;
 		}
 
-		position = abs(normalize(position)) / 5.0f;
+		position = (normalize(abs(position))) / 5.0f;
 		if (isUp) position = -position;
 		cam.transform.translateLocal(position);
 		cam.update();

@@ -20,6 +20,7 @@
 #define SHADER_LIGHT 0
 #define TOON_LIGHT 1
 #define TERRAIN_LIGHT 2
+#define TOON_NON_EDGE_LIGHT 3
 
 /* 
   Non owned resources: i.e. if you add resources to the Resources pool,

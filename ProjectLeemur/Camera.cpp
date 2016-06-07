@@ -26,8 +26,12 @@ Camera& Camera::setUpVector(const Vector3f & val) {
 }
 
 void Camera::update() {
-	view = glm::lookAt(transform.getLocalPosition(), lookAt, upVector) 
-		* transform.getLocalRotation().asMatrix();
+	//lookAt = Vector3f(transform.getLocalRotation() * Vector4f(lookAt, 1.0f));
+	//upVector = Vector3f(transform.getLocalRotation() * Vector4f(upVector, 1.0f));
+	//glm::lookAt(transform.getLocalPosition(), lookAt, upVector)
+	//view = transform.getLocalRotation();
+
+	view = glm::lookAt(transform.getLocalPosition(), lookAt, upVector) * (transform.getLocalRotation() * Matrix4f(1.0f));
 }
 
 

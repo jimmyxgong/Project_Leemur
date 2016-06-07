@@ -21,6 +21,8 @@ public:
 		bool generateBuildings = true;
 		bool generatePlants = true;
 
+		bool isWaterDecreasing = false;
+
 	} options;
 
 	struct Biomes {
@@ -38,6 +40,7 @@ public:
 		float buildingMin = plantMax - 0.3;
 		float buildingMax = snow + 1.2;
 
+		bool restructureParts = false;
 	} biomeOptions;
 
 

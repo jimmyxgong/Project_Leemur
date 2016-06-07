@@ -50,6 +50,7 @@ void Light::init() {
 	Resources::addShader(SHADER_LIGHT, "light.vert.shader", "light.frag.shader");
     Resources::addShader(TOON_LIGHT, "light.vert.shader", "toon.frag.shader");
 	Resources::addShader(TERRAIN_LIGHT, "light.vert.shader", "terrain.frag.shader");
+	Resources::addShader(TOON_NON_EDGE_LIGHT, "light.vert.shader", "toon-non-edge.frag.shader");
 
 #else
     Resources::addShader(SHADER_LIGHT, "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.vert.shader", "/Users/sebastian/Google Drive/College/Year 3/Spring 16/ProjectLeemur/ProjectLeemur/light.frag.shader");

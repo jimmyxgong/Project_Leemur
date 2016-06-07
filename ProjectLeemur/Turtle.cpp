@@ -28,6 +28,9 @@ void Turtle::onCreate() {
 void Turtle::onStart() {}
 
 void Turtle::onRender() {
+	//((ObjObject&)Resources::getEntity(CYL_OBJ)).attachShader(&Resources::getShader(TOON_LIGHT));
+	//((ObjObject&)Resources::getEntity(CUB_OBJ)).attachShader(&Resources::getShader(TOON_LIGHT));
+	//((ObjObject&)Resources::getEntity(SPH_OBJ)).attachShader(&Resources::getShader(TOON_LIGHT));
 	//Resources::getShader(SHADER_LIGHT);
 	//Light::Directional.loadToShader();
 	world->renderAll();

@@ -24,7 +24,7 @@ public:
 	void onUpdate() override;
 
 	Camera & getCamera() const;
-
+	void move(Movement move);
 
 
 	Player();

@@ -36,7 +36,7 @@ void World::allowKeyBindings() {
 		printf(out.c_str());
 	});
 
-	bindings.onKeyPressed(GLFW_KEY_O, [this](bool shifted) {
+	bindings.onKeyPressed(GLFW_KEY_7, [this](bool shifted) {
 		changed = true;
 		_div += shifted ? -0.2 : 0.2;
 
@@ -143,8 +143,19 @@ void World::allowKeyBindings() {
 	bindings.onKeyPressed(GLFW_KEY_C, [this](bool shifted) {
 		biomeOptions.waterMax += shifted ? -0.2 : 0.2;
 		biomeOptions.waterMin += shifted ? -0.2 : 0.2;
-		biomeOptions.sand += shifted ? -0.11 : 0.11;
+		biomeOptions.sand += shifted ? -0.14 : 0.14;
+		options.isWaterDecreasing = true;
 		changed = true;
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_R, [this](bool) {
+		biomeOptions.restructureParts = true;
+		changed = true;
+	});
+
+	bindings.onKeyPressed(GLFW_KEY_E, [this](bool) {
+		options.generateBuildings = !options.generateBuildings;
+		options.generatePlants = !options.generatePlants;
 	});
 
 	Keyboard::addLayout(&bindings);
@@ -239,10 +250,13 @@ void World::evaluateChunks() {
 		auto & chunk = ref.second;
 		chunk->generateChunk(terrain);
 	}
-	for (auto & ref : chunks) {
-		ref.second->renderMesh();
-		ref.second->resetResumable();
-	}
+	if (!biomeOptions.restructureParts)
+		for (auto & ref : chunks) {
+			ref.second->renderMesh();
+			ref.second->resetResumable();
+		}
+	biomeOptions.restructureParts = false;
+	options.isWaterDecreasing = false;
 }
 
 void World::startChunks() {

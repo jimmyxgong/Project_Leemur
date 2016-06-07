@@ -5,10 +5,11 @@
 Keyboard::Layout Keyboard::defaultLayout;
 Keyboard::Layout * Keyboard::layout;
 std::stack<Keyboard::Layout*> Keyboard::layoutBackstack;
+std::vector<Keyboard::Layout*> Keyboard::layoutStack;
 
 void Keyboard::init() {
 	std::cout << "Keyboard initializng... " << std::endl;
-	layoutBackstack.push(&defaultLayout);
+	layoutStack.push_back(&defaultLayout);
 
 	// Define the default layout here:
 	defaultLayout.onKeyPressed(GLFW_KEY_E, [](bool isShifted) -> void {
@@ -36,12 +37,23 @@ void Keyboard::onKeyAction(GLFWwindow* window, int key, int scancode, int action
 		auto listener = topLayout().listeners.find(key);
 		if (listener != topLayout().listeners.end()) {
 			listener->second(isShifted);
+			return;
+		}
+
+		// Not in the top stack, iterate down and check.
+		for (int i = layoutStack.size() - 1; i >= 0; --i) {
+			auto layout = layoutStack[i];
+			auto listener = layout->listeners.find(key);
+			if (listener != layout->listeners.end()) {
+				listener->second(isShifted);
+				break;
+			}
 		}
 	}
 }
 
 void Keyboard::addLayout(Keyboard::Layout * layout) {
-	layoutBackstack.push(layout);
+	layoutStack.push_back(layout);
 }
 
 Keyboard::Layout * Keyboard::popLayout() {
@@ -54,7 +66,7 @@ Keyboard::Layout * Keyboard::popLayout() {
 }
 
 Keyboard::Layout & Keyboard::topLayout() {
-	return *layoutBackstack.top();
+	return *(layoutStack[layoutStack.size() - 1]);
 }
 
 

@@ -6,7 +6,7 @@ void Player::onStart() {
 	trackball = Trackball(&Window::getFocusedWindow());
 	//transform.setPosition(Vector3f(1000, 1000, 1000));
 
-	camera = unique<Camera>(Vector3f(0.0f, 1.0f, 2.2f));
+	camera = unique<Camera>(Vector3f(0.0f, 6.0f, 2.2f));
 	//camera->setLookAt(Vector3f(0.0f, 16.0f, 0.2f));
 	queue = unique<std::queue<Movement>>();
 	
@@ -36,6 +36,7 @@ void Player::onStart() {
 	});
 
 	Mouse::pushLayout(&mousebind);
+	//Keyboard::addLayout(&keybind);
 	Window::getFocusedWindow().setActiveCamera(camera.get());
 }
 
@@ -44,11 +45,31 @@ void Player::onRender() {
 }
 
 void Player::onUpdate() {
+	//printf("Moving\n");
 	while (!queue->empty()) {
 		Movement m = queue->front(); 
 		queue->pop();
-		move(m);
+		for (int i = 0; i < 4; i++)
+			move(m);
 	}
+
+}
+
+void Player::move(Movement move) {
+	Vector3f m(0.f);
+	if (move == Movement::FORWARD) {
+		m.z = -0.5f;
+	}
+	else if (move == Movement::BACKWARD) {
+		m.z = 0.5f;
+	}
+	else if (move == Movement::RIGHT) {
+		m.x = 0.5f;
+	}
+	else m.x = -0.5f;
+
+	camera->transform.translateLocal(m);
+	camera->update();
 }
 
 Camera & Player::getCamera() const {
