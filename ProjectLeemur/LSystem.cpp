@@ -173,28 +173,28 @@ void LSystem::drawRules() {
 			turtle->pitchUp(this->angle + r_angle);
 			break;
 		}
-	   case '\\' : {
-		   //roll left
-		   turtle->rollLeft(this->angle + r_angle);
-		   break;
-		}
-	   case '/': {
-		   //roll right
-		   turtle->rollRight(this->angle + r_angle);
-		   break;
-	   }
-	   case '|': {
-		   //turn 180
-		   turtle->turnAround();
-		   break;
-	   }
-	   case '[': {
-			//save matrix state
-		    //std::cout << "save state" << std::endl;
-		    turtle->saveState();
+	  	case '\\' : {
+		        //roll left
+			turtle->rollLeft(this->angle + r_angle);
 			break;
 		}
-	    case ']': {
+	  	case '/': {
+			//roll right
+			turtle->rollRight(this->angle + r_angle);
+			break;
+	   	}
+	   	case '|': {
+		 	//turn 180
+			turtle->turnAround();
+		 	break;
+	   	}
+	   	case '[': {
+			//save matrix state
+		   	//std::cout << "save state" << std::endl;
+		   	turtle->saveState();
+			break;
+		}
+	    	case ']': {
 			//restore matrix state
 			//std::cout << "restore state" << std::endl;
 			turtle->restoreState();
