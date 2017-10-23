@@ -57,7 +57,7 @@ void Turtle::setIndices() {
 }
 
 void Turtle::setPosition(glm::vec3 pos) {
-    original_position = pos;
+   	original_position = pos;
 	this->position = pos;
 }
 
@@ -100,47 +100,45 @@ void Turtle::moveForward(float amt) {
 
 //for now just add vertice to VBO
 void Turtle::drawForward(float amt) {  
-    // draw the points
-    Component& pod = (ObjObject&)Resources::getEntity(SPH_OBJ);
-    pod.setMaterial(&Material::Emerald);
-    game_object p = share<GameObject>(&pod);
-    transform_group pod_t = share<Transform>();
-    pod_t->addChild(p);
-    pod_t->scaleLocal(amt/2);
-    pod_t->translateLocal(position.x, position.y, position.z);
-    pod_t->translateLocal(amt*normalize(Vector3f(direction.x, direction.y*amt, direction.z)));
-    pod_t->translateLocal(0, amt/4, 0);
+   	// draw the points
+   	Component& pod = (ObjObject&)Resources::getEntity(SPH_OBJ);
+   	pod.setMaterial(&Material::Emerald);
+        game_object p = share<GameObject>(&pod);
+        transform_group pod_t = share<Transform>();
+        pod_t->addChild(p);
+        pod_t->scaleLocal(amt/2);
+        pod_t->translateLocal(position.x, position.y, position.z);
+        pod_t->translateLocal(amt*normalize(Vector3f(direction.x, direction.y*amt, direction.z)));
+        pod_t->translateLocal(0, amt/4, 0);
 
-    transform_group rotated_pod = share<Transform>();
-    rotated_pod->addChild(pod_t);
-    if (position.y > amt*4+original_position.y)
-        leaves->addChild(pod_t);
-    
-    
-    
+        transform_group rotated_pod = share<Transform>();
+        rotated_pod->addChild(pod_t);
+        if (position.y > amt*4+original_position.y)
+                leaves->addChild(pod_t);
+        
 	Component& cylinder = (ObjObject&)Resources::getEntity(CYL_OBJ);
 	cylinder.setMaterial(&Material::Bronze);
 	
-    game_object c = share<GameObject>(&cylinder);
+        game_object c = share<GameObject>(&cylinder);
 
-    transform_group cyl_t = share<Transform>();
-    cyl_t->addChild(c);
-    cyl_t->scaleLocal(0.05f, amt/2, 0.05f);
-    cyl_t->translateLocal(0, amt/4, 0);
+        transform_group cyl_t = share<Transform>();
+        cyl_t->addChild(c);
+        cyl_t->scaleLocal(0.05f, amt/2, 0.05f);
+        cyl_t->translateLocal(0, amt/4, 0);
     
 	transform_group rotated = share<Transform>();
-    rotated->addChild(cyl_t);
+        rotated->addChild(cyl_t);
     
-    Vector3f up = Vector3f(0,1,0);
-    Vector3f new_up = normalize(Vector3f(direction.x, direction.y*amt, direction.z));
-    Vector3f rotation_axis = cross(new_up, up);
-    float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
+        Vector3f up = Vector3f(0,1,0);
+        Vector3f new_up = normalize(Vector3f(direction.x, direction.y*amt, direction.z));
+        Vector3f rotation_axis = cross(new_up, up);
+        float rotation_degree = acos(dot(up, new_up)/(length(up)*length(new_up))) * 360 / (2*M_PI);
     
-    rotated->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
+        rotated->rotateLocal(rotation_axis.x, rotation_axis.y, rotation_axis.z, rotation_degree);
     
-    transform_group translated_rotated = share<Transform>();
-    translated_rotated->addChild(rotated);
-    translated_rotated->translateLocal(position);
+        transform_group translated_rotated = share<Transform>();
+        translated_rotated->addChild(rotated);
+        translated_rotated->translateLocal(position);
     
 	branches->addChild(translated_rotated);
 
